@@ -14,8 +14,15 @@ This goes for all members, including the admins.
 Secondly a proposal for the coding style. This is very open to suggestion, but
 for the sake of code readability and management, a good idea to keep in mind.
 Update these in agreement if necessary.
+
 - Indent using 4 spaces. You can configure your IDE to convert tabs to do this
   for you.
 - The maximum line length is 80 characters. This makes it easy to read code
   without having to scroll horizontally and makes it nicer to read in programs
   that use line wrap.
+- Naming conventions:
+  * Class names should follow CapitalizedWords
+  * Function and method names should follow mixedCase
+  * Variables should also follow mixedCase
+  * Constants should follow UPPER_CASE_WITH_UNDERSCORES
+  * 'internal use' should be denoted with a _singleLeadingUnderscore
