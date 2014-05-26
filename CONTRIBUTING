@@ -23,6 +23,7 @@ Update these in agreement if necessary.
 - Always end files with a newline. Some editors will have this behaviour by
   default, but mostly on Windows you're going to have to pay attention to this.
 - Naming conventions:
+  * Python file names should be all_lowercase
   * Class names should follow CapitalizedWords
   * Function and method names should follow mixedCase
   * Variables should also follow mixedCase
