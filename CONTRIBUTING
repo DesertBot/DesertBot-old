@@ -20,7 +20,7 @@ Update these in agreement if necessary.
 - The maximum line length is 80 characters. This makes it easy to read code
   without having to scroll horizontally and makes it nicer to read in programs
   that use line wrap.
-- Always end files with a newline. Some editors will have this behavious by
+- Always end files with a newline. Some editors will have this behaviour by
   default, but mostly on Windows you're going to have to pay attention to this.
 - Naming conventions:
   * Class names should follow CapitalizedWords
