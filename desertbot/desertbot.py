@@ -58,24 +58,6 @@ class DesertBot(irc.IRCClient):
             message = IRCMessage('QUIT', self.getUser(prefix, channel), channel, quitMessage)
             pass
 
-
-class DesertBotFactory(protocol.ReconnectingClientFactory):
-    def __init__(self):
-        pass
-
-    def startedConnecting(self, connector):
-        pass
-
-    def buildProtocol(self, addr):
-        self.resetDelay()
-        return self.protocol
-
-    def clientConnectionLost(self, connector, unused_reason):
-        pass
-
-    def clientConnectionFailed(self, connector, reason):
-        pass
-
     def getChannel(self, channel):
         """
         @type channel: str
@@ -94,3 +76,20 @@ class DesertBotFactory(protocol.ReconnectingClientFactory):
         if user in self.channels[channel]:
             return self.channels[channel].users[user]
         return None
+
+class DesertBotFactory(protocol.ReconnectingClientFactory):
+    def __init__(self):
+        pass
+
+    def startedConnecting(self, connector):
+        pass
+
+    def buildProtocol(self, addr):
+        self.resetDelay()
+        return self.protocol
+
+    def clientConnectionLost(self, connector, unused_reason):
+        pass
+
+    def clientConnectionFailed(self, connector, reason):
+        pass
