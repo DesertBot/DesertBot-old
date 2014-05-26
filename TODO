@@ -11,6 +11,7 @@ are working on.
   [x] Library management (Discussed in issue #4) 
 [ ] Core implementation
   [?] Multiserver
+     [ ] Server management
      [?] Cross-server messaging
   [ ] Config loading
   [ ] Command parsing
