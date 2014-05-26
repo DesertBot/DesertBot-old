@@ -1,0 +1,11 @@
+In this document we'll keep a list of everything that needs to be done, as well
+as who does what. Feel free to add things that aren't on this list yet that you
+are working on.
+
+- = in progress, x = finished, ? = needs to be discussed
+
+[ ] Design
+  [ ] Decide on language (and possibly framework)
+[ ] Core implementation
+[ ] API implementation
+[ ] Module implementation
