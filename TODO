@@ -5,7 +5,8 @@ are working on.
 - = in progress, x = finished, ? = needs to be discussed
 
 [ ] Design
-  [ ] Decide on language (and possibly framework)
+  [?] Decide on language (and possibly framework)
+  [?] Persistent data storage
 [ ] Core implementation
 [ ] API implementation
 [ ] Module implementation
