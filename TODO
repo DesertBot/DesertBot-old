@@ -6,8 +6,9 @@ are working on.
 
 [-] Design
   [x] Decide on a name (Discussed in issue #1)
-  [x] Decide on language and framework(Discussed in issue #3) 
-  [?] Persistent data storage
+  [x] Decide on language and framework (Discussed in issue #3) 
+  [?] Persistent data storage (Discussed in issue #2) 
+  [?] Library management (Discussed in issue #4) 
 [ ] Core implementation
 [ ] API implementation
 [ ] Module implementation
