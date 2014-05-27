@@ -4,7 +4,7 @@ from enum import Enum
 class ServerInfo(object):
     def __init__(self, serverName):
         """
-        @type servername: str
+        @type serverName: str
         """
         self.name = serverName
         self.version = None
