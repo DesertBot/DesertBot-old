@@ -1,11 +1,10 @@
 from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
+from channel import IRCChannel
+from config import Config
 from message import IRCMessage
 from user import IRCUser
-from channel import IRCChannel
 from serverinfo import ServerInfo, ModeType
-import os
-import yaml
 
 
 class DesertBot(irc.IRCClient):
@@ -192,10 +191,11 @@ class DesertBot(irc.IRCClient):
                     del channel.ranks[message.user.nickname]
 
     def irc_NICK(self, prefix, params):
-        message = IRCMessage("NICK", self.getUser(prefix[:prefix.index("!")]), None, oldnick)
-
-        oldnick = message.user.nickname
+        user = self.getUser(prefix[:prefix.index("!")])
+        oldnick = user.nickname
         newnick = params[0]
+
+        message = IRCMessage("NICK", self.getUser(prefix[:prefix.index("!")]), None, oldnick)
 
         for channel in self.channels.itervalues():
             if oldnick in channel.users:
@@ -233,7 +233,7 @@ class DesertBotFactory(protocol.ReconnectingClientFactory):
         """
         @type server: str
         """
-        config = yaml.load(os.path.join("configs", "{}.yaml".format(server)))
+        config = Config(server)
         self.bot = DesertBot(self)
         reactor.connectTCP(config["server"], config["port"], self)
 
