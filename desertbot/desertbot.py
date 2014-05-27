@@ -3,7 +3,7 @@ from twisted.internet import protocol, reactor
 from message import IRCMessage
 from user import IRCUser
 from channel import IRCChannel
-from serverinfo import ServerInfo
+from serverinfo import ServerInfo, ModeType
 import yaml
 
 
@@ -45,8 +45,15 @@ class DesertBot(irc.IRCClient):
                 if token[0] == "CHANTYPES":
                     self.serverInfo.chanTypes = token[1]
                 elif token[0] == "CHANMODES":
-                    # TODO Parse chanmodes, I dunno how do
-                    pass
+                    modes = token[1].split(",")
+                    for mode in modes[0]:
+                        self.serverInfo.chanModes[mode] = ModeType.LIST
+                    for mode in modes[1]:
+                        self.serverInfo.chanModes[mode] = ModeType.PARAM_SET_UNSET
+                    for mode in modes[2]:
+                        self.serverInfo.chanModes[mode] = ModeType.PARAM_SET
+                    for mode in modes[3]:
+                        self.serverInfo.chanModes[mode] = ModeType.NORMAL
                 elif token[0] == "NETWORK":
                     self.serverInfo.network = token[1]
                 elif token[0] == "PREFIX":
