@@ -94,6 +94,40 @@ class DesertBot(irc.IRCClient):
         channel = self.getChannel(params[1])
         channel.namesListCompete = True
 
+    def irc_RPL_WHOREPLY(self, prefix, params):
+        channel = self.getChannel(params[1])
+        user = channel.users[params[5]]
+
+        if not user:
+            user = IRCUser("{}!{}@{}".format(params[5], params[2], params[3]))
+        else:
+            user.username = params[2]
+            user.hostname = params[3]
+
+        user.server = params[4]
+
+        #The RFC is weird and puts hops and realname in the same parameter
+        hopsRealnameParam =  params[7].split(" ")
+        user.hops = int(hopsRealnameParam[0])
+        user.realname = hopsRealnameParam[1]
+
+        flags = params[6]
+        statusFlags = None
+        if flags[0] == "G":
+            user.away = True
+        if len(flags) > 1:
+            if flags[1] == "*":
+                user.oper = True
+                statusFlags = flags[2:]
+            else:
+                statusFlags = flags[1:]
+        statusModes = ""
+        if statusFlags:
+            del channel.ranks[user.nickname]
+            for flag in statusFlags:
+                statusModes = statusModes + self.serverInfo.prefixesCharToMode[flag]
+        channel.ranks[user.nickname] = statusModes
+
     def privmsg(self, user, channel, msg):
         message = IRCMessage('PRIVMSG', self.getUser(user, channel), self.getChannel(channel), msg, self)
         pass
