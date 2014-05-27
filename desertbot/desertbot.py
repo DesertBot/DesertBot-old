@@ -3,6 +3,7 @@ from twisted.internet import protocol, reactor
 from message import IRCMessage
 from user import IRCUser
 from channel import IRCChannel
+from serverinfo import ServerInfo
 import yaml
 
 
@@ -18,6 +19,7 @@ class DesertBot(irc.IRCClient):
         for channelName in factory.config["channels"]:
             self.channels[channelName] = IRCChannel(channelName)
         self.admins = factory.config["admins"]
+        self.serverInfo = ServerInfo(factory.config["server"])
         #assuming, for now, that channels and admins would be in the config as lists
 
     def signedOn(self):
@@ -36,12 +38,42 @@ class DesertBot(irc.IRCClient):
     def irc_RPL_TOPIC(self, prefix, params):
         pass
 
+    def isupport(self, options):
+        for item in options:
+            if "=" in item:
+                token = item.split("=")
+                if token[0] == "CHANTYPES":
+                    self.serverInfo.chanTypes = token[1]
+                elif token[0] == "CHANMODES":
+                    # TODO Parse chanmodes, I dunno how do
+                    pass
+                elif token[0] == "NETWORK":
+                    self.serverInfo.network = token[1]
+                elif token[0] == "PREFIX":
+                    prefixes = token[1]
+                    statusModes = prefixes[:prefixes.find(")")]
+                    statusChars = prefixes[prefixes.find(")"):]
+                    self.serverInfo.prefixOrder = statusModes
+                    for i in range(len(statusModes)):
+                        self.serverInfo.prefixesModeToChar[statusModes[i]] = statusChars[i]
+                        self.serverInfo.prefixesCharToMode[statusChars[i]] = statusModes[i]
+                elif token[0] == "NICKLEN":
+                    self.serverInfo.nickLength = int(token[1])
+
     def irc_RPL_NAMREPLY(self, prefix, params):
         channel = self.getChannel(params[2])
+        if channel.namesListCompete:
+            channel.namesListCompete = False
+            channel.users.clear()
+            channel.ranks.clear()
+
         channelUsers = params[3].strip().split(" ")
         for channelUser in channelUsers:
             rank = ""
-            # TODO Parse rank information
+
+            if channelUser[0] in self.serverInfo.prefixesCharToMode:
+                rank = self.serverInfo.prefixesCharToMode[channelUser[0]]
+                channelUser = channelUser[1:]
 
             user = self.getUser(channelUser, params[2])
             if not user:
@@ -49,6 +81,10 @@ class DesertBot(irc.IRCClient):
 
             channel.users[user.nickname] = user
             channel.ranks[user.nickname] = rank
+
+    def irc_RPL_ENDOFNAMES(self, prefix, params):
+        channel = self.getChannel(params[1])
+        channel.namesListCompete = True
 
     def privmsg(self, user, channel, msg):
         message = IRCMessage('PRIVMSG', self.getUser(user, channel), self.getChannel(channel), msg)
