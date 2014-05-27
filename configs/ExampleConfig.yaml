@@ -1,0 +1,8 @@
+server:         irc.desertbus.org
+port:           6667
+channels:       [#unmoderated]
+nickname:       DesertBot
+username:       DesertBot
+realname:       DesertBot
+commandChar:    +
+admins:         [HubbeKing, Heufneutje, Tyranic-Moron]
