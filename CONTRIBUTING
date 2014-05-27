@@ -17,9 +17,9 @@ Update these in agreement if necessary.
 
 - Indent using 4 spaces. You can configure your IDE to convert tabs to do this
   for you.
-- The maximum line length is 80 characters. This makes it easy to read code
-  without having to scroll horizontally and makes it nicer to read in programs
-  that use line wrap.
+- The maximum line length for documentation and config files is 80 characters.
+  This makes it easy to read without having to scroll horizontally and makes
+  it nicer to read in programs that use line wrap.
 - Always end files with a newline. Some editors will have this behaviour by
   default, but mostly on Windows you're going to have to pay attention to this.
 - Naming conventions:
