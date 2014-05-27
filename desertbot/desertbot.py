@@ -155,7 +155,13 @@ class DesertBot(irc.IRCClient):
         if len(params) > 1:
             partMessage = u', message: ' + u' '.join(params[1:])
         message = IRCMessage('PART', self.getUser(prefix[:prefix.index("!")]), self.getChannel(params[0]), partMessage, self)
-        pass
+
+        if message.user.nickname == self.nickname:
+            # The bot is leaving the channel
+            del self.channels[message.channel.name]
+        else:
+            del message.channel.users[message.user.nickname]
+            del message.channel.ranks[message.user.nickname]
 
     def irc_KICK(self, prefix, params):
         kickMessage = u''
