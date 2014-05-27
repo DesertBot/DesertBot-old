@@ -123,7 +123,6 @@ class DesertBot(irc.IRCClient):
                 statusFlags = flags[1:]
         statusModes = ""
         if statusFlags:
-            del channel.ranks[user.nickname]
             for flag in statusFlags:
                 statusModes = statusModes + self.serverInfo.prefixesCharToMode[flag]
         channel.ranks[user.nickname] = statusModes
