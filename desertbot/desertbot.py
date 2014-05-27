@@ -4,6 +4,7 @@ from message import IRCMessage
 from user import IRCUser
 from channel import IRCChannel
 from serverinfo import ServerInfo, ModeType
+import os
 import yaml
 
 
@@ -160,7 +161,7 @@ class DesertBotFactory(protocol.ReconnectingClientFactory):
         """
         @type server: str
         """
-        config = yaml.load("configs/{}.yaml". format(server))
+        config = yaml.load(os.path.join("configs", "{}.yaml".format(server)))
         self.bot = DesertBot(self)
         reactor.connectTCP(config["server"], config["port"], self)
 
