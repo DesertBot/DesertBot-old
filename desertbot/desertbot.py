@@ -27,6 +27,29 @@ class DesertBot(irc.IRCClient):
     def nickChanged(self, nick):
         self.nickname = nick
 
+    def modeChanged(self, user, channel, set, modes, args):
+        pass
+
+    def irc_TOPIC(self, prefix, params):
+        pass
+
+    def irc_RPL_TOPIC(self, prefix, params):
+        pass
+
+    def irc_RPL_NAMREPLY(self, prefix, params):
+        channel = self.getChannel(params[2])
+        channelUsers = params[3].strip().split(" ")
+        for channelUser in channelUsers:
+            rank = ""
+            # TODO Parse rank information
+
+            user = self.getUser(channelUser, params[2])
+            if not user:
+                user = IRCUser("{}!{}@{}".format(channelUser, None, None))
+
+            channel.users[user.nickname] = user
+            channel.ranks[user.nickname] = rank
+
     def privmsg(self, user, channel, msg):
         message = IRCMessage('PRIVMSG', self.getUser(user, channel), self.getChannel(channel), msg)
         pass
