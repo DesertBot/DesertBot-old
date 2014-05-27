@@ -6,10 +6,9 @@ from channel import IRCChannel
 
 
 class DesertBot(irc.IRCClient):
-    channels = {}
-    nickname = "DesertBot"
     def __init__(self):
-        pass
+        self.channels = {}
+        self.nickname = "DesertBot"
 
     def signedOn(self):
         for channel in self.channels.keys():
