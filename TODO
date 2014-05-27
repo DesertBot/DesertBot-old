@@ -13,10 +13,10 @@ are working on.
   [?] Multiserver
      [ ] Server management
      [?] Cross-server messaging
-  [-] Initial class setup
+  [x] Initial class setup
   [ ] Config loading
-  [ ] Command parsing
-  [ ] Numeric parsing
-  [ ] User/channel management
+  [-] Command parsing
+  [-] Numeric parsing
+  [-] User/channel management
 [ ] API implementation
 [ ] Module implementation
