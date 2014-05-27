@@ -15,13 +15,16 @@ class DesertBot(irc.IRCClient):
         """
         self.factory = factory
         self.channels = {}
-        self.nickname = factory.config["nickname"]
-        self.username = factory.config["username"]
-        self.realname = factory.config["realname"]
         self.commandChar = factory.config["commandChar"]
         self.admins = factory.config["admins"]
         self.serverInfo = ServerInfo(factory.config["server"])
         #assuming, for now, that channels and admins would be in the config as lists
+
+    def connectionMade(self):
+        self.nickname = self.factory.config["nickname"]
+        self.username = self.factory.config["username"]
+        self.realname = self.factory.config["realname"]
+        irc.IRCClient.connectionMade(self)
 
     def signedOn(self):
         for channel in self.factory.config["channels"]:
