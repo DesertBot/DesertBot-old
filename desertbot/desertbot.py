@@ -146,7 +146,9 @@ class DesertBot(irc.IRCClient):
             # Bot joins the channel, do initial setup
             self.sendLine("WHO {}".format(message.channel.name))
             self.sendLine("MODE {}".format(message.channel.name))
-        pass
+        else:
+            message.channel.users[message.user.nickname] = message.user
+            message.channel.ranks[message.user.nickname] = ""
 
     def irc_PART(self, prefix, params):
         partMessage = u''
