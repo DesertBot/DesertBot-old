@@ -185,7 +185,11 @@ class DesertBot(irc.IRCClient):
         for key in self.channels:
             channel = self.channels[key]
             message = IRCMessage('QUIT', self.getUser(prefix[:prefix.index("!")]), channel, quitMessage, self)
-            pass
+
+            for channel in self.channels.itervalues():
+                if message.user.nickname in channel.users:
+                    del channel.users[message.user.nickname]
+                    del channel.ranks[message.user.nickname]
 
     def getChannel(self, channel):
         """
