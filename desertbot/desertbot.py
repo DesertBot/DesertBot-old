@@ -3,13 +3,22 @@ from twisted.internet import protocol, reactor
 from message import IRCMessage
 from user import IRCUser
 from channel import IRCChannel
+import yaml
 
 
 class DesertBot(irc.IRCClient):
-    channels = {}
-    nickname = "DesertBot"
-    def __init__(self):
-        pass
+    def __init__(self, factory):
+        """
+        @type factory: DesertBotFactory
+        """
+        self.nickname = factory.config["nickname"]
+        self.username = factory.config["username"]
+        self.realname = factory.config["realname"]
+        self.commandChar = factory.config["commandChar"]
+        for channelName in factory.config["channels"]:
+            self.channels[channelName] = IRCChannel(channelName)
+        self.admins = factory.config["admins"]
+        #assuming, for now, that channels and admins would be in the config as lists
 
     def signedOn(self):
         for channel in self.channels.keys():
@@ -77,16 +86,24 @@ class DesertBot(irc.IRCClient):
             return self.channels[channel].users[user]
         return None
 
+
 class DesertBotFactory(protocol.ReconnectingClientFactory):
-    def __init__(self):
-        pass
+    protocol = DesertBot
+
+    def __init__(self, server):
+        """
+        @type server: str
+        """
+        config = yaml.load("configs/{}.yaml". format(server))
+        self.bot = DesertBot(self)
+        reactor.connectTCP(config["server"], config["port"], self)
 
     def startedConnecting(self, connector):
         pass
 
     def buildProtocol(self, addr):
         self.resetDelay()
-        return self.protocol
+        return self.bot
 
     def clientConnectionLost(self, connector, unused_reason):
         pass
