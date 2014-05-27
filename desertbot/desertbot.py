@@ -168,8 +168,15 @@ class DesertBot(irc.IRCClient):
         if len(params) > 2:
             kickMessage = u', message: ' + u' '.join(params[2:])
         message = IRCMessage('KICK', self.getUser(prefix[:prefix.index("!")]), self.getChannel(params[0]), kickMessage, self)
-        kickee = params[1]
-        pass
+        kickee = params[1] # TODO: We need to get this into the message, otherwise we won't know who got kicked
+
+        if kickee == self.nickname:
+            # The bot is kicked from the channel
+            del self.channels[message.channel.name]
+        else:
+            # Someone else is kicking someone from the channel
+            del message.channel.users[kickee]
+            del message.channel.ranks[kickee]
 
     def irc_QUIT(self, prefix, params):
         quitMessage = u''
