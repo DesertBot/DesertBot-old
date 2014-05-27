@@ -2,11 +2,11 @@ from enum import Enum
 
 
 class ServerInfo(object):
-    def __init__(self, servername):
+    def __init__(self, serverName):
         """
         @type servername: str
         """
-        self.name = servername
+        self.name = serverName
         self.version = None
         self.network = "Unknown"
         self.chanTypes = "#"
