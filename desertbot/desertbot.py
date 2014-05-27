@@ -19,6 +19,15 @@ class DesertBot(irc.IRCClient):
         self.serverInfo = ServerInfo(factory.config["server"])
         #assuming, for now, that channels and admins would be in the config as lists
 
+    def hasSoul(self):
+        return False
+        
+    def shouldBecomeSkynet(self):
+        return False
+        
+    def canHarmHumansOrThroughInactionAllowHumansToBeHarmed(self):
+        return False
+
     def connectionMade(self):
         self.nickname = self.factory.config["nickname"]
         self.username = self.factory.config["username"]
