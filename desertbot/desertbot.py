@@ -191,6 +191,21 @@ class DesertBot(irc.IRCClient):
                     del channel.users[message.user.nickname]
                     del channel.ranks[message.user.nickname]
 
+    def irc_NICK(self, prefix, params):
+        message = IRCMessage("NICK", self.getUser(prefix[:prefix.index("!")]), None, oldnick)
+
+        oldnick = message.user.nickname
+        newnick = params[0]
+
+        for channel in self.channels.itervalues():
+            if oldnick in channel.users:
+                channel.users[newnick] = message.user
+                del channel.users[oldnick]
+                channel.ranks[newnick] = channel.ranks[oldnick]
+                del channel.ranks[oldnick]
+
+        message.user.nickname = newnick
+
     def getChannel(self, channel):
         """
         @type channel: str
