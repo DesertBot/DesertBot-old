@@ -27,9 +27,6 @@ class DesertBot(irc.IRCClient):
         for channel in self.factory.config["channels"]:
             self.join(channel)
 
-    def nickChanged(self, nick):
-        self.nickname = nick
-
     def modeChanged(self, user, channel, set, modes, args):
         pass
 
