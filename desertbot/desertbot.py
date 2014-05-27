@@ -142,6 +142,11 @@ class DesertBot(irc.IRCClient):
 
     def irc_JOIN(self, prefix, params):
         message = IRCMessage('JOIN', self.getUser(prefix, params[0]), self.getChannel(params[0]), u'', self)
+
+        if message.user.nickname == self.nickname:
+            # Bot joins the channel, do initial setup
+            self.sendLine("WHO {}".format(message.channel.name))
+            self.sendLine("MODE {}".format(message.channel.name))
         pass
 
     def irc_PART(self, prefix, params):
