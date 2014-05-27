@@ -94,33 +94,33 @@ class DesertBot(irc.IRCClient):
         channel.namesListCompete = True
 
     def privmsg(self, user, channel, msg):
-        message = IRCMessage('PRIVMSG', self.getUser(user, channel), self.getChannel(channel), msg)
+        message = IRCMessage('PRIVMSG', self.getUser(user, channel), self.getChannel(channel), msg, self)
         pass
 
     def action(self, user, channel, msg):
-        message = IRCMessage('ACTION', self.getUser(user, channel), self.getChannel(channel), msg)
+        message = IRCMessage('ACTION', self.getUser(user, channel), self.getChannel(channel), msg, self)
         pass
 
     def noticed(self, user, channel, msg):
-        message = IRCMessage('NOTICE', self.getUser(user, channel), self.getChannel(channel), msg.upper())
+        message = IRCMessage('NOTICE', self.getUser(user, channel), self.getChannel(channel), msg.upper(), self)
         pass
 
     def irc_JOIN(self, prefix, params):
-        message = IRCMessage('JOIN', self.getUser(prefix, params[0]), self.getChannel(params[0]), '')
+        message = IRCMessage('JOIN', self.getUser(prefix, params[0]), self.getChannel(params[0]), u'', self)
         pass
 
     def irc_PART(self, prefix, params):
         partMessage = u''
         if len(params) > 1:
             partMessage = u', message: ' + u' '.join(params[1:])
-        message = IRCMessage('PART', self.getUser(prefix, params[0]), self.getChannel(params[0]), partMessage)
+        message = IRCMessage('PART', self.getUser(prefix, params[0]), self.getChannel(params[0]), partMessage, self)
         pass
 
     def irc_KICK(self, prefix, params):
         kickMessage = u''
         if len(params) > 2:
             kickMessage = u', message: ' + u' '.join(params[2:])
-        message = IRCMessage('KICK', self.getUser(prefix, params[0]), self.getChannel(params[0]), kickMessage)
+        message = IRCMessage('KICK', self.getUser(prefix, params[0]), self.getChannel(params[0]), kickMessage, self)
         kickee = params[1]
         pass
 
@@ -130,7 +130,7 @@ class DesertBot(irc.IRCClient):
             quitMessage = u', message: ' + u' '.join(params[0])
         for key in self.channels:
             channel = self.channels[key]
-            message = IRCMessage('QUIT', self.getUser(prefix, channel), channel, quitMessage)
+            message = IRCMessage('QUIT', self.getUser(prefix, channel), channel, quitMessage, self)
             pass
 
     def getChannel(self, channel):
