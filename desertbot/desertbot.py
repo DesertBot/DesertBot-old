@@ -50,7 +50,11 @@ class DesertBot(irc.IRCClient):
         modeChannel = self.getChannel(channel)
 
         if not modeUser:
-            modeUser = IRCUser(user)
+            if "!" in user:
+                modeUser = IRCUser(user)
+            else:
+                # User doesn't have a username or hostname.
+                modeUser = IRCUser("{}!{}@{}".format(user, None, None))
 
         if not modeChannel:
             #setting a usermode
