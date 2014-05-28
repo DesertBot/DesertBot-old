@@ -14,9 +14,9 @@ are working on.
      [ ] Server management
      [?] Cross-server messaging
   [x] Initial class setup
-  [ ] Config loading
-  [-] Command parsing
+  [-] Config loading
+  [x] Command parsing
   [-] Numeric parsing
-  [-] User/channel management
+  [x] User/channel management
 [ ] API implementation
 [ ] Module implementation
