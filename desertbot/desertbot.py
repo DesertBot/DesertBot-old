@@ -1,3 +1,5 @@
+import platform
+from __init__ import *
 from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
 from channel import IRCChannel
@@ -32,6 +34,10 @@ class DesertBot(irc.IRCClient):
         self.nickname = self.factory.config["nickname"]
         self.username = self.factory.config["username"]
         self.realname = self.factory.config["realname"]
+        self.versionName = self.nickname
+        self.versionNum = "v{}.{}.{}".format(version_major, version_minor, version_patch)
+        #TODO Move those version numbers somewhere sensible. I'm not even sure Python will accept importing them ATM.
+        self.versionEnv = platform.platform()
         irc.IRCClient.connectionMade(self)
 
     def signedOn(self):
@@ -148,7 +154,11 @@ class DesertBot(irc.IRCClient):
         pass
 
     def irc_JOIN(self, prefix, params):
-        message = IRCMessage('JOIN', self.getUser(prefix[:prefix.index("!")]), self.getChannel(params[0]), u'', self)
+        channel = self.getChannel(params[0])
+        if not channel:
+            channel = IRCChannel(params[0])
+            self.channels[params[0]] = channel
+        message = IRCMessage('JOIN', self.getUser(prefix[:prefix.index("!")]), channel, u'', self)
 
         if message.user.nickname == self.nickname:
             # Bot joins the channel, do initial setup
@@ -172,11 +182,11 @@ class DesertBot(irc.IRCClient):
             del message.channel.ranks[message.user.nickname]
 
     def irc_KICK(self, prefix, params):
-        kickMessage = u''
+        kickee = params[1]
+        kickMessage = u'{}'.format(kickee)
         if len(params) > 2:
-            kickMessage = u', message: ' + u' '.join(params[2:])
+            kickMessage = u'{}, message: '.format(kickee) + u' '.join(params[2:])
         message = IRCMessage('KICK', self.getUser(prefix[:prefix.index("!")]), self.getChannel(params[0]), kickMessage, self)
-        kickee = params[1] # TODO: We need to get this into the message, otherwise we won't know who got kicked
 
         if kickee == self.nickname:
             # The bot is kicked from the channel
