@@ -1,5 +1,5 @@
 import platform
-from __init__ import *
+from desertbot import version_major, version_minor, version_patch
 from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
 from channel import IRCChannel
@@ -36,7 +36,6 @@ class DesertBot(irc.IRCClient):
         self.realname = self.factory.config["realname"]
         self.versionName = self.nickname
         self.versionNum = "v{}.{}.{}".format(version_major, version_minor, version_patch)
-        #TODO Move those version numbers somewhere sensible. I'm not even sure Python will accept importing them ATM.
         self.versionEnv = platform.platform()
         irc.IRCClient.connectionMade(self)
 
