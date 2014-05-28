@@ -293,11 +293,10 @@ class DesertBot(irc.IRCClient):
 class DesertBotFactory(protocol.ReconnectingClientFactory):
     protocol = DesertBot
 
-    def __init__(self, server):
+    def __init__(self, config):
         """
-        @type server: str
+        @type config: Config
         """
-        config = Config(server)
         self.bot = DesertBot(self)
         reactor.connectTCP(config["server"], config["port"], self)
 
