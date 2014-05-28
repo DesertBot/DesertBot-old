@@ -44,7 +44,40 @@ class DesertBot(irc.IRCClient):
             self.join(channel)
 
     def modeChanged(self, user, channel, set, modes, args):
-        pass
+        modeUser = self.getUser(user)
+        modeChannel = self.getChannel(channel)
+
+        if not modeUser:
+            modeUser = IRCUser(user)
+
+        if not modeChannel:
+            #setting a usermode
+            for mode, arg in zip(modes, args):
+                if set:
+                    self.usermodes[mode] = arg
+                else:
+                    del self.usermodes[mode]
+
+        else:
+            #setting a chanmode
+            for mode, arg in zip(modes, args):
+                if mode in self.serverInfo.prefixesModeToChar:
+                    #setting status mode
+                    if set:
+                        modeChannel.ranks[arg] = modeChannel.ranks[arg] + mode
+                    else:
+                        modeChannel.ranks[arg] = modeChannel.ranks[arg].replace(mode, "")
+                else:
+                    #normal status mode
+                    if set:
+                        modeChannel.modes[mode] = arg
+                    else:
+                        del modeChannel.modes[mode]
+
+        messageList = [arg for arg in args if arg is not None]
+        operator = "+" if set else "-"
+
+        message = IRCMessage("MODE", modeUser, modeChannel, "{}{} {}".format(operator, modes, " ".join(messageList)), self)
 
     def irc_TOPIC(self, prefix, params):
         pass
