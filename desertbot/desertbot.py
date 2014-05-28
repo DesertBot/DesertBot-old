@@ -1,4 +1,5 @@
 import platform
+import datetime
 from desertbot import version_major, version_minor, version_patch
 from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
@@ -16,6 +17,7 @@ class DesertBot(irc.IRCClient):
         """
         self.factory = factory
         self.channels = {}
+        self.usermodes = {}
         self.commandChar = factory.config["commandChar"]
         self.admins = factory.config["admins"]
         self.serverInfo = ServerInfo(factory.config["server"])
@@ -78,11 +80,21 @@ class DesertBot(irc.IRCClient):
         operator = "+" if set else "-"
 
         message = IRCMessage("MODE", modeUser, modeChannel, "{}{} {}".format(operator, modes, " ".join(messageList)), self)
+        pass
 
     def irc_TOPIC(self, prefix, params):
+        user = self.getUser(prefix[:prefix.index("!")])
+        channel = self.getChannel(params[1])
+        channel.topic = params[2]
+        channel.topicSetter = user.getUserString()
+        channel.topicTimestamp = datetime.datetime.utcnow()
+
+        message = IRCMessage("TOPIC", user, channel, params[2], self)
         pass
 
     def irc_RPL_TOPIC(self, prefix, params):
+        channel = self.getChannel(params[1])
+        channel.topic = params[2]
         pass
 
     def isupport(self, options):
