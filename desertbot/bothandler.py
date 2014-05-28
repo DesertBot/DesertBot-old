@@ -5,11 +5,9 @@ from twisted.internet import reactor
 
 
 class BotHandler:
-    botfactories = {}
-
     def __init__(self):
         #TODO create a config object for each config file
-        pass
+        self.botfactories = {}
 
     def startBotFactory(self, config):
         """
