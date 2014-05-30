@@ -6,7 +6,9 @@ from twisted.internet import reactor
 
 class BotHandler:
     def __init__(self):
-        #TODO create a config object for each config file
+        #TODO read servers to connect to from command line args
+        #TODO pass the servers to Config, create Config objects if config files exist
+        #TODO raise an exception if no config can be found for a given server
         self.botfactories = {}
 
     def startBotFactory(self, config):
