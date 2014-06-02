@@ -1,7 +1,7 @@
 from enum import Enum
-from user import IRCUser
-from channel import IRCChannel
-from desertbot import DesertBot
+from desertbot.user import IRCUser
+from desertbot.channel import IRCChannel
+from desertbot.desertbot import DesertBot
 
 class IRCMessage(object):
     def __init__(self, messageType, user, channel, messageText, bot):
