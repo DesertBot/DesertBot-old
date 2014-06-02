@@ -264,6 +264,12 @@ class DesertBot(irc.IRCClient):
         message.user.nickname = newnick
         irc.IRCClient.irc_NICK(self, prefix, params)
 
+    def irc_unknown(self, prefix, command, params):
+        if command == "333": #RPL_TOPICWHOTIME
+            channel = self.getChannel(params[1])
+            channel.topicSetter = params[2]
+            channel.topicTimestamp = long(params[3])
+
     def getChannel(self, channel):
         """
         @type channel: str
