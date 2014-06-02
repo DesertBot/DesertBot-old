@@ -80,7 +80,6 @@ class DesertBot(irc.IRCClient):
         operator = "+" if set else "-"
 
         message = IRCMessage("MODE", modeUser, modeChannel, "{}{} {}".format(operator, modes, " ".join(messageList)), self)
-        pass
 
     def irc_TOPIC(self, prefix, params):
         user = self.getUser(prefix[:prefix.index("!")])
@@ -90,12 +89,10 @@ class DesertBot(irc.IRCClient):
         channel.topicTimestamp = datetime.datetime.utcnow()
 
         message = IRCMessage("TOPIC", user, channel, params[2], self)
-        pass
 
     def irc_RPL_TOPIC(self, prefix, params):
         channel = self.getChannel(params[1])
         channel.topic = params[2]
-        pass
 
     def isupport(self, options):
         for item in options:
@@ -187,15 +184,12 @@ class DesertBot(irc.IRCClient):
 
     def privmsg(self, user, channel, msg):
         message = IRCMessage('PRIVMSG', self.getUser(user[:user.index("!")]), self.getChannel(channel), msg, self)
-        pass
 
     def action(self, user, channel, msg):
         message = IRCMessage('ACTION', self.getUser(user[:user.index("!")]), self.getChannel(channel), msg, self)
-        pass
 
     def noticed(self, user, channel, msg):
         message = IRCMessage('NOTICE', self.getUser(user[:user.index("!")]), self.getChannel(channel), msg.upper(), self)
-        pass
 
     def irc_JOIN(self, prefix, params):
         channel = self.getChannel(params[0])
