@@ -20,8 +20,8 @@ class BotHandler:
 
     def startBotFactory(self, config):
         """
-@type config: Config
-"""
+        @type config: Config
+        """
         if config["server"] in self.botfactories:
             #already on this server for some reason
             return False
