@@ -1,29 +1,27 @@
-import os, sys, argparse
+import os, sys
 from desertbot.desertbot import DesertBotFactory
 from desertbot.config import Config
 from twisted.internet import reactor
+from twisted.python import log
 
 
 class BotHandler:
-    parser = argparse.ArgumentParser(description="An IRC bot written in Python.")
-    parser.add_argument("-s", "--servers", help="the IRC servers to connect to (required)", type=str, nargs="+", required=True)
-
-    def __init__(self):
+    def __init__(self, cmdArgs):
         self.configs = {}
         cmdArgs = self.parser.parse_args()
         for server in cmdArgs.server:
             try:
                 self.configs[server] = Config(server)
             except:
-                print "No config file found for '{}'!".format(server)
+                log.err("No config file found for '{}'!".format(server))
         self.botfactories = {}
         for server, configObject in self.configs.iteritems():
             self.startBotFactory(configObject)
 
     def startBotFactory(self, config):
         """
-        @type config: Config
-        """
+@type config: Config
+"""
         if config["server"] in self.botfactories:
             #already on this server for some reason
             return False
@@ -68,4 +66,3 @@ class BotHandler:
         reactor.stop()
         python = sys.executable
         os.execl(python, python, *sys.argv)
-        
