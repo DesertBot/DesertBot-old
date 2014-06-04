@@ -1,11 +1,27 @@
 import os
 import yaml
+from twisted.python import log
 
 
 class Config(object):
-    def __init__(self, server):
+    def __init__(self, configFileName):
         self.configData = {}
-        yaml.load(os.path.join("configs", "{}.yaml".format(server)))
+        self.configFileName = configFileName
+
+    def loadConfig(self):
+        if not os.path.exists(os.path.join("config", self.configFileName)):
+            log.err("Config file \"{}\" was not found!".format(self.configFileName))
+            return False
+
+        try:
+            with open(os.path.join("config", self.configFileName), 'r') as configFile:
+                configData = yaml.load(configFile)
+            self.configData = configData
+            return True
+
+        except yaml.parser.ParserError as e:
+            log.err("An error occurred while reading file \"{}\": {}".format(self.configFileName, e))
+            return False
 
     def __iter__(self):
         return iter(self.configData)
