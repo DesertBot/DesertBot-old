@@ -16,7 +16,7 @@ class ServerInfo(object):
             {
                 "i" : ModeType.NORMAL,
                 "o" : ModeType.NORMAL,
-                "s" : ModeType.LIST,
+                "s" : ModeType.PARAM_SET,
                 "w" : ModeType.NORMAL
             }
 
