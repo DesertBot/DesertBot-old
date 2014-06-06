@@ -253,7 +253,7 @@ class DesertBot(irc.IRCClient):
         oldnick = user.nickname
         newnick = params[0]
 
-        message = IRCMessage("NICK", self.getUser(prefix[:prefix.index("!")]), None, oldnick)
+        message = IRCMessage("NICK", self.getUser(prefix[:prefix.index("!")]), None, oldnick, self)
 
         for channel in self.channels.itervalues():
             if oldnick in channel.users:

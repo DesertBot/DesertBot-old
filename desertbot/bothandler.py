@@ -6,7 +6,7 @@ from twisted.internet import reactor
 from twisted.python import log
 
 
-class BotHandler:
+class BotHandler(object):
     def __init__(self, cmdArgs):
         self.configs = {}
         for server in cmdArgs.servers:

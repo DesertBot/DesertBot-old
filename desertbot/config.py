@@ -16,19 +16,19 @@ class Config(object):
 
         try:
             with open(os.path.join("config", "globals.yaml"), "r") as globalConfigFile:
-                configData = yaml.load(configFile)
+                configData = yaml.load(globalConfigFile)
             with open(os.path.join("config", self.configFileName), 'r') as configFile:
                 configData.update(yaml.load(configFile))
             if "port" not in configData:
                 configData["port"] = 6667
             self.configData = configData
-            if checkRequiredValues():
+            if self.checkRequiredValues():
                 return True
             else:
                 log.err("Not all required config data was present in '{}'!".format(self.configFileName))
                 return False
 
-        except yaml.parser.ParserError as e:
+        except yaml.ParserError as e:
             log.err("An error occurred while reading file \"{}\": {}".format(self.configFileName, e))
             return False
 
