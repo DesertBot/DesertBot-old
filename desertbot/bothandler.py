@@ -32,7 +32,7 @@ class BotHandler(object):
             return True
 
     def stopBotFactory(self, server, quitMessage=None):
-        if quitMessage is None or type(quitMessage) != unicode:
+        if quitMessage is None or not isinstance(quitMessage, unicode):
             self.quitMessage = u"FINE. I'LL GO."
         else:
             self.quitMessage = quitMessage

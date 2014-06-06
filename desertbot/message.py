@@ -18,7 +18,7 @@ class IRCMessage(object):
         self.user = user
         self.channel = channel
         self.messageList = messageText.strip().split(" ")
-        if type(messageText) != unicode:
+        if not isinstance(messageText, unicode):
             messageText = messageText.encode("utf-8")
         self.messageString = messageText
         if user is None or channel is None:
