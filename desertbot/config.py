@@ -18,6 +18,8 @@ class Config(object):
                 configData = yaml.load(configFile)
             with open(os.path.join("config", self.configFileName), 'r') as configFile:
                 configData.update(yaml.load(configFile))
+            if "port" not in configData:
+                configData["port"] = 6667
             self.configData = configData
             if checkRequiredValues():
                 return True
