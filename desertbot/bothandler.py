@@ -8,12 +8,9 @@ from twisted.python import log
 class BotHandler:
     def __init__(self, cmdArgs):
         self.configs = {}
-        cmdArgs = self.parser.parse_args()
-        for server in cmdArgs.server:
-            try:
-                self.configs[server] = Config(server)
-            except:
-                log.err("No config file found for '{}'!".format(server))
+        for server in cmdArgs.servers:
+            self.configs[server] = Config(server)
+            self.configs[server].loadConfig()
         self.botfactories = {}
         for server, configObject in self.configs.iteritems():
             self.startBotFactory(configObject)
