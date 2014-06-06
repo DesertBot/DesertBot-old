@@ -22,14 +22,14 @@ class DesertBot(irc.IRCClient):
         self.commandChar = factory.config["commandChar"]
         self.admins = factory.config["admins"]
         self.serverInfo = ServerInfo(factory.config["server"])
-        #assuming, for now, that channels and admins would be in the config as lists
+        # assuming, for now, that channels and admins would be in the config as lists
 
     def hasSoul(self):
         return False
-        
+
     def shouldBecomeSkynet(self):
         return False
-        
+
     def canHarmHumansOrThroughInactionAllowHumansToBeHarmed(self):
         return False
 
@@ -54,7 +54,7 @@ class DesertBot(irc.IRCClient):
             modeUser = IRCUser(user)
 
         if not modeChannel:
-            #setting a usermode
+            # setting a usermode
             for mode, arg in zip(modes, args):
                 if set:
                     self.usermodes[mode] = arg
@@ -62,16 +62,16 @@ class DesertBot(irc.IRCClient):
                     del self.usermodes[mode]
 
         else:
-            #setting a chanmode
+            # setting a chanmode
             for mode, arg in zip(modes, args):
                 if mode in self.serverInfo.prefixesModeToChar:
-                    #setting status mode
+                    # setting status mode
                     if set:
                         modeChannel.ranks[arg] = modeChannel.ranks[arg] + mode
                     else:
                         modeChannel.ranks[arg] = modeChannel.ranks[arg].replace(mode, "")
                 else:
-                    #normal status mode
+                    # normal status mode
                     if set:
                         modeChannel.modes[mode] = arg
                     else:
@@ -162,8 +162,8 @@ class DesertBot(irc.IRCClient):
 
         user.server = params[4]
 
-        #The RFC is weird and puts hops and realname in the same parameter
-        hopsRealnameParam =  params[7].split(" ")
+        # The RFC is weird and puts hops and realname in the same parameter
+        hopsRealnameParam = params[7].split(" ")
         user.hops = int(hopsRealnameParam[0])
         user.realname = hopsRealnameParam[1]
 
@@ -266,7 +266,7 @@ class DesertBot(irc.IRCClient):
         irc.IRCClient.irc_NICK(self, prefix, params)
 
     def irc_unknown(self, prefix, command, params):
-        if command == "333": #RPL_TOPICWHOTIME
+        if command == "333":  # RPL_TOPICWHOTIME
             channel = self.getChannel(params[1])
             channel.topicSetter = params[2]
             channel.topicTimestamp = long(params[3])

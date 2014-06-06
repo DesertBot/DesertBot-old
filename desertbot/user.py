@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 class IRCUser(object):
     def __init__(self, userString):
+        """
+        @type userString: str
+        """
         exclamationIndex = userString.find("!")
         atIndex = userString.find("@")
         if exclamationIndex == -1 or atIndex == -1:
@@ -9,8 +12,8 @@ class IRCUser(object):
             self.hostname = None
         else:
             self.nickname = userString[:exclamationIndex]
-            self.username = userString[exclamationIndex +1:atIndex]
-            self.hostname = userString[atIndex+1:]
+            self.username = userString[exclamationIndex + 1:atIndex]
+            self.hostname = userString[atIndex + 1:]
         self.realname = None
         self.server = None
         self.hops = 0

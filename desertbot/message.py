@@ -4,12 +4,13 @@ from desertbot.user import IRCUser
 from desertbot.channel import IRCChannel
 from desertbot.desertbot import DesertBot
 
+
 class IRCMessage(object):
     def __init__(self, messageType, user, channel, messageText, bot):
         """
         @type messageType: str
-        @type user: IRCUser
-        @type channel: IRCChannel
+        @type user: IRCUser | None
+        @type channel: IRCChannel | None
         @type messageText: unicode
         @type bot: DesertBot
         """
