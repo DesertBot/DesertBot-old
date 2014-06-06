@@ -14,10 +14,16 @@ class Config(object):
             return False
 
         try:
-            with open(os.path.join("config", self.configFileName), 'r') as configFile:
+            with open(os.path.join("config", "globals.yaml"), "r") as globalConfigFile:
                 configData = yaml.load(configFile)
+            with open(os.path.join("config", self.configFileName), 'r') as configFile:
+                configData.update(yaml.load(configFile))
             self.configData = configData
-            return True
+            if checkRequiredValues():
+                return True
+            else:
+                log.err("Not all required config data was present in '{}'!".format(self.configFileName))
+                return False
 
         except yaml.parser.ParserError as e:
             log.err("An error occurred while reading file \"{}\": {}".format(self.configFileName, e))
@@ -30,5 +36,5 @@ class Config(object):
         return self.configData[key]
 
     def checkRequiredValues(self):
-        required = ["nickname", "username", "realname"]
+        required = ["nickname", "username", "realname", "server"]
         return True if required in self.configData else False
