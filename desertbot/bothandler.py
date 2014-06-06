@@ -10,7 +10,10 @@ class BotHandler:
         self.configs = {}
         for server in cmdArgs.servers:
             self.configs[server] = Config(server)
-            self.configs[server].loadConfig()
+            if self.configs[server].loadConfig():
+                continue
+            else:
+                del self.configs[server]
         self.botfactories = {}
         for server, configObject in self.configs.iteritems():
             self.startBotFactory(configObject)
