@@ -58,6 +58,9 @@ docs/_build/
 *.suo
 .gitattributes
 
+# PyCharm
+.idea/*
+
 # Bot
 config/
 !config/global.yaml.example
