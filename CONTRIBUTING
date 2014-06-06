@@ -20,6 +20,9 @@ Update these in agreement if necessary.
 - The maximum line length for documentation and config files is 80 characters.
   This makes it easy to read without having to scroll horizontally and makes
   it nicer to read in programs that use line wrap.
+- In general code should have a maximum line length of 100 characters,
+  however sometimes this only serves to make the code less readable.
+  Use your best judgement.
 - Always end files with a newline. Some editors will have this behaviour by
   default, but mostly on Windows you're going to have to pay attention to this.
 - Naming conventions:
