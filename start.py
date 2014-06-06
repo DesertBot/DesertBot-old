@@ -1,4 +1,5 @@
 import argparse, os
+# -*- coding: utf-8 -*-
 from desertbot.bothandler import BotHandler
 from twisted.python import log
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os, sys
 from desertbot.desertbot import DesertBotFactory
 from desertbot.config import Config

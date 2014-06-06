@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class IRCUser(object):
     def __init__(self, userString):
         exclamationIndex = userString.find("!")

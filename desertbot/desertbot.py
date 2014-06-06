@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import platform
 import datetime
 from desertbot import version_major, version_minor, version_patch
