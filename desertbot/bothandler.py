@@ -10,7 +10,7 @@ class BotHandler(object):
     def __init__(self, cmdArgs):
         self.configs = {}
         for server in cmdArgs.servers:
-            self.configs[server] = Config(server)
+            self.configs[server] = Config("{}.yaml".format(server))
             if self.configs[server].loadConfig():
                 continue
             else:
