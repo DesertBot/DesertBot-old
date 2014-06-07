@@ -185,20 +185,20 @@ class DesertBot(irc.IRCClient):
         channel.ranks[user.nickname] = statusModes
 
     def privmsg(self, user, channel, msg):
-        message = IRCMessage('PRIVMSG', self.getUser(user[:user.index("!")]), self.getChannel(channel), msg, self)
+        message = IRCMessage('PRIVMSG', self._userFromPrefix(user), self.getChannel(channel), msg, self)
 
     def action(self, user, channel, msg):
-        message = IRCMessage('ACTION', self.getUser(user[:user.index("!")]), self.getChannel(channel), msg, self)
+        message = IRCMessage('ACTION', self._userFromPrefix(user), self.getChannel(channel), msg, self)
 
     def noticed(self, user, channel, msg):
-        message = IRCMessage('NOTICE', self.getUser(user[:user.index("!")]), self.getChannel(channel), msg.upper(), self)
+        message = IRCMessage('NOTICE', self._userFromPrefix(user), self.getChannel(channel), msg.upper(), self)
 
     def irc_JOIN(self, prefix, params):
         channel = self.getChannel(params[0])
         if not channel:
             channel = IRCChannel(params[0])
             self.channels[params[0]] = channel
-        message = IRCMessage('JOIN', self.getUser(prefix[:prefix.index("!")]), channel, u'', self)
+        message = IRCMessage('JOIN', self._userFromPrefix(prefix), channel, u'', self)
 
         if message.user.nickname == self.nickname:
             # Bot joins the channel, do initial setup
@@ -212,7 +212,7 @@ class DesertBot(irc.IRCClient):
         partMessage = u''
         if len(params) > 1:
             partMessage = u', message: ' + u' '.join(params[1:])
-        message = IRCMessage('PART', self.getUser(prefix[:prefix.index("!")]), self.getChannel(params[0]), partMessage, self)
+        message = IRCMessage('PART', self._userFromPrefix(prefix), self.getChannel(params[0]), partMessage, self)
 
         if message.user.nickname == self.nickname:
             # The bot is leaving the channel
@@ -226,7 +226,7 @@ class DesertBot(irc.IRCClient):
         kickMessage = u'{}'.format(kickee)
         if len(params) > 2:
             kickMessage = u'{}, message: '.format(kickee) + u' '.join(params[2:])
-        message = IRCMessage('KICK', self.getUser(prefix[:prefix.index("!")]), self.getChannel(params[0]), kickMessage, self)
+        message = IRCMessage('KICK', self._userFromPrefix(prefix), self.getChannel(params[0]), kickMessage, self)
 
         if kickee == self.nickname:
             # The bot is kicked from the channel
@@ -241,7 +241,7 @@ class DesertBot(irc.IRCClient):
         if len(params) > 0:
             quitMessage = u', message: ' + u' '.join(params[0])
 
-        message = IRCMessage('QUIT', self.getUser(prefix[:prefix.index("!")]), None, quitMessage, self)
+        message = IRCMessage('QUIT', self._userFromPrefix(prefix), None, quitMessage, self)
 
         for channel in self.channels.itervalues():
             if message.user.nickname in channel.users:
@@ -253,7 +253,7 @@ class DesertBot(irc.IRCClient):
         oldnick = user.nickname
         newnick = params[0]
 
-        message = IRCMessage("NICK", self.getUser(prefix[:prefix.index("!")]), None, oldnick, self)
+        message = IRCMessage("NICK", self._userFromPrefix(prefix), None, oldnick, self)
 
         for channel in self.channels.itervalues():
             if oldnick in channel.users:
@@ -293,6 +293,9 @@ class DesertBot(irc.IRCClient):
             if user in self.channels[channel]:
                 return self.channels[channel].users[user]
         return None
+
+    def _userFromPrefix(self, prefix):
+        return self.getUser(prefix[:prefix.index("!")])
 
 
 class DesertBotFactory(protocol.ReconnectingClientFactory):
