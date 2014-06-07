@@ -22,11 +22,8 @@ class Config(object):
             if "port" not in configData:
                 configData["port"] = 6667
             self.configData = configData
-            if self.checkRequiredValues():
-                return True
-            else:
-                log.err("Not all required config data was present in \"{}\"!".format(self.configFileName))
-                return False
+
+            return self.checkRequiredValues()
 
         except yaml.ParserError as e:
             log.err("An error occurred while reading file \"{}\": {}".format(self.configFileName, e))
@@ -40,4 +37,9 @@ class Config(object):
 
     def checkRequiredValues(self):
         required = ["nickname", "username", "realname", "server"]
-        return True if required in self.configData else False
+        if required in self.configData:
+            return True
+        else:
+            missing = [data for data in required if data not in self.configData]
+            log.err("Required config data '{}' not found in \"{}\"!".format(', '.join(missing), self.configFileName))
+            return False
