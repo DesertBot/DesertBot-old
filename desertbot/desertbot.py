@@ -4,6 +4,7 @@ import datetime
 from desertbot import version_major, version_minor, version_patch
 from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
+from twisted.python import log
 from desertbot.channel import IRCChannel
 from desertbot.config import Config
 from desertbot.message import IRCMessage
@@ -262,13 +263,17 @@ class DesertBot(irc.IRCClient):
                 del channel.ranks[oldnick]
 
         message.user.nickname = newnick
+        # call the superclass function to ensure self.nickname is synced
         irc.IRCClient.irc_NICK(self, prefix, params)
 
+    def irc_333(self, prefix, command, params):  # RPL_TOPICWHOTIME
+        channel = self.getChannel(params[1])
+        channel.topicSetter = params[2]
+        channel.topicTimestamp = long(params[3])
+
     def irc_unknown(self, prefix, command, params):
-        if command == "333":  # RPL_TOPICWHOTIME
-            channel = self.getChannel(params[1])
-            channel.topicSetter = params[2]
-            channel.topicTimestamp = long(params[3])
+        # log unhandled commands
+        log.msg("Received unhandled command '{}' with params [{}], and prefix '{}'".format(command, ', '.join(params), prefix))
 
     def getChannel(self, channel):
         """
