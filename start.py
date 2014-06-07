@@ -1,3 +1,4 @@
+#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 import argparse, os, sys
 from desertbot.bothandler import BotHandler
