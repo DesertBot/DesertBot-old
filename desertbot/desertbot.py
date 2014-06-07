@@ -239,14 +239,13 @@ class DesertBot(irc.IRCClient):
         quitMessage = u''
         if len(params) > 0:
             quitMessage = u', message: ' + u' '.join(params[0])
-        for key in self.channels:
-            channel = self.channels[key]
-            message = IRCMessage('QUIT', self.getUser(prefix[:prefix.index("!")]), channel, quitMessage, self)
 
-            for channel in self.channels.itervalues():
-                if message.user.nickname in channel.users:
-                    del channel.users[message.user.nickname]
-                    del channel.ranks[message.user.nickname]
+        message = IRCMessage('QUIT', self.getUser(prefix[:prefix.index("!")]), None, quitMessage, self)
+
+        for channel in self.channels.itervalues():
+            if message.user.nickname in channel.users:
+                del channel.users[message.user.nickname]
+                del channel.ranks[message.user.nickname]
 
     def irc_NICK(self, prefix, params):
         user = self.getUser(prefix[:prefix.index("!")])
