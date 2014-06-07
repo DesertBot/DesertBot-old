@@ -25,7 +25,7 @@ class Config(object):
             if self.checkRequiredValues():
                 return True
             else:
-                log.err("Not all required config data was present in '{}'!".format(self.configFileName))
+                log.err("Not all required config data was present in \"{}\"!".format(self.configFileName))
                 return False
 
         except yaml.ParserError as e:
