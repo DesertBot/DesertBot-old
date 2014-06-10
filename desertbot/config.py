@@ -8,6 +8,7 @@ class Config(object):
     def __init__(self, configFileName):
         self.configData = {}
         self.configFileName = configFileName
+        self.
 
     def loadConfig(self):
         if not os.path.exists(os.path.join("config", self.configFileName)):
@@ -17,10 +18,13 @@ class Config(object):
         try:
             with open(os.path.join("config", "globals.yaml"), "r") as globalConfigFile:
                 configData = yaml.load(globalConfigFile)
-            with open(os.path.join("config", self.configFileName), 'r') as configFile:
+            with open(os.path.join("config", self.configFileName), "r") as configFile:
                 configData.update(yaml.load(configFile))
-            if "port" not in configData:
-                configData["port"] = 6667
+            
+            defaultValues = { "port" : 6667 }
+            for dKey, dValue in defaultValues.iteritems():
+                if dKey not in configData:
+                    configData[dKey] = dValue
             self.configData = configData
 
             return self.checkRequiredValues()
