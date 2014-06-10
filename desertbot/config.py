@@ -8,7 +8,6 @@ class Config(object):
     def __init__(self, configFileName):
         self.configData = {}
         self.configFileName = configFileName
-        self.
 
     def loadConfig(self):
         if not os.path.exists(os.path.join("config", self.configFileName)):
