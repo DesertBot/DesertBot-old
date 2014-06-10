@@ -7,6 +7,7 @@ class IModule(Interface):
     trigger = Attribute("The command or message regex the module will trigger on.")
     messageTypes = Attribute("The message types this module will trigger on.")
     moduleType = Attribute("The module's type.")
+    accessLevel = Attribute("The module's accesslevel.")
     modulePriority = Attribute("The module's priority.")
     helpText = Attribute("The text that will be sent when a user requests help for this module.")
     
@@ -30,6 +31,7 @@ class Module(object):
     trigger = ""
     messageTypes = []
     moduleType = ModuleType.PASSIVE
+    accessLevel = AccessLevel.ANYONE
     modulePriority = ModulePriority.NORMAL
     helpText = ""
     
@@ -42,6 +44,7 @@ class Module(object):
     def onModuleUnloaded():
         pass
 
+
 class ModuleType(Enum):
     PASSIVE = 1
     ACTIVE = 2
@@ -49,9 +52,15 @@ class ModuleType(Enum):
     POSTPROCESS = 4
     UTILITY = 5
     
+    
 class ModulePriority(object):
     HIGH = -2
     ABOVENORMAL = -1
     NORMAL = 0
     BELOWNORMAL = 1
     LOW = 2
+    
+    
+class AccessLevel(Enum):
+    ANYONE = 1
+    ADMINS = 2
