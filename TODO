@@ -17,7 +17,7 @@ are working on.
   [x] Initial class setup
   [-] Config loading
   [x] Command parsing
-  [-] Numeric parsing
+  [x] Numeric parsing
   [x] User/channel management
 [ ] API implementation
 [ ] Module implementation
