@@ -53,5 +53,5 @@ class ModulePriority(object):
     HIGH = -2
     ABOVENORMAL = -1
     NORMAL = 0
-    BELOWNORMAL = -1
-    LOW = -2
+    BELOWNORMAL = 1
+    LOW = 2
