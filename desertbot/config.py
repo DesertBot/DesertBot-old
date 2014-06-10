@@ -41,5 +41,5 @@ class Config(object):
             return True
         else:
             missing = [data for data in required if data not in self.configData]
-            log.err("Required config data '{}' not found in \"{}\"!".format(', '.join(missing), self.configFileName))
+            log.err("Required config data \"{}\" not found in \"{}\"!".format(", ".join(missing), self.configFileName))
             return False
