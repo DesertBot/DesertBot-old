@@ -284,6 +284,10 @@ class DesertBot(irc.IRCClient):
         channel.topicSetter = params[2]
         channel.topicTimestamp = long(params[3])
 
+    def irc_329(self, prefix, command, params):  # RPL_CREATIONTIME
+        channel = self.getChannel(params[1])
+        channel.creationTimestamp = long(params[2])
+
     def irc_unknown(self, prefix, command, params):
         # log unhandled commands
         log.msg("Received unhandled command '{}' with params [{}], and prefix '{}'".format(command, ', '.join(params), prefix))

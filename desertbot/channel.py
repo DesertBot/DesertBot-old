@@ -8,4 +8,5 @@ class IRCChannel(object):
         self.topic = None
         self.topicSetter = None
         self.topicTimestamp = 0
+        self.creationTimestamp = 0
         self.namesListCompete = True
