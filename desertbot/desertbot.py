@@ -72,7 +72,7 @@ class DesertBot(irc.IRCClient):
                     else:
                         modeChannel.ranks[arg] = modeChannel.ranks[arg].replace(mode, "")
                 else:
-                    # normal status mode
+                    # setting normal mode
                     if set:
                         modeChannel.modes[mode] = arg
                     else:
