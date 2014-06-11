@@ -5,7 +5,7 @@ from zope.interface import Attribute, Interface
 
 class IModule(Interface):
     name = Attribute("The module name.")
-    trigger = Attribute("The command or message regex the module will trigger on.")
+    triggers = Attribute("The list of commands or regexes this module will trigger on.")
     messageTypes = Attribute("The message types this module will trigger on.")
     moduleType = Attribute("The module's type.")
     accessLevel = Attribute("The module's accesslevel.")
@@ -29,7 +29,7 @@ class IModule(Interface):
         
 class Module(object):
     name = ""
-    trigger = ""
+    triggers = []
     messageTypes = []
     moduleType = ModuleType.PASSIVE
     accessLevel = AccessLevel.ANYONE
