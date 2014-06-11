@@ -266,6 +266,19 @@ class DesertBot(irc.IRCClient):
         # call the superclass function to ensure self.nickname is synced
         irc.IRCClient.irc_NICK(self, prefix, params)
 
+    def irc_RPL_CHANNELMODEIS(self, prefix, params):
+        channel = self.getChannel(params[1])
+        modestring = params[2][1:]
+        modeparams = params[3:]
+
+        for mode in modestring:
+            if self.serverInfo.chanModes[mode] == ModeType.PARAM_SET or self.serverInfo.chanModes[mode] == ModeType.PARAM_SETUNSET:
+                # Mode takes an argument
+                channel.modes[mode] = modeparams[0]
+                del modeparams[0]
+            else:
+                channel.modes[mode] = None
+
     def irc_333(self, prefix, command, params):  # RPL_TOPICWHOTIME
         channel = self.getChannel(params[1])
         channel.topicSetter = params[2]
