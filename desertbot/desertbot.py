@@ -96,6 +96,16 @@ class DesertBot(irc.IRCClient):
         channel = self.getChannel(params[1])
         channel.topic = params[2]
 
+    def irc_RPL_MYINFO(self, prefix, params):
+        self.serverInfo.name = params[1]
+        self.serverInfo.version = params[2]
+
+        for mode in params[3]:
+            if mode == "s":
+                self.serverInfo.userModes[mode] = ModeType.PARAM_SET
+            else:
+                self.serverInfo.userModes[mode] = ModeType.NORMAL
+
     def isupport(self, options):
         for item in options:
             if "=" in item:
