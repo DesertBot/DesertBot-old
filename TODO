@@ -22,7 +22,7 @@ are working on.
 [-] API implementation
   [-] Interface implementation
   [ ] Handler implementation
-  [ ] Response implementation
+  [-] Response implementation
   [ ] Command authorization
   [ ] Module threading
 [ ] Module implementation
