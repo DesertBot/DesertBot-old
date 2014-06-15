@@ -22,15 +22,15 @@ class IRCMessage(object):
             messageText = messageText.encode("utf-8")
         self.messageString = messageText
         if not user and not channel:
-            self.ReplyTo = ''
+            self.replyTo = ''
         elif not channel:
-            self.ReplyTo = self.user.nickname
+            self.replyTo = self.user.nickname
         else:
-            self.ReplyTo = channel.name
+            self.replyTo = channel.name
         if channel.name.startswith("#"):
-            self.TargetType = TargetTypes.CHANNEL
+            self.targetType = TargetTypes.CHANNEL
         else:
-            self.TargetType = TargetTypes.USER
+            self.targetType = TargetTypes.USER
 
         if self.messageList[0].startswith(bot.commandChar):
             self.command = self.messageList[0][len(bot.commandChar):].lower()
