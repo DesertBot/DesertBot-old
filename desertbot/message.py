@@ -21,9 +21,9 @@ class IRCMessage(object):
         if not isinstance(messageText, unicode):
             messageText = messageText.encode("utf-8")
         self.messageString = messageText
-        if user is None or channel is None:
+        if not user and not channel:
             self.ReplyTo = ''
-        elif channel.name == bot.nickname:
+        elif not channel:
             self.ReplyTo = self.user.nickname
         else:
             self.ReplyTo = channel.name
