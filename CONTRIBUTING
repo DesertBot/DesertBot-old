@@ -10,6 +10,9 @@ This goes for all members, including the admins.
   project, or in a seperate branch in the main repository if you are a member.
 - Always test your code before committing anything. Make sure not only your own
   code works, but the integration of it into the rest of the project as well.
+- When you commit something, use sane commit messages and squash your commits
+  if needed. This way we can keep the commit history as clean as possible and
+  we don't end up with a bunch of meaningless commits.
   
 Secondly a proposal for the coding style. This is very open to suggestion, but
 for the sake of code readability and management, a good idea to keep in mind.
