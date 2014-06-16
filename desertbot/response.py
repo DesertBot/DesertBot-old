@@ -15,11 +15,14 @@ class IRCResponse(object):
         """
         @type responseType: ResponseType
         @type response: unicode
-        @type target: str
+        @type target: unicode
         """
         self.type = responseType
         if not isinstance(response, unicode):
             self.response = unicode(response, "utf-8")
         else:
             self.response = response
-        self.target = target
+        if not isinstance(target, unicode):
+            self.target = unicode(target, "utf-8")
+        else:
+            self.target = target
