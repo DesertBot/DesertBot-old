@@ -4,8 +4,8 @@ from channel import IRCChannel
 
 
 class ResponseType(Enum):
-    SAY = 1
-    DO = 2
+    PRIVMSG = 1
+    ACTION = 2
     NOTICE = 3
     RAW = 4
 
@@ -15,7 +15,7 @@ class IRCResponse(object):
         """
         @type responseType: ResponseType
         @type response: unicode
-        @type target: IRCChannel
+        @type target: str
         """
         self.type = responseType
         if not isinstance(response, unicode):
