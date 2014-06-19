@@ -41,9 +41,12 @@ class DesertBot(irc.IRCClient):
         self.versionName = self.nickname
         self.versionNum = "v{}.{}.{}".format(version_major, version_minor, version_patch)
         self.versionEnv = platform.platform()
+        log.msg("Connected to {}.".format(self.factory.config["server"]))
+        
         irc.IRCClient.connectionMade(self)
 
     def signedOn(self):
+        log.msg("Finished signing onto {}.".format(self.factory.config["server"]))
         for channel in self.factory.config["channels"]:
             self.join(channel)
 
@@ -333,17 +336,19 @@ class DesertBotFactory(protocol.ReconnectingClientFactory):
         @type config: Config
         """
         self.bot = DesertBot(self)
+        self.config = config
         reactor.connectTCP(config["server"], config["port"], self)
 
     def startedConnecting(self, connector):
-        pass
+        log.msg("Connecting to {}:{}...".format(config["server"], config["port"]))
 
     def buildProtocol(self, addr):
+        log.msg("Resetting connection delay...")
         self.resetDelay()
         return self.bot
 
-    def clientConnectionLost(self, connector, unused_reason):
-        pass
+    def clientConnectionLost(self, connector, reason):
+        log.msg("Connection to {} was lost, reason: {}".format(self.config["server"], reason))
 
     def clientConnectionFailed(self, connector, reason):
-        pass
+        log.msg("Failed to connect to {}, reason: {}".format(self.config["server"], reason))
