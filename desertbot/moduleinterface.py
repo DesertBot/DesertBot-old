@@ -36,13 +36,13 @@ class Module(object):
     modulePriority = ModulePriority.NORMAL
     helpText = ""
     
-    def onTrigger(message):
+    def onTrigger(self, message):
         pass
     
-    def onModuleLoaded():
+    def onModuleLoaded(self):
         pass
     
-    def onModuleUnloaded():
+    def onModuleUnloaded(self):
         pass
 
 
