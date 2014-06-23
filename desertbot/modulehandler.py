@@ -5,7 +5,6 @@ from message import IRCMessage
 
 
 class ModuleHandler(object):
-
     def __init__(self, bot):
         """
         @type bot: DesertBot
@@ -25,17 +24,17 @@ class ModuleHandler(object):
         """
         pass
   
-    def _loadModule(self, name):
+    def loadModule(self, name):
         """
         @type name: unicode
         """
         pass
     
-    def _unloadModule(self, name):
+    def unloadModule(self, name):
         """
         @type name: unicode
         """
         pass
     
-    def _loadAllModules(self):
+    def loadAllModules(self):
         pass
