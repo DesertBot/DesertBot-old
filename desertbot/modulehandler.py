@@ -30,18 +30,18 @@ class ModuleHandler(object):
         """
         @type name: unicode
         """
-        if name not in self.loadedModules:
+        if name.lower() not in self.loadedModules:
             for module in getPlugins(IModule, desertbot.modules):
-                if module.name == name:
-                    self.loadedModules[name] = module
+                if module.name == name.lower():
+                    self.loadedModules[module.name] = module
     
     def unloadModule(self, name):
         """
         @type name: unicode
         """
-        if name in self.loadedModules:
-            del self.loadedModules[name]
+        if name.lower() in self.loadedModules:
+            del self.loadedModules[name.lower()]
     
     def loadAllModules(self):
         for module in getPlugins(IModule, desertbot.modules):
-            self.loadedModules[module.name] = module
+            self.loadedModules[module.name.lower()] = module
