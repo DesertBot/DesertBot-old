@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from twisted.plugin import getPlugins
+from desertbot.moduleinterface import IModule
 from desertbot.desertbot import DesertBot
 from desertbot.response import IRCResponse
 from desertbot.message import IRCMessage
-from twisted.plugin import getPlugins
+import desertbot.modules
 
 class ModuleHandler(object):
     def __init__(self, bot):
@@ -28,13 +30,18 @@ class ModuleHandler(object):
         """
         @type name: unicode
         """
-        pass
+        if name not in self.loadedModules:
+            for module in getPlugins(IModule, desertbot.modules):
+                if module.name == name:
+                    self.loadedModules[name] = module
     
     def unloadModule(self, name):
         """
         @type name: unicode
         """
-        pass
+        if name in self.loadedModules:
+            del self.loadedModules[name]
     
     def loadAllModules(self):
-        pass
+        for module in getPlugins(IModule, desertbot.modules):
+            self.loadedModules[module.name] = module
