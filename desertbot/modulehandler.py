@@ -24,24 +24,36 @@ class ModuleHandler(object):
         """
         @type message: IRCMessage
         """
-        pass
+        pass #TODO Toss the IRCMessage at loadedModules and see what happens.
+             #TODO a _shouldExecute of some form
   
     def loadModule(self, name):
         """
         @type name: unicode
         """
         if name.lower() not in self.loadedModules:
-            for module in getPlugins(IModule, desertbot.modules):
-                if module.name == name.lower():
-                    self.loadedModules[module.name] = module
-    
+            # not a reload, log something for this? A boolean for later return perhaps?
+        else:
+            # totes a reload. Log/boolean?
+        for module in getPlugins(IModule, desertbot.modules):
+            if module.name == name.lower():
+                self.loadedModules[module.name] = module
+                self.loadedModules[module.name].onModuleLoaded()
+                break
+                #TODO Return stuff and also log
+        #if we get here, there is no such module. Throw exception?
+
     def unloadModule(self, name):
         """
         @type name: unicode
         """
         if name.lower() in self.loadedModules:
+            self.loadedModules[name.lower()].onModuleUnloaded()
             del self.loadedModules[name.lower()]
+            #TODO Return stuff and log
     
     def loadAllModules(self):
         for module in getPlugins(IModule, desertbot.modules):
             self.loadedModules[module.name.lower()] = module
+            self.loadedModules[module.name.lower()].onModuleLoaded()
+            #TODO Return stuff and log
