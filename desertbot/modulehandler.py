@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from desertbot import DesertBot
-from response import IRCResponse
-from message import IRCMessage
-
+from desertbot.desertbot import DesertBot
+from desertbot.response import IRCResponse
+from desertbot.message import IRCMessage
+from twisted.plugin import getPlugins
 
 class ModuleHandler(object):
     def __init__(self, bot):
