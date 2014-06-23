@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from twisted.plugin import getPlugins
-from desertbot.moduleinterface import IModule
+from desertbot.moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
 from desertbot.desertbot import DesertBot
 from desertbot.response import IRCResponse
 from desertbot.message import IRCMessage
@@ -25,15 +25,38 @@ class ModuleHandler(object):
         @type message: IRCMessage
         """
         pass #TODO Toss the IRCMessage at loadedModules and see what happens.
-             #TODO a _shouldExecute of some form
-  
+
+    def _shouldExecute(self, module, message):
+        if message.messageType in module.messageTypes:
+            if module.moduleType == ModuleType.PASSIVE:
+                return True
+            elif message.user.nickname == self.bot.nickname:
+                return False
+            elif module.moduleType == ModuleType.ACTIVE:
+                pass
+            elif module.moduleType == ModuleType.COMMAND:
+                pass
+            elif module.moduleType == ModuleType.POSTPROCESS:
+                pass
+            elif module.moduleType == ModuleType.UTILITY:
+                pass
+
+    def _checkCommandAuthorization(self, module, message):
+        if module.accessLevel == AccessLevel.ANYONE:
+            return True
+
+        if module.accessLevel == AccessLevel.ADMINS:
+            pass
+
     def loadModule(self, name):
         """
         @type name: unicode
         """
         if name.lower() not in self.loadedModules:
+            pass
             # not a reload, log something for this? A boolean for later return perhaps?
         else:
+            pass
             # totes a reload. Log/boolean?
         for module in getPlugins(IModule, desertbot.modules):
             if module.name == name.lower():
