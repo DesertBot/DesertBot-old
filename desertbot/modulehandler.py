@@ -3,8 +3,7 @@ from twisted.plugin import getPlugins
 from twisted.python import log
 from twisted.internet import threads
 from moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
-from desertbot import DesertBot
-from response import IRCResponse, ReponseType
+from response import IRCResponse, ResponseType
 from message import IRCMessage
 import modules
 import re, operator
@@ -12,7 +11,7 @@ import re, operator
 class ModuleHandler(object):
     def __init__(self, bot):
         """
-        @type bot: DesertBot
+        @type bot: desertbot.DesertBot
         """
         self.bot = bot
         self.loadedModules = {}

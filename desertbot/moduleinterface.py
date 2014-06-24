@@ -3,6 +3,27 @@ from enum import Enum
 from zope.interface import Attribute, Interface
 
 
+class ModuleType(Enum):
+    PASSIVE = 1
+    ACTIVE = 2
+    COMMAND = 3
+    POSTPROCESS = 4
+    UTILITY = 5
+
+
+class ModulePriority(object):
+    HIGH = -2
+    ABOVENORMAL = -1
+    NORMAL = 0
+    BELOWNORMAL = 1
+    LOW = 2
+
+
+class AccessLevel(Enum):
+    ANYONE = 1
+    ADMINS = 2
+
+
 class IModule(Interface):
     name = Attribute("The module name.")
     triggers = Attribute("The list of commands or regexes this module will trigger on.")
@@ -46,24 +67,3 @@ class Module(object):
     
     def onModuleUnloaded(self):
         pass
-
-
-class ModuleType(Enum):
-    PASSIVE = 1
-    ACTIVE = 2
-    COMMAND = 3
-    POSTPROCESS = 4
-    UTILITY = 5
-    
-    
-class ModulePriority(object):
-    HIGH = -2
-    ABOVENORMAL = -1
-    NORMAL = 0
-    BELOWNORMAL = 1
-    LOW = 2
-    
-    
-class AccessLevel(Enum):
-    ANYONE = 1
-    ADMINS = 2
