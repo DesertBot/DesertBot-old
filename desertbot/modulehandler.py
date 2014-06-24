@@ -19,6 +19,8 @@ class ModuleHandler(object):
     
     def sendResponse(self, response):
         """
+        @type response: IRCResponse
+        """
         responses = []
         
         if hasattr(response, "__iter__"):
