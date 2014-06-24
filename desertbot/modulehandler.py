@@ -118,7 +118,13 @@ class ModuleHandler(object):
                 return (False, errorMsg)
             if module.nameloadMsg:
                 self.loadedModules[module.name] = module
-                self.loadedModules[module.name].onModuleLoaded()
+                try:
+                    self.loadedModules[module.name].onModuleLoaded()
+                except Exception as e:
+                    errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
+                    log.err(errorMsg)
+                    return (False, errorMsg)
+
                 if moduleReload:
                     loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
                     log.msg(loadMsg)
@@ -134,7 +140,12 @@ class ModuleHandler(object):
         @type name: unicode
         """
         if name.lower() in self.loadedModules:
-            self.loadedModules[name.lower()].onModuleUnloaded()
+            try:
+                self.loadedModules[name.lower()].onModuleUnloaded()
+            except Exception as e:
+                    errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
+                    log.err(errorMsg)
+            # Unload module so it doesn't get stuck, but emit the error still.
             del self.loadedModules[name.lower()]
             loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
             log.msg(loadMsg)
