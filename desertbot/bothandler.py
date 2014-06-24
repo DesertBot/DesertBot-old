@@ -12,7 +12,7 @@ class BotHandler(object):
         for server in cmdArgs.servers:
             config = Config("{}.yaml".format(server))
             if config.loadConfig():
-                self.configs[server] = Config("{}.yaml".format(server))
+                self.configs[server] = config
         self.botfactories = {}
         for server, configObject in self.configs.iteritems():
             self.startBotFactory(configObject)
