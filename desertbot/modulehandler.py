@@ -143,8 +143,8 @@ class ModuleHandler(object):
             try:
                 self.loadedModules[name.lower()].onModuleUnloaded()
             except Exception as e:
-                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(module.name, e)
-                    log.err(errorMsg)
+                errorMsg = "An error occurred while unloading module \"{}\" ({})".format(module.name, e)
+                log.err(errorMsg)
             # Unload module so it doesn't get stuck, but emit the error still.
             del self.loadedModules[name.lower()]
             loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
