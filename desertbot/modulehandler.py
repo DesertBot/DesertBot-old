@@ -5,6 +5,7 @@ from desertbot.desertbot import DesertBot
 from desertbot.response import IRCResponse
 from desertbot.message import IRCMessage
 import desertbot.modules
+import re
 
 class ModuleHandler(object):
     def __init__(self, bot):
@@ -46,24 +47,31 @@ class ModuleHandler(object):
             return True
 
         if module.accessLevel == AccessLevel.ADMINS:
-            pass
+            for adminRegex in self.bot.admins:
+                if re.match(adminRegex, message.user.getUserString()):
+                    return True
+            return False
 
     def loadModule(self, name):
         """
         @type name: unicode
         """
         if name.lower() not in self.loadedModules:
-            pass
+            moduleReload = False
             # not a reload, log something for this? A boolean for later return perhaps?
         else:
-            pass
+            moduleReload = True
             # totes a reload. Log/boolean?
         for module in getPlugins(IModule, desertbot.modules):
             if module.name == name.lower():
                 self.loadedModules[module.name] = module
                 self.loadedModules[module.name].onModuleLoaded()
-                break
+                if moduleReload:
+                    return (True, "{} reloaded!".format(module.name))
+                else:
+                    return (True, "{} loaded!".format(module.name))
                 #TODO Return stuff and also log
+        return (False, "No module named '{}' could be found!".format(name))
         #if we get here, there is no such module. Throw exception?
 
     def unloadModule(self, name):
@@ -73,10 +81,13 @@ class ModuleHandler(object):
         if name.lower() in self.loadedModules:
             self.loadedModules[name.lower()].onModuleUnloaded()
             del self.loadedModules[name.lower()]
+            return (True, "{} unloaded!".format(name))
             #TODO Return stuff and log
+        return (False, "No module named '{}' is loaded!".format(name)
     
     def loadAllModules(self):
         for module in getPlugins(IModule, desertbot.modules):
             self.loadedModules[module.name.lower()] = module
             self.loadedModules[module.name.lower()].onModuleLoaded()
             #TODO Return stuff and log
+        return (True, "All modules successfully loaded!")
