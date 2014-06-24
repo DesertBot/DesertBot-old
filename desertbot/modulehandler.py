@@ -42,6 +42,7 @@ class ModuleHandler(object):
                 elif response.responseType == ResponseType.RAW:
                     self.bot.sendLine(response.response)
             except:
+                # This needs to get out as soon as we start using this. except: pass is evil :|
                 pass #TODO Exception handling
                     
 
@@ -104,6 +105,7 @@ class ModuleHandler(object):
         """
         @type name: unicode
         """
+        # This has to be done differently somehow. This code will break if two modules have the same name.
         if name.lower() not in self.loadedModules:
             moduleReload = False
             # not a reload, log something for this? A boolean for later return perhaps?
@@ -117,7 +119,13 @@ class ModuleHandler(object):
                 return (False, errorMsg)
             if module.nameloadMsg:
                 self.loadedModules[module.name] = module
-                self.loadedModules[module.name].onModuleLoaded()
+                try:
+                    self.loadedModules[module.name].onModuleLoaded()
+                except Exception as e:
+                    errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
+                    log.err(errorMsg)
+                    return (False, errorMsg)
+
                 if moduleReload:
                     loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
                     log.msg(loadMsg)
@@ -133,7 +141,12 @@ class ModuleHandler(object):
         @type name: unicode
         """
         if name.lower() in self.loadedModules:
-            self.loadedModules[name.lower()].onModuleUnloaded()
+            try:
+                self.loadedModules[name.lower()].onModuleUnloaded()
+            except Exception as e:
+                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(module.name, e)
+                    log.err(errorMsg)
+            # Unload module so it doesn't get stuck, but emit the error still.
             del self.loadedModules[name.lower()]
             loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
             log.msg(loadMsg)
@@ -145,7 +158,5 @@ class ModuleHandler(object):
     
     def loadAllModules(self):
         for module in getPlugins(IModule, desertbot.modules):
-            self.loadedModules[module.name.lower()] = module
-            self.loadedModules[module.name.lower()].onModuleLoaded()
-            #TODO Return stuff and log
-        return (True, "All modules successfully loaded!")
+            self.loadModule(module.name)
+            # TODO: Make sure that module actually has a name
