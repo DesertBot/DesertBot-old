@@ -110,6 +110,8 @@ class ModuleHandler(object):
             moduleReload = True
             # totes a reload. Log/boolean?
         for module in getPlugins(IModule, desertbot.modules):
+            if not IModule.providedBy(module):
+                return (False, "Module {} can't be loaded; module does not implement module interface.", format(module.name))
             if module.name == name.lower():
                 self.loadedModules[module.name] = module
                 self.loadedModules[module.name].onModuleLoaded()
