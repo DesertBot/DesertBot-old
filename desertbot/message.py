@@ -33,15 +33,14 @@ class IRCMessage(object):
             self.command = self.messageList[0][len(bot.commandChar):].lower()
             self.parameters = u' '.join(self.messageList[1:])
 
-        if self.parameters.strip():
-            self.parameterList = self.parameters.split(" ")
+            if self.parameters.strip():
+                self.parameterList = self.parameters.split(" ")
+                self.parameterList = [param for param in self.parameterList if param != u'']
 
-            self.parameterList = [param for param in self.parameterList if param != u'']
-
-            if len(self.parameterList) == 1 and not self.parameterList[0]:
-                self.parameterList = []
+                if len(self.parameterList) == 1 and not self.parameterList[0]:
+                    self.parameterList = []
 
 
-class TargetTypes(Enum):
+class TargetType(Enum):
     CHANNEL = 1
     USER = 2

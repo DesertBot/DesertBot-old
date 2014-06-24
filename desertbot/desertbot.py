@@ -2,7 +2,7 @@
 import platform
 import datetime
 from twisted.words.protocols import irc
-from twisted.internet import protocol, reactor
+from twisted.internet import protocol
 from twisted.python import log
 from channel import IRCChannel
 from config import Config
@@ -210,15 +210,19 @@ class DesertBot(irc.IRCClient):
         if not channel:
             channel = IRCChannel(params[0])
             self.channels[params[0]] = channel
-        message = IRCMessage('JOIN', self._userFromPrefix(prefix), channel, u'', self)
+        user = self._userFromPrefix(prefix)
+        if not user:
+            user = IRCUser(prefix)
+          
+        message = IRCMessage('JOIN', user, channel, u'', self)
 
         if message.user.nickname == self.nickname:
             # Bot joins the channel, do initial setup
             self.sendLine("WHO {}".format(message.channel.name))
             self.sendLine("MODE {}".format(message.channel.name))
-        else:
-            message.channel.users[message.user.nickname] = message.user
-            message.channel.ranks[message.user.nickname] = ""
+        
+        message.channel.users[message.user.nickname] = message.user
+        message.channel.ranks[message.user.nickname] = ""
 
     def irc_PART(self, prefix, params):
         partMessage = u''
@@ -284,19 +288,19 @@ class DesertBot(irc.IRCClient):
         modeparams = params[3:]
 
         for mode in modestring:
-            if self.serverInfo.chanModes[mode] == ModeType.PARAM_SET or self.serverInfo.chanModes[mode] == ModeType.PARAM_SETUNSET:
+            if self.serverInfo.chanModes[mode] == ModeType.PARAM_SET or self.serverInfo.chanModes[mode] == ModeType.PARAM_SET_UNSET:
                 # Mode takes an argument
                 channel.modes[mode] = modeparams[0]
                 del modeparams[0]
             else:
                 channel.modes[mode] = None
 
-    def irc_333(self, prefix, command, params):  # RPL_TOPICWHOTIME
+    def irc_333(self, prefix, params):  # RPL_TOPICWHOTIME
         channel = self.getChannel(params[1])
         channel.topicSetter = params[2]
         channel.topicTimestamp = long(params[3])
 
-    def irc_329(self, prefix, command, params):  # RPL_CREATIONTIME
+    def irc_329(self, prefix, params):  # RPL_CREATIONTIME
         channel = self.getChannel(params[1])
         channel.creationTimestamp = long(params[2])
 
@@ -319,7 +323,7 @@ class DesertBot(irc.IRCClient):
         @rtype: IRCUser
         """
         for channel in self.channels:
-            if user in self.channels[channel]:
+            if user in self.channels[channel].users:
                 return self.channels[channel].users[user]
         return None
 
@@ -334,12 +338,11 @@ class DesertBotFactory(protocol.ReconnectingClientFactory):
         """
         @type config: Config
         """
-        self.bot = DesertBot(self)
         self.config = config
-        reactor.connectTCP(config["server"], config["port"], self)
+        self.bot = DesertBot(self)
 
     def startedConnecting(self, connector):
-        log.msg("Connecting to {}:{}...".format(config["server"], config["port"]))
+        log.msg("Connecting to {}:{}...".format(self.config["server"], self.config["port"]))
 
     def buildProtocol(self, addr):
         log.msg("Resetting connection delay...")

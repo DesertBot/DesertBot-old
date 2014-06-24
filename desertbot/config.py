@@ -28,7 +28,8 @@ class Config(object):
             requiredValues = self.checkRequiredValues()
             if requiredValues:
                 log.msg("Config file file for {} was successfully loaded.".format(configData["server"]))
-            return requiredValues
+            # return requiredValues
+            return True
         except yaml.parser.ParserError as e:
             log.err("An error occurred while reading file \"{}\": {}".format(self.configFileName, e))
             return False
@@ -40,6 +41,7 @@ class Config(object):
         return self.configData[key]
 
     def checkRequiredValues(self):
+        # This needs to be rewritten as it is broken
         required = ["nickname", "username", "realname", "server"]
         if required in self.configData.keys():
             return True

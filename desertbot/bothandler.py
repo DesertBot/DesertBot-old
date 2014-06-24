@@ -16,6 +16,7 @@ class BotHandler(object):
         self.botfactories = {}
         for server, configObject in self.configs.iteritems():
             self.startBotFactory(configObject)
+        reactor.run()
 
     def startBotFactory(self, config):
         """
@@ -24,8 +25,9 @@ class BotHandler(object):
         if config["server"] in self.botfactories:
             #already on this server for some reason
             return False
-        else:
+        else: 
             botfactory = DesertBotFactory(config)
+            reactor.connectTCP(config["server"], config["port"], botfactory)
             self.botfactories[config["server"]] = botfactory
             return True
 
