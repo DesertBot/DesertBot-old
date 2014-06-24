@@ -20,7 +20,7 @@ are working on.
   [x] Numeric parsing
   [x] User/channel management
 [-] API implementation
-  [-] Interface implementation
+  [x] Interface implementation
   [-] Handler implementation
   [-] Response implementation
   [-] Command authorization
