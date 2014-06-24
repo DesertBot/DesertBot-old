@@ -111,7 +111,7 @@ class ModuleHandler(object):
         else:
             moduleReload = True
             # totes a reload. Log/boolean?
-        for module in getPlugins(IModule):
+        for module in getPlugins(IModule, modules):
             if module.name == name.lower():
                 if not IModule.providedBy(module):
                     errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
@@ -156,7 +156,6 @@ class ModuleHandler(object):
             return (False, errorMsg)
     
     def loadAllModules(self):
-        print list(getPlugins(IModule))
-        for module in getPlugins(IModule):
+        for module in getPlugins(IModule, modules):
             self.loadModule(module.name)
             # TODO: Make sure that module actually has a name

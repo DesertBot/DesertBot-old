@@ -14,4 +14,5 @@ class ExampleModule(Module):
     
     def onTrigger(self, message):
         print message.messageText
-        
+
+exampleModule = ExampleModule()
