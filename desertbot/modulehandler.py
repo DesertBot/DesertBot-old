@@ -112,7 +112,7 @@ class ModuleHandler(object):
             # totes a reload. Log/boolean?
         for module in getPlugins(IModule, desertbot.modules):
             if not IModule.providedBy(module):
-                errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.". format(module.name)
+                errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
                 log.err(errorMsg)
                 return (False, errorMsg)
             if module.nameloadMsg:
