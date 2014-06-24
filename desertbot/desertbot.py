@@ -24,6 +24,7 @@ class DesertBot(irc.IRCClient):
         self.admins = factory.config["admins"]
         self.serverInfo = ServerInfo(factory.config["server"])
         self.moduleHandler = ModuleHandler(self)
+        self.moduleHandler.loadAllModules()
 
     def hasSoul(self):
         return False
