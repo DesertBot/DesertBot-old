@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from twisted.plugin import getPlugins
+from twisted.internet import threads
 from desertbot.moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
 from desertbot.desertbot import DesertBot
 from desertbot.response import IRCResponse, ReponseType
@@ -39,7 +40,7 @@ class ModuleHandler(object):
                     self.bot.notice(response.target, response.response)
                 elif response.responseType == ResponseType.RAW:
                     self.bot.sendLine(response.response)
-            except Exception:
+            except:
                 pass #TODO Exception handling
                     
 
@@ -50,10 +51,13 @@ class ModuleHandler(object):
         for module in sorted(self.loadedModules.values(), key=operator.attrgetter("modulePriority")):
             try:
                 if self._shouldExecute(module, message):
-                    #TODO Threading for the modules?
-                    response = module.execute(message)
-                    self.sendResponse(response)
-            except Exception:
+                    if not module.runInThread:
+                        response = module.onTrigger(message)
+                        self.sendResponse(response)
+                    else:
+                        d = threads.deferToThread(module.onTrigger, message)
+                        d.addCallback(self.sendResponse)
+            except:
                 pass #TODO Exception logging
 
     def _shouldExecute(self, module, message):
