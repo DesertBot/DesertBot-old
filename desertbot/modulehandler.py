@@ -2,10 +2,10 @@
 from twisted.plugin import getPlugins
 from desertbot.moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
 from desertbot.desertbot import DesertBot
-from desertbot.response import IRCResponse
+from desertbot.response import IRCResponse, ReponseType
 from desertbot.message import IRCMessage
 import desertbot.modules
-import re
+import re, operator
 
 class ModuleHandler(object):
     def __init__(self, bot):
@@ -19,30 +19,73 @@ class ModuleHandler(object):
         """
         @type response: IRCResponse
         """
-        pass
+        responses = []
+        
+        if hasattr(response, "__iter__"):
+            for r in response:
+                if r is None or r.response is None or r.response == "":
+                    continue
+                responses.append(r)
+        elif response is not None and response.response is not None and response.response != "":
+            responses.append(response)
+            
+        for response in responses:
+            try:
+                if response.responseType == ResponseType.PRIVMSG:
+                    self.bot.msg(response.target, response.response) #response should be unicode here
+                elif response.responseType == ResponseType.ACTION:
+                    self.bot.describe(response.target, response.response)
+                elif response.responseType == ResponseType.NOTICE:
+                    self.bot.notice(response.target, response.response)
+                elif response.responseType == ResponseType.RAW:
+                    self.bot.sendLine(response.response)
+            except Exception:
+                pass #TODO Exception handling
+                    
 
     def handleMessage(self, message):
         """
         @type message: IRCMessage
         """
-        pass #TODO Toss the IRCMessage at loadedModules and see what happens.
+        for module in sorted(self.loadedModules.values(), key=operator.attrgetter("modulePriority")):
+            try:
+                if self._shouldExecute(module, message):
+                    #TODO Threading for the modules?
+                    response = module.execute(message)
+                    self.sendResponse(response)
+            except Exception:
+                pass #TODO Exception logging
 
     def _shouldExecute(self, module, message):
+        """
+        @type message: IRCMessage
+        """
         if message.messageType in module.messageTypes:
             if module.moduleType == ModuleType.PASSIVE:
                 return True
             elif message.user.nickname == self.bot.nickname:
                 return False
             elif module.moduleType == ModuleType.ACTIVE:
-                pass
+                for trigger in module.triggers:
+                    match = re.search(".*{}.*".format(trigger), message.messageText, re.IGNORECASE)
+                    if match:
+                        return True
+                return False
             elif module.moduleType == ModuleType.COMMAND:
-                pass
+                for trigger in module.triggers:
+                    match = re.search("^{}({})($| .*)".format(self.bot.commandChar, trigger), message.messageText, re.IGNORECASE)
+                    if match:
+                        return True
+                return False
             elif module.moduleType == ModuleType.POSTPROCESS:
-                pass
+                return True
             elif module.moduleType == ModuleType.UTILITY:
-                pass
+                return True
 
     def _checkCommandAuthorization(self, module, message):
+        """
+        @type message: IRCMessage
+        """
         if module.accessLevel == AccessLevel.ANYONE:
             return True
 
@@ -83,7 +126,7 @@ class ModuleHandler(object):
             del self.loadedModules[name.lower()]
             return (True, "{} unloaded!".format(name))
             #TODO Return stuff and log
-        return (False, "No module named '{}' is loaded!".format(name)
+        return (False, "No module named '{}' is loaded!".format(name))
     
     def loadAllModules(self):
         for module in getPlugins(IModule, desertbot.modules):
