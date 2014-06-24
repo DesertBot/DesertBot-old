@@ -4,11 +4,11 @@ import datetime
 from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
 from twisted.python import log
-from desertbot.channel import IRCChannel
-from desertbot.config import Config
-from desertbot.message import IRCMessage
-from desertbot.user import IRCUser
-from desertbot.serverinfo import ServerInfo, ModeType
+from channel import IRCChannel
+from config import Config
+from message import IRCMessage
+from user import IRCUser
+from serverinfo import ServerInfo, ModeType
 
 
 class DesertBot(irc.IRCClient):

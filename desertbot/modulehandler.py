@@ -2,11 +2,11 @@
 from twisted.plugin import getPlugins
 from twisted.python import log
 from twisted.internet import threads
-from desertbot.moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
-from desertbot.desertbot import DesertBot
-from desertbot.response import IRCResponse, ReponseType
-from desertbot.message import IRCMessage
-import desertbot.modules
+from moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
+from desertbot import DesertBot
+from response import IRCResponse, ReponseType
+from message import IRCMessage
+import modules
 import re, operator
 
 class ModuleHandler(object):
@@ -112,7 +112,7 @@ class ModuleHandler(object):
         else:
             moduleReload = True
             # totes a reload. Log/boolean?
-        for module in getPlugins(IModule, desertbot.modules):
+        for module in getPlugins(IModule, modules):
             if not IModule.providedBy(module):
                 errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
                 log.err(errorMsg)

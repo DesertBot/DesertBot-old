@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
-from desertbot.user import IRCUser
-from desertbot.channel import IRCChannel
-from desertbot.desertbot import DesertBot
+from user import IRCUser
+from channel import IRCChannel
 
 
 class IRCMessage(object):
@@ -12,7 +11,7 @@ class IRCMessage(object):
         @type user: IRCUser | None
         @type channel: IRCChannel | None
         @type messageText: unicode
-        @type bot: DesertBot
+        @type bot: desertbot.DesertBot
         """
         self.messageType = messageType
         self.user = user

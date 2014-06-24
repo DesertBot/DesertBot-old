@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, sys
-from desertbot.desertbot import DesertBotFactory
-from desertbot.config import Config
+from desertbot import DesertBotFactory
+from config import Config
 from twisted.internet import reactor
 from twisted.python import log
 
