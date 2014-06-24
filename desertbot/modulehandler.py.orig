@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from twisted.plugin import getPlugins
+<<<<<<< HEAD
 from twisted.python import log
+=======
+>>>>>>> 5107dbfd64007e7a0a30dda93919476499b162c5
 from twisted.internet import threads
 from desertbot.moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
 from desertbot.desertbot import DesertBot
@@ -18,6 +21,8 @@ class ModuleHandler(object):
         self.loadedModules = {}
     
     def sendResponse(self, response):
+        """
+        @type response: IRCResponse
         """
         responses = []
         
@@ -110,7 +115,8 @@ class ModuleHandler(object):
             # totes a reload. Log/boolean?
         for module in getPlugins(IModule, desertbot.modules):
             if not IModule.providedBy(module):
-                errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.". format(module.name)
+<<<<<<< HEAD
+                errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.", format(module.name)
                 log.err(errorMsg)
                 return (False, errorMsg)
             if module.nameloadMsg:
@@ -125,6 +131,19 @@ class ModuleHandler(object):
                     log.msg(loadMsg)
                     return (True, loadMsg)
         return (False, "No module named \"{}\" could be found!".format(name))
+=======
+                return (False, "Module {} can't be loaded; module does not implement module interface.".format(module.name))
+            if module.name == name.lower():
+                self.loadedModules[module.name] = module
+                self.loadedModules[module.name].onModuleLoaded()
+                if moduleReload:
+                    return (True, "{} reloaded!".format(module.name))
+                else:
+                    return (True, "{} loaded!".format(module.name))
+                #TODO Return stuff and also log
+        return (False, "No module named '{}' could be found!".format(name))
+>>>>>>> 5107dbfd64007e7a0a30dda93919476499b162c5
+        #if we get here, there is no such module. Throw exception?
 
     def unloadModule(self, name):
         """
@@ -133,6 +152,7 @@ class ModuleHandler(object):
         if name.lower() in self.loadedModules:
             self.loadedModules[name.lower()].onModuleUnloaded()
             del self.loadedModules[name.lower()]
+<<<<<<< HEAD
             loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
             log.msg(loadMsg)
             return (True, loadMsg)
@@ -140,6 +160,11 @@ class ModuleHandler(object):
             errorMsg = "No module named \"{}\" is loaded!".format(name)
             log.err(errorMsg)
             return (False, errorMsg)
+=======
+            return (True, "{} unloaded!".format(name))
+            #TODO Return stuff and log
+        return (False, "No module named '{}' is loaded!".format(name))
+>>>>>>> 5107dbfd64007e7a0a30dda93919476499b162c5
     
     def loadAllModules(self):
         for module in getPlugins(IModule, desertbot.modules):
