@@ -10,11 +10,9 @@ class BotHandler(object):
     def __init__(self, cmdArgs):
         self.configs = {}
         for server in cmdArgs.servers:
-            self.configs[server] = Config("{}.yaml".format(server))
-            if self.configs[server].loadConfig():
-                continue
-            else:
-                del self.configs[server]
+            config = Config("{}.yaml".format(server))
+            if config.loadConfig():
+                self.configs[server] = Config("{}.yaml".format(server))
         self.botfactories = {}
         for server, configObject in self.configs.iteritems():
             self.startBotFactory(configObject)
