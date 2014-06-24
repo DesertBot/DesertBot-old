@@ -13,7 +13,7 @@ are working on.
 [-] Core implementation
   [?] Multiserver
      [-] Server management
-     [?] Cross-server messaging
+     [?] Cross-server messaging (To be a module)
   [x] Initial class setup
   [-] Config loading
   [x] Command parsing
@@ -21,8 +21,8 @@ are working on.
   [x] User/channel management
 [-] API implementation
   [-] Interface implementation
-  [ ] Handler implementation
+  [-] Handler implementation
   [-] Response implementation
-  [ ] Command authorization
-  [ ] Module threading
+  [-] Command authorization
+  [-] Module threading
 [ ] Module implementation
