@@ -16,6 +16,7 @@ if __name__ == "__main__":
         os.makedirs("config")
     
     # Open log file
+    open(cmdArgs.logfile, 'a').close()
     log.startLogging(open(cmdArgs.logfile), setStdout=False)
     if cmdArgs.verbose:
         log.startLogging(sys.stdout)
