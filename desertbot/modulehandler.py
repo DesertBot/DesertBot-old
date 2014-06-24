@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from twisted.plugin import getPlugins
+from twisted.python import log
 from twisted.internet import threads
 from desertbot.moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
 from desertbot.desertbot import DesertBot
@@ -111,16 +112,21 @@ class ModuleHandler(object):
             # totes a reload. Log/boolean?
         for module in getPlugins(IModule, desertbot.modules):
             if not IModule.providedBy(module):
-                return (False, "Module {} can't be loaded; module does not implement module interface.", format(module.name))
-            if module.name == name.lower():
+                errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.", format(module.name)
+                log.err(errorMsg)
+                return (False, errorMsg)
+            if module.nameloadMsg:
                 self.loadedModules[module.name] = module
                 self.loadedModules[module.name].onModuleLoaded()
                 if moduleReload:
-                    return (True, "{} reloaded!".format(module.name))
+                    loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
+                    log.msg(loadMsg)
+                    return (True, loadMsg)
                 else:
-                    return (True, "{} loaded!".format(module.name))
-                #TODO Return stuff and also log
-        return (False, "No module named '{}' could be found!".format(name))
+                    loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
+                    log.msg(loadMsg)
+                    return (True, loadMsg)
+        return (False, "No module named \"{}\" could be found!".format(name))
         #if we get here, there is no such module. Throw exception?
 
     def unloadModule(self, name):
@@ -130,9 +136,13 @@ class ModuleHandler(object):
         if name.lower() in self.loadedModules:
             self.loadedModules[name.lower()].onModuleUnloaded()
             del self.loadedModules[name.lower()]
-            return (True, "{} unloaded!".format(name))
-            #TODO Return stuff and log
-        return (False, "No module named '{}' is loaded!".format(name))
+            loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
+            log.msg(loadMsg)
+            return (True, loadMsg)
+        else:
+            errorMsg = "No module named \"{}\" is loaded!".format(name)
+            log.err(errorMsg)
+            return (False, errorMsg)
     
     def loadAllModules(self):
         for module in getPlugins(IModule, desertbot.modules):
