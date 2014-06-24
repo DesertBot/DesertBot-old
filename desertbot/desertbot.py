@@ -9,6 +9,7 @@ from config import Config
 from message import IRCMessage
 from user import IRCUser
 from serverinfo import ServerInfo, ModeType
+from modulehandler import ModuleHandler
 
 
 class DesertBot(irc.IRCClient):
@@ -22,7 +23,7 @@ class DesertBot(irc.IRCClient):
         self.commandChar = factory.config["commandChar"]
         self.admins = factory.config["admins"]
         self.serverInfo = ServerInfo(factory.config["server"])
-        # assuming, for now, that channels and admins would be in the config as lists
+        self.moduleHandler = ModuleHandler(self)
 
     def hasSoul(self):
         return False
@@ -84,7 +85,8 @@ class DesertBot(irc.IRCClient):
         operator = "+" if set else "-"
 
         message = IRCMessage("MODE", modeUser, modeChannel, "{}{} {}".format(operator, modes, " ".join(messageList)), self)
-
+        self.moduleHandler.handleMessage(message)
+        
     def irc_TOPIC(self, prefix, params):
         user = self.getUser(prefix[:prefix.index("!")])
         channel = self.getChannel(params[1])
@@ -93,6 +95,7 @@ class DesertBot(irc.IRCClient):
         channel.topicTimestamp = datetime.datetime.utcnow()
 
         message = IRCMessage("TOPIC", user, channel, params[2], self)
+        self.moduleHandler.handleMessage(message)
 
     def irc_RPL_TOPIC(self, prefix, params):
         channel = self.getChannel(params[1])
@@ -198,13 +201,16 @@ class DesertBot(irc.IRCClient):
 
     def privmsg(self, user, channel, msg):
         message = IRCMessage('PRIVMSG', self._userFromPrefix(user), self.getChannel(channel), msg, self)
+        self.moduleHandler.handleMessage(message)
 
     def action(self, user, channel, msg):
         message = IRCMessage('ACTION', self._userFromPrefix(user), self.getChannel(channel), msg, self)
+        self.moduleHandler.handleMessage(message)
 
     def noticed(self, user, channel, msg):
         message = IRCMessage('NOTICE', self._userFromPrefix(user), self.getChannel(channel), msg.upper(), self)
-
+        self.moduleHandler.handleMessage(message)
+        
     def irc_JOIN(self, prefix, params):
         channel = self.getChannel(params[0])
         if not channel:
@@ -215,6 +221,7 @@ class DesertBot(irc.IRCClient):
             user = IRCUser(prefix)
           
         message = IRCMessage('JOIN', user, channel, u'', self)
+        self.moduleHandler.handleMessage(message)
 
         if message.user.nickname == self.nickname:
             # Bot joins the channel, do initial setup
@@ -229,7 +236,8 @@ class DesertBot(irc.IRCClient):
         if len(params) > 1:
             partMessage = u', message: ' + u' '.join(params[1:])
         message = IRCMessage('PART', self._userFromPrefix(prefix), self.getChannel(params[0]), partMessage, self)
-
+        self.moduleHandler.handleMessage(message)
+        
         if message.user.nickname == self.nickname:
             # The bot is leaving the channel
             del self.channels[message.channel.name]
@@ -243,7 +251,8 @@ class DesertBot(irc.IRCClient):
         if len(params) > 2:
             kickMessage = u'{}, message: '.format(kickee) + u' '.join(params[2:])
         message = IRCMessage('KICK', self._userFromPrefix(prefix), self.getChannel(params[0]), kickMessage, self)
-
+        self.moduleHandler.handleMessage(message)
+        
         if kickee == self.nickname:
             # The bot is kicked from the channel
             del self.channels[message.channel.name]
@@ -258,7 +267,8 @@ class DesertBot(irc.IRCClient):
             quitMessage = u', message: ' + u' '.join(params[0])
 
         message = IRCMessage('QUIT', self._userFromPrefix(prefix), None, quitMessage, self)
-
+        self.moduleHandler.handleMessage(message)
+        
         for channel in self.channels.itervalues():
             if message.user.nickname in channel.users:
                 del channel.users[message.user.nickname]
@@ -270,7 +280,8 @@ class DesertBot(irc.IRCClient):
         newnick = params[0]
 
         message = IRCMessage("NICK", self._userFromPrefix(prefix), None, oldnick, self)
-
+        self.moduleHandler.handleMessage(message)
+        
         for channel in self.channels.itervalues():
             if oldnick in channel.users:
                 channel.users[newnick] = message.user
