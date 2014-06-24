@@ -10,6 +10,7 @@ class IModule(Interface):
     moduleType = Attribute("The module's type.")
     accessLevel = Attribute("The module's accesslevel.")
     modulePriority = Attribute("The module's priority.")
+    runInThread = Attribute("Specifies if this module should be run in a separate thread.")
     helpText = Attribute("The text that will be sent when a user requests help for this module.")
     
     def onTrigger(message):
@@ -34,6 +35,7 @@ class Module(object):
     moduleType = ModuleType.PASSIVE
     accessLevel = AccessLevel.ANYONE
     modulePriority = ModulePriority.NORMAL
+    runInThread = False
     helpText = ""
     
     def onTrigger(self, message):
