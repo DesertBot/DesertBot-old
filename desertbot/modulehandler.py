@@ -111,7 +111,7 @@ class ModuleHandler(object):
         else:
             moduleReload = True
             # totes a reload. Log/boolean?
-        for module in getPlugins(IModule, modules):
+        for module in getPlugins(IModule):
             if not IModule.providedBy(module):
                 errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
                 log.err(errorMsg)
@@ -156,6 +156,7 @@ class ModuleHandler(object):
             return (False, errorMsg)
     
     def loadAllModules(self):
-        for module in getPlugins(IModule, desertbot.modules):
+        print list(getPlugins(IModule))
+        for module in getPlugins(IModule):
             self.loadModule(module.name)
             # TODO: Make sure that module actually has a name

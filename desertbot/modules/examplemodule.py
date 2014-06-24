@@ -2,7 +2,7 @@
 
 from zope.interface import implements
 from twisted.plugin import IPlugin
-from moduleinterface import IModule, Module
+from desertbot.moduleinterface import IModule, Module
 
 
 class ExampleModule(Module):
