@@ -112,11 +112,11 @@ class ModuleHandler(object):
             moduleReload = True
             # totes a reload. Log/boolean?
         for module in getPlugins(IModule):
-            if not IModule.providedBy(module):
-                errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
-                log.err(errorMsg)
-                return (False, errorMsg)
-            if module.nameloadMsg:
+            if module.name == name.lower():
+                if not IModule.providedBy(module):
+                    errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
+                    log.err(errorMsg)
+                    return (False, errorMsg)
                 self.loadedModules[module.name] = module
                 try:
                     self.loadedModules[module.name].onModuleLoaded()
