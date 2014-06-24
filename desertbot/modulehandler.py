@@ -105,6 +105,7 @@ class ModuleHandler(object):
         """
         @type name: unicode
         """
+        # This has to be done differently somehow. This code will break if two modules have the same name.
         if name.lower() not in self.loadedModules:
             moduleReload = False
             # not a reload, log something for this? A boolean for later return perhaps?
