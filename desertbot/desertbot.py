@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import platform
 import datetime
-from desertbot import version_major, version_minor, version_patch
 from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
 from twisted.python import log
@@ -39,7 +38,7 @@ class DesertBot(irc.IRCClient):
         self.username = self.factory.config["username"]
         self.realname = self.factory.config["realname"]
         self.versionName = self.nickname
-        self.versionNum = "v{}.{}.{}".format(version_major, version_minor, version_patch)
+        self.versionNum = "v{}.{}.{}".format(0, 0, 1)
         self.versionEnv = platform.platform()
         log.msg("Connected to {}.".format(self.factory.config["server"]))
         
