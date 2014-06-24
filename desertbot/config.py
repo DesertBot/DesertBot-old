@@ -25,10 +25,11 @@ class Config(object):
                 if dKey not in configData:
                     configData[dKey] = dValue
             self.configData = configData
-
-            return self.checkRequiredValues()
-
-        except yaml.ParserError as e:
+            requiredValues = self.checkRequiredValues()
+            if requiredValues:
+                log.msg("Config file file for {} was successfully loaded.".format(configData["server"]))
+            return requiredValues
+        except yaml.parser.ParserError as e:
             log.err("An error occurred while reading file \"{}\": {}".format(self.configFileName, e))
             return False
 
@@ -40,7 +41,7 @@ class Config(object):
 
     def checkRequiredValues(self):
         required = ["nickname", "username", "realname", "server"]
-        if required in self.configData:
+        if required in self.configData.keys():
             return True
         else:
             missing = [data for data in required if data not in self.configData]
