@@ -42,6 +42,7 @@ class ModuleHandler(object):
                 elif response.responseType == ResponseType.RAW:
                     self.bot.sendLine(response.response)
             except:
+                # This needs to get out as soon as we start using this. except: pass is evil :|
                 pass #TODO Exception handling
                     
 
@@ -145,7 +146,5 @@ class ModuleHandler(object):
     
     def loadAllModules(self):
         for module in getPlugins(IModule, desertbot.modules):
-            self.loadedModules[module.name.lower()] = module
-            self.loadedModules[module.name.lower()].onModuleLoaded()
-            #TODO Return stuff and log
-        return (True, "All modules successfully loaded!")
+            self.loadModule(module.name)
+            # TODO: Make sure that module actually has a name
