@@ -40,9 +40,9 @@ class ModuleHandler(object):
                     self.bot.notice(response.target, response.response)
                 elif response.responseType == ResponseType.RAW:
                     self.bot.sendLine(response.response)
-            except:
-                # This needs to get out as soon as we start using this. except: pass is evil :|
-                pass #TODO Exception handling
+            except Exception as e:
+                errorMsg = "An error occurred while sending response: \"{}\" ({})".format(response.response, e)
+                log.err(errorMsg)
                     
 
     def handleMessage(self, message):
@@ -58,9 +58,10 @@ class ModuleHandler(object):
                     else:
                         d = threads.deferToThread(module.onTrigger, message)
                         d.addCallback(self.sendResponse)
-            except:
-                pass #TODO Exception logging
-
+            except Exception as e:
+                errorMsg = "An error occured while handling message: \"{}\" ({})".format(message.messageText, e)
+                log.err(errorMsg)
+                
     def _shouldExecute(self, module, message):
         """
         @type message: IRCMessage
