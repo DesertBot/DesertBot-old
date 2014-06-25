@@ -39,6 +39,12 @@ class IModule(Interface):
         This function will be executed when the API triggers this module.
         """
     
+    def shouldTrigger(message):
+        """
+        This function determines if this module should trigger on a message.
+        It is only used for POSTPROCESS and UTILITY modules.
+        """
+    
     def onModuleLoaded():
         """
         This function will be executed when the API loads this module.
@@ -61,6 +67,9 @@ class Module(object):
     
     def onTrigger(self, message):
         pass
+    
+    def shouldTrigger(self, message):
+        return True
     
     def onModuleLoaded(self):
         pass
