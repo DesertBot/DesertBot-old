@@ -16,6 +16,7 @@ class ModuleHandler(object):
         """
         self.bot = bot
         self.loadedModules = {}
+        self.loadedPostProcesses = {}
     
     def sendResponse(self, response):
         """
@@ -32,6 +33,7 @@ class ModuleHandler(object):
             responses.append(response)
             
         for response in responses:
+            response = self.postProcess(response)
             try:
                 if response.responseType == ResponseType.PRIVMSG:
                     self.bot.msg(response.target, response.response) #response should be unicode here
@@ -44,7 +46,19 @@ class ModuleHandler(object):
             except Exception as e:
                 errorMsg = "An error occurred while sending response: \"{}\" ({})".format(response.response, e)
                 log.err(errorMsg)
-                    
+    
+    def postProcess(self, response):
+        """
+        @type response: IRCResponse
+        """
+        newResponse = response
+        for post in sorted(self.loadedPostProcesses.values(), key=operator.attrgetter("modulePriority")):
+            try:
+                if post.shouldExecute(newResponse):
+                    newResponse = post.onTrigger(newResponse)
+            except Exception as e:
+                errorMsg = "An error occured while postprocessing: \"{}\" ({})".format(response.response, e)
+                log.err(errorMsg)
 
     def handleMessage(self, message):
         """
@@ -108,16 +122,52 @@ class ModuleHandler(object):
         """
         @type name: unicode
         """
+        return self._load(name, u"IModule")
+        
+    def loadPostProcess(self, name):
+        """
+        @type name: unicode
+        """
+        return self._load(name, u"IPost")
+
+    def unloadModule(self, name):
+        """
+        @type name: unicode
+        """
+        return self._unload(name, u"IModule")
+        
+    def unloadPostProcess(self, name):
+        """
+        @type name: unicode
+        """
+        return self._unload(name, u"IPost")
+        
+    def loadAllModules(self):
+        for module in getPlugins(IModule, modules):
+            if module.name is not None and module.name != "" and module.name != u"":
+                self.loadModule(module.name)
+    
+    def loadPostProcesses(self):
+        for module in getPlugins(IPost, postprocesses):
+            if module.name is not None and module.name != "" and module.name != u"":
+                self.loadPostProcess(module.name)
+                
+    def _load(self, name, interfaceName):
+        """
+        @type name: unicode
+        @type interfaceName: unicode
+        """
         if name is None or name == "" or name == u"":
             errorMsg = "Module name not specified!"
             log.err(errorMsg)
             return (False, errorMsg)
-        if name.lower() not in self.loadedModules:
-            moduleReload = False
-        else:
-            moduleReload = True
-        for module in getPlugins(IModule, modules):
-            if module.name == name.lower():
+        if interfaceName == u"IModule":
+            if name.lower() not in self.loadedModules:
+                moduleReload = False
+            else:
+                moduleReload = True
+            for module in getPlugins(IModule, modules):
+                if module.name == name.lower():
                 if not IModule.providedBy(module):
                     errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
                     log.err(errorMsg)
@@ -138,33 +188,74 @@ class ModuleHandler(object):
                     loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
                     log.msg(loadMsg)
                     return (True, loadMsg)
-        return (False, "No module named \"{}\" could be found!".format(name))
-
-    def unloadModule(self, name):
+            return (False, "No module named \"{}\" could be found!".format(name))
+        elif interfaceName == u"IPost":
+            if name.lower() not in self.loadedPostProcesses:
+                moduleReload = False
+            else:
+                moduleReload = True
+            for module in getPlugins(IPost, postprocesses):
+                if module.name == name.lower():
+                if not IPost.providedBy(module):
+                    errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
+                    log.err(errorMsg)
+                    return (False, errorMsg)
+                self.loadedPostProcesses[module.name] = module
+                try:
+                    self.loadedPostProcesses[module.name].onModuleLoaded()
+                except Exception as e:
+                    errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
+                    log.err(errorMsg)
+                    return (False, errorMsg)
+                if moduleReload:
+                    loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
+                    log.msg(loadMsg)
+                    return (True, loadMsg)
+                else:
+                    loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
+                    log.msg(loadMsg)
+                    return (True, loadMsg)
+            return (False, "No module named \"{}\" could be found!".format(name))
+            
+    def _unload(self, name, interfaceName):
         """
         @type name: unicode
+        @type interfaceName: unicode
         """
         if name is None or name == "" or name == u"":
             errorMsg = "Module name not specified!"
             log.err(errorMsg)
             return (False, errorMsg)
-        if name.lower() in self.loadedModules:
-            try:
-                self.loadedModules[name.lower()].onModuleUnloaded()
-            except Exception as e:
-                errorMsg = "An error occurred while unloading module \"{}\" ({})".format(module.name, e)
+        if interfaceName == u"IModule":
+            if name.lower() in self.loadedModules:
+                try:
+                    self.loadedModules[name.lower()].onModuleUnloaded()
+                except Exception as e:
+                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(module.name, e)
+                    log.err(errorMsg)
+                # Unload module so it doesn't get stuck, but emit the error still.
+                del self.loadedModules[name.lower()]
+                loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
+                log.msg(loadMsg)
+                return (True, loadMsg)
+            else:
+                errorMsg = "No module named \"{}\" is loaded!".format(name)
                 log.err(errorMsg)
-            # Unload module so it doesn't get stuck, but emit the error still.
-            del self.loadedModules[name.lower()]
-            loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
-            log.msg(loadMsg)
-            return (True, loadMsg)
-        else:
-            errorMsg = "No module named \"{}\" is loaded!".format(name)
-            log.err(errorMsg)
-            return (False, errorMsg)
-    
-    def loadAllModules(self):
-        for module in getPlugins(IModule, modules):
-            if module.name is not None and module.name != "" and module.name != u"":
-                self.loadModule(module.name)
+                return (False, errorMsg)
+        if interfaceName == u"IPost":
+            if name.lower() in self.loadedPostProcesses:
+                try:
+                    self.loadedPostProcesses[name.lower()].onModuleUnloaded()
+                except Exception as e:
+                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(module.name, e)
+                    log.err(errorMsg)
+                # Unload module so it doesn't get stuck, but emit the error still.
+                del self.loadedPostProcesses[name.lower()]
+                loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
+                log.msg(loadMsg)
+                return (True, loadMsg)
+            else:
+                errorMsg = "No module named \"{}\" is loaded!".format(name)
+                log.err(errorMsg)
+                return (False, errorMsg)
+        
