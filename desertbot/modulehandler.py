@@ -56,9 +56,12 @@ class ModuleHandler(object):
             try:
                 if post.shouldExecute(newResponse):
                     newResponse = post.onTrigger(newResponse)
+                    #TODO Threading for postProcesses
             except Exception as e:
                 errorMsg = "An error occured while postprocessing: \"{}\" ({})".format(response.response, e)
                 log.err(errorMsg)
+                
+        return newResponse
 
     def handleMessage(self, message):
         """
