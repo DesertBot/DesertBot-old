@@ -104,13 +104,14 @@ class ModuleHandler(object):
         """
         @type name: unicode
         """
-        # This has to be done differently somehow. This code will break if two modules have the same name.
+        if name is None or name == "" or name == u"":
+            errorMsg = "Module name not specified!"
+            log.err(errorMsg)
+            return (False, errorMsg)
         if name.lower() not in self.loadedModules:
             moduleReload = False
-            # not a reload, log something for this? A boolean for later return perhaps?
         else:
             moduleReload = True
-            # totes a reload. Log/boolean?
         for module in getPlugins(IModule, modules):
             if module.name == name.lower():
                 if not IModule.providedBy(module):
@@ -139,6 +140,10 @@ class ModuleHandler(object):
         """
         @type name: unicode
         """
+        if name is None or name == "" or name == u"":
+            errorMsg = "Module name not specified!"
+            log.err(errorMsg)
+            return (False, errorMsg)
         if name.lower() in self.loadedModules:
             try:
                 self.loadedModules[name.lower()].onModuleUnloaded()
@@ -157,5 +162,5 @@ class ModuleHandler(object):
     
     def loadAllModules(self):
         for module in getPlugins(IModule, modules):
-            self.loadModule(module.name)
-            # TODO: Make sure that module actually has a name
+            if module.name is not None and module.name != "" and module.name != u"":
+                self.loadModule(module.name)
