@@ -82,9 +82,9 @@ class ModuleHandler(object):
                     return True
                 return False
             elif module.moduleType == ModuleType.POSTPROCESS:
-                return True
+                return module.shouldTrigger(message)
             elif module.moduleType == ModuleType.UTILITY:
-                return True
+                return module.shouldTrigger(message)
 
     def _checkCommandAuthorization(self, module, message):
         """
