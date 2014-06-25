@@ -58,7 +58,7 @@ class IModule(Interface):
 class Module(object):
     name = u""
     triggers = []
-    messageTypes = []
+    messageTypes = [u"PRIVMSG"]
     moduleType = ModuleType.PASSIVE
     accessLevel = AccessLevel.ANYONE
     modulePriority = ModulePriority.NORMAL
