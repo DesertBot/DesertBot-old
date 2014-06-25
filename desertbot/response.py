@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 from channel import IRCChannel
+from user import IRCUser
 
 
 class ResponseType(Enum):
@@ -11,10 +12,11 @@ class ResponseType(Enum):
 
 
 class IRCResponse(object):
-    def __init__(self, responseType, response, target):
+    def __init__(self, responseType, response, user, target):
         """
         @type responseType: ResponseType
         @type response: unicode
+        @type user: IRCUser
         @type target: unicode
         """
         self.type = responseType
@@ -22,6 +24,7 @@ class IRCResponse(object):
             self.response = unicode(response, "utf-8")
         else:
             self.response = response
+        self.user = user
         if not isinstance(target, unicode):
             self.target = unicode(target, "utf-8")
         else:
