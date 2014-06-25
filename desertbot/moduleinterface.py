@@ -7,8 +7,7 @@ class ModuleType(Enum):
     PASSIVE = 1
     ACTIVE = 2
     COMMAND = 3
-    POSTPROCESS = 4
-    UTILITY = 5
+    UTILITY = 4
 
 
 class ModulePriority(object):
