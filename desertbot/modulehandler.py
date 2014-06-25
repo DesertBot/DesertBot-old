@@ -5,6 +5,7 @@ from twisted.internet import threads
 from moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
 from response import IRCResponse, ResponseType
 from message import IRCMessage
+from user import IRCUser
 import modules
 import re, operator
 
@@ -78,24 +79,28 @@ class ModuleHandler(object):
                         return True
                 return False
             elif module.moduleType == ModuleType.COMMAND:
-                if message.command in module.triggers:
+                if message.command in module.triggers and _allowedToUse(module, message.user):
                     return True
-                return False
+                else:
+                    return False
             elif module.moduleType == ModuleType.POSTPROCESS:
                 return module.shouldTrigger(message)
             elif module.moduleType == ModuleType.UTILITY:
                 return module.shouldTrigger(message)
 
-    def _checkCommandAuthorization(self, module, message):
+    def _allowedToUse(self, module, user):
         """
-        @type message: IRCMessage
+        @type user: IRCUser
         """
+        if user is None:
+            return False
+        
         if module.accessLevel == AccessLevel.ANYONE:
             return True
 
         if module.accessLevel == AccessLevel.ADMINS:
             for adminRegex in self.bot.admins:
-                if re.match(adminRegex, message.user.getUserString()):
+                if re.match(adminRegex, user.getUserString()):
                     return True
             return False
 
