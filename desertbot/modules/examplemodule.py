@@ -10,7 +10,7 @@ class ExampleModule(Module):
     
     name = u"examplemodule"
     messageTypes = [u"PRIVMSG"]
-    helpText = "This example module outputs PRIVMSG-es to console!"
+    helpText = u"This example module outputs PRIVMSG-es to console!"
     
     def onTrigger(self, message):
         print message.messageText
