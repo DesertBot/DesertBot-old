@@ -97,8 +97,6 @@ class ModuleHandler(object):
                     return True
                 else:
                     return False
-            elif module.moduleType == ModuleType.POSTPROCESS:
-                return module.shouldTrigger(message)
             elif module.moduleType == ModuleType.UTILITY:
                 return module.shouldTrigger(message)
 
