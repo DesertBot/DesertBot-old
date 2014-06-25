@@ -50,14 +50,14 @@ class IModule(Interface):
         """
         
 class Module(object):
-    name = ""
+    name = u""
     triggers = []
     messageTypes = []
     moduleType = ModuleType.PASSIVE
     accessLevel = AccessLevel.ANYONE
     modulePriority = ModulePriority.NORMAL
     runInThread = False
-    helpText = ""
+    helpText = u""
     
     def onTrigger(self, message):
         pass
