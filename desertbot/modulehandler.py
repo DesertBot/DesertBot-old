@@ -51,7 +51,7 @@ class ModuleHandler(object):
         """
         for module in sorted(self.loadedModules.values(), key=operator.attrgetter("modulePriority")):
             try:
-                if self._shouldExecute(module, message):
+                if self._shouldTrigger(module, message):
                     if not module.runInThread:
                         response = module.onTrigger(message)
                         self.sendResponse(response)
@@ -62,7 +62,7 @@ class ModuleHandler(object):
                 errorMsg = "An error occured while handling message: \"{}\" ({})".format(message.messageText, e)
                 log.err(errorMsg)
                 
-    def _shouldExecute(self, module, message):
+    def _shouldTrigger(self, module, message):
         """
         @type message: IRCMessage
         """
@@ -78,10 +78,8 @@ class ModuleHandler(object):
                         return True
                 return False
             elif module.moduleType == ModuleType.COMMAND:
-                for trigger in module.triggers:
-                    match = re.search("^{}({})($| .*)".format(self.bot.commandChar, trigger), message.messageText, re.IGNORECASE)
-                    if match:
-                        return True
+                if message.command in module.triggers:
+                    return True
                 return False
             elif module.moduleType == ModuleType.POSTPROCESS:
                 return True
