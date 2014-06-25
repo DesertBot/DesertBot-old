@@ -33,7 +33,6 @@ class ModuleHandler(object):
             responses.append(response)
             
         for response in responses:
-            response = self.postProcess(response)
             try:
                 if response.responseType == ResponseType.PRIVMSG:
                     self.bot.msg(response.target, response.response) #response should be unicode here
@@ -55,13 +54,16 @@ class ModuleHandler(object):
         for post in sorted(self.loadedPostProcesses.values(), key=operator.attrgetter("modulePriority")):
             try:
                 if post.shouldExecute(newResponse):
-                    newResponse = post.onTrigger(newResponse)
-                    #TODO Threading for postProcesses
+                    if not post.runInThread:
+                        newResponse = post.onTrigger(newResponse)
+                        self.sendResponse(newResponse)
+                    else:
+                        d = threads.deferToThread(post.onTrigger, newResponse)
+                        d.addCallback(self.sendResponse)
             except Exception as e:
                 errorMsg = "An error occured while postprocessing: \"{}\" ({})".format(response.response, e)
                 log.err(errorMsg)
-                
-        return newResponse
+                self.sendResponse(newResponse)
 
     def handleMessage(self, message):
         """
@@ -72,10 +74,10 @@ class ModuleHandler(object):
                 if self._shouldTrigger(module, message):
                     if not module.runInThread:
                         response = module.onTrigger(message)
-                        self.sendResponse(response)
+                        self.postProcess(response)
                     else:
                         d = threads.deferToThread(module.onTrigger, message)
-                        d.addCallback(self.sendResponse)
+                        d.addCallback(self.postProcess)
             except Exception as e:
                 errorMsg = "An error occured while handling message: \"{}\" ({})".format(message.messageText, e)
                 log.err(errorMsg)
