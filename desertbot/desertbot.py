@@ -40,7 +40,7 @@ class DesertBot(irc.IRCClient):
         self.username = self.factory.config["username"]
         self.realname = self.factory.config["realname"]
         self.versionName = self.nickname
-        self.versionNum = "v{}.{}.{}".format(0, 0, 1)
+        self.versionNum = "v{}.{}.{}".format(0, 1, 0)
         self.versionEnv = platform.platform()
         log.msg("Connected to {}.".format(self.factory.config["server"]))
         
