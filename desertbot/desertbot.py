@@ -341,7 +341,10 @@ class DesertBot(irc.IRCClient):
         return None
 
     def _userFromPrefix(self, prefix):
-        return self.getUser(prefix[:prefix.index("!")])
+        if "!" in prefix:
+            return self.getUser(prefix[:prefix.index("!")])
+        else:
+            return self.getUser(prefix)
 
 
 class DesertBotFactory(protocol.ReconnectingClientFactory):
