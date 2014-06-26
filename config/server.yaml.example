@@ -1,0 +1,18 @@
+# ============================================================================ #
+#                          EXAMPLE SERVER CONFIG FILE                          #
+# ============================================================================ #
+
+# server: This is the server to connect to
+server: "irc.example.net"
+
+# port: This is the port to use when connecting (defaults to 6667 if not specified)
+port: 6667
+
+# channels: These are the channels to join when connecting
+channels: ["#help", "#example"]
+
+# admins: These are the users that should have access to admin-level modules
+admins: ["exampleuser!.*@.*"]
+
+# commandchar: This is the command prefix that the bot should use
+commandchar: "!"
