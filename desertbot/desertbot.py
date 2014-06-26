@@ -367,6 +367,8 @@ class DesertBotFactory(protocol.ReconnectingClientFactory):
 
     def clientConnectionLost(self, connector, reason):
         log.msg("Connection to {} was lost, reason: {}".format(self.config["server"], reason))
+        protocol.ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
 
     def clientConnectionFailed(self, connector, reason):
         log.msg("Failed to connect to {}, reason: {}".format(self.config["server"], reason))
+        protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
