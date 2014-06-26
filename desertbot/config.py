@@ -15,7 +15,7 @@ class Config(object):
             return False
 
         try:
-            with open(os.path.join("config", "globals.yaml"), "r") as globalConfigFile:
+            with open(os.path.join("config", "global.yaml"), "r") as globalConfigFile:
                 configData = yaml.load(globalConfigFile)
             with open(os.path.join("config", self.configFileName), "r") as configFile:
                 configData.update(yaml.load(configFile))

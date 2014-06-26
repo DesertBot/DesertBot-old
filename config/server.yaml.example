@@ -12,4 +12,4 @@ port: 6667
 channels: ["#help", "#example"]
 
 # commandchar: This is the command prefix that the bot should use
-commandchar: "!"
+commandChar: "!"
