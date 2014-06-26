@@ -171,10 +171,6 @@ class ModuleHandler(object):
                 moduleReload = True
             for module in getPlugins(IModule, modules):
                 if module.name == name.lower():
-                if not IModule.providedBy(module):
-                    errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
-                    log.err(errorMsg)
-                    return (False, errorMsg)
                 self.loadedModules[module.name] = module
                 try:
                     self.loadedModules[module.name].onModuleLoaded()
@@ -199,10 +195,6 @@ class ModuleHandler(object):
                 moduleReload = True
             for module in getPlugins(IPost, postprocesses):
                 if module.name == name.lower():
-                if not IPost.providedBy(module):
-                    errorMsg = "Module \"{}\" can't be loaded; module does not implement module interface.".format(module.name)
-                    log.err(errorMsg)
-                    return (False, errorMsg)
                 self.loadedPostProcesses[module.name] = module
                 try:
                     self.loadedPostProcesses[module.name].onModuleLoaded()
