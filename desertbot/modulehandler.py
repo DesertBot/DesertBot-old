@@ -172,13 +172,21 @@ class ModuleHandler(object):
                 moduleReload = True
             for module in getPlugins(IModule, modules):
                 if module.name == name.lower():
-                self.loadedModules[module.name] = module
-                try:
-                    self.loadedModules[module.name].onModuleLoaded()
-                except Exception as e:
-                    errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
-                    log.err(errorMsg)
-                    return False, errorMsg
+                    self.loadedModules[module.name] = module
+                    try:
+                        self.loadedModules[module.name].onModuleLoaded()
+                    except Exception as e:
+                        errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
+                        log.err(errorMsg)
+                        return False, errorMsg
+                    if moduleReload:
+                        loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
+                        log.msg(loadMsg)
+                        return True, loadMsg
+                    else:
+                        loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
+                        log.msg(loadMsg)
+                        return True, loadMsg
         elif interfaceName == u"IPost":
             if name.lower() not in self.loadedPostProcesses:
                 moduleReload = False
@@ -186,24 +194,22 @@ class ModuleHandler(object):
                 moduleReload = True
             for module in getPlugins(IPost, postprocesses):
                 if module.name == name.lower():
-                self.loadedPostProcesses[module.name] = module
-                try:
-                    self.loadedPostProcesses[module.name].onModuleLoaded()
-                except Exception as e:
-                    errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
-                    log.err(errorMsg)
-                    return False, errorMsg
-        else:
+                    self.loadedPostProcesses[module.name] = module
+                    try:
+                        self.loadedPostProcesses[module.name].onModuleLoaded()
+                    except Exception as e:
+                        errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
+                        log.err(errorMsg)
+                        return False, errorMsg
+                    if moduleReload:
+                        loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
+                        log.msg(loadMsg)
+                        return True, loadMsg
+                    else:
+                        loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
+                        log.msg(loadMsg)
+                        return True, loadMsg
             return False, "No module named \"{}\" could be found!".format(name)
-
-        if moduleReload:
-            loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
-            log.msg(loadMsg)
-            return True, loadMsg
-        else:
-            loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
-            log.msg(loadMsg)
-            return True, loadMsg
             
     def _unload(self, name, interfaceName):
         """
@@ -213,7 +219,7 @@ class ModuleHandler(object):
         if name is None or name == "" or name == u"":
             errorMsg = "Module name not specified!"
             log.err(errorMsg)
-            return (False, errorMsg)
+            return False, errorMsg
         if interfaceName == u"IModule":
             if name.lower() in self.loadedModules:
                 try:
