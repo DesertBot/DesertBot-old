@@ -11,8 +11,5 @@ port: 6667
 # channels: These are the channels to join when connecting
 channels: ["#help", "#example"]
 
-# admins: These are the users that should have access to admin-level modules
-admins: ["exampleuser!.*@.*"]
-
 # commandchar: This is the command prefix that the bot should use
 commandchar: "!"
