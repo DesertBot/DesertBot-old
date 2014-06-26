@@ -21,7 +21,7 @@ class DesertBot(irc.IRCClient):
         self.channels = {}
         self.usermodes = {}
         self.commandChar = factory.config["commandChar"]
-        self.admins = factory.config["admins"]
+        self.admins = [] #TODO Load/Save/Store admins in JSON
         self.serverInfo = ServerInfo(factory.config["server"])
         self.moduleHandler = ModuleHandler(self)
         self.moduleHandler.loadAllModules()
