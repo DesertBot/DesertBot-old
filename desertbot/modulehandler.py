@@ -2,7 +2,7 @@
 from twisted.plugin import getPlugins
 from twisted.python import log
 from twisted.internet import threads
-from moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
+from moduleinterface import IModule, ModuleType, AccessLevel
 from postprocessinterface import IPost
 from response import IRCResponse, ResponseType
 from message import IRCMessage
@@ -20,9 +20,6 @@ class ModuleHandler(object):
         self.loadedPostProcesses = {}
     
     def sendResponse(self, response):
-        """
-        @type response: IRCResponse
-        """
         responses = []
         
         if hasattr(response, "__iter__"):
@@ -80,7 +77,7 @@ class ModuleHandler(object):
                         d = threads.deferToThread(module.onTrigger, message)
                         d.addCallback(self.postProcess)
             except Exception as e:
-                errorMsg = "An error occured while handling message: \"{}\" ({})".format(message.messageText, e)
+                errorMsg = "An error occured while handling message: \"{}\" ({})".format(message.messageString, e)
                 log.err(errorMsg)
                 
     def _shouldTrigger(self, module, message):
@@ -94,12 +91,12 @@ class ModuleHandler(object):
                 return False
             elif module.moduleType == ModuleType.ACTIVE:
                 for trigger in module.triggers:
-                    match = re.search(".*{}.*".format(trigger), message.messageText, re.IGNORECASE)
+                    match = re.search(".*{}.*".format(trigger), message.messageString, re.IGNORECASE)
                     if match:
                         return True
                 return False
             elif module.moduleType == ModuleType.COMMAND:
-                if message.command in module.triggers and _allowedToUse(module, message.user):
+                if message.command in module.triggers and self._allowedToUse(module, message.user):
                     return True
                 else:
                     return False
@@ -225,11 +222,11 @@ class ModuleHandler(object):
                 try:
                     self.loadedModules[name.lower()].onModuleUnloaded()
                 except Exception as e:
-                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(module.name, e)
+                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(name, e)
                     log.err(errorMsg)
                 # Unload module so it doesn't get stuck, but emit the error still.
                 del self.loadedModules[name.lower()]
-                loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
+                loadMsg = "Module \"{}\" was successfully unloaded!".format(name)
                 log.msg(loadMsg)
                 return True, loadMsg
             else:
@@ -241,11 +238,11 @@ class ModuleHandler(object):
                 try:
                     self.loadedPostProcesses[name.lower()].onModuleUnloaded()
                 except Exception as e:
-                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(module.name, e)
+                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(name, e)
                     log.err(errorMsg)
                 # Unload module so it doesn't get stuck, but emit the error still.
                 del self.loadedPostProcesses[name.lower()]
-                loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
+                loadMsg = "Module \"{}\" was successfully unloaded!".format(name)
                 log.msg(loadMsg)
                 return True, loadMsg
             else:
