@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from zope.interface import Attribute, Interface
-from response import IRCResponse, ResponseType
+from response import ResponseType
 
 
 class ModulePriority(object):

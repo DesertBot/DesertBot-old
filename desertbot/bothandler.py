@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import os, sys
-from bot import DesertBotFactory
-from config import Config
+from desertbot.bot import DesertBotFactory
+from desertbot.config import Config
 from twisted.internet import reactor
-from twisted.python import log
 
 
 class BotHandler(object):
@@ -42,7 +41,10 @@ class BotHandler(object):
         else:
             try:
                 self.botfactories[server].bot.quit(quitMessage)
-                #TODO Unload the modules aswell, incase we have onUnload stuff.
+                for module in self.botfactories[server].bot.moduleHandler.loadedModules.values():
+                    module.onModuleUnloaded()
+                for post in self.botfactories[server].bot.moduleHandler.loadedPostProcesses.values():
+                    post.onModuleUnloaded()
             except:
                 #Bot is probably stuck mid-reconnection
                 self.botfactories[server].stopTrying()
@@ -60,7 +62,10 @@ class BotHandler(object):
     def restart(self, quitMessage=u'Restarting...'):
         for server, botfactory in self.botfactories.iteritems():
             botfactory.bot.quit(quitMessage)
-            #TODO Once again, unload modules, or at least do module.onUnload()
+            for module in botfactory.bot.moduleHandler.loadedModules.values():
+                module.onModuleUnloaded()
+            for post in botfactory.bot.moduleHandler.loadedPostProcesses.values():
+                post.onModuleUnloaded()
         reactor.callLater(2.0, self.replaceInstance)
 
     def replaceInstance(self):
