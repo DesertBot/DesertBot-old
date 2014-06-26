@@ -3,10 +3,11 @@ from twisted.plugin import getPlugins
 from twisted.python import log
 from twisted.internet import threads
 from moduleinterface import IModule, ModuleType, ModulePriority, AccessLevel
+from postprocessinterface import IPost
 from response import IRCResponse, ResponseType
 from message import IRCMessage
 from user import IRCUser
-import modules
+import modules, postprocesses
 import re, operator
 
 class ModuleHandler(object):
@@ -163,7 +164,7 @@ class ModuleHandler(object):
         if name is None or name == "" or name == u"":
             errorMsg = "Module name not specified!"
             log.err(errorMsg)
-            return (False, errorMsg)
+            return False, errorMsg
         if interfaceName == u"IModule":
             if name.lower() not in self.loadedModules:
                 moduleReload = False
@@ -177,17 +178,7 @@ class ModuleHandler(object):
                 except Exception as e:
                     errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
                     log.err(errorMsg)
-                    return (False, errorMsg)
-
-                if moduleReload:
-                    loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
-                    log.msg(loadMsg)
-                    return (True, loadMsg)
-                else:
-                    loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
-                    log.msg(loadMsg)
-                    return (True, loadMsg)
-            return (False, "No module named \"{}\" could be found!".format(name))
+                    return False, errorMsg
         elif interfaceName == u"IPost":
             if name.lower() not in self.loadedPostProcesses:
                 moduleReload = False
@@ -201,16 +192,18 @@ class ModuleHandler(object):
                 except Exception as e:
                     errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
                     log.err(errorMsg)
-                    return (False, errorMsg)
-                if moduleReload:
-                    loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
-                    log.msg(loadMsg)
-                    return (True, loadMsg)
-                else:
-                    loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
-                    log.msg(loadMsg)
-                    return (True, loadMsg)
-            return (False, "No module named \"{}\" could be found!".format(name))
+                    return False, errorMsg
+        else:
+            return False, "No module named \"{}\" could be found!".format(name)
+
+        if moduleReload:
+            loadMsg = "Module \"{}\" was successfully reloaded!".format(module.name)
+            log.msg(loadMsg)
+            return True, loadMsg
+        else:
+            loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
+            log.msg(loadMsg)
+            return True, loadMsg
             
     def _unload(self, name, interfaceName):
         """
