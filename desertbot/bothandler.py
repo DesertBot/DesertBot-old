@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os, sys
-from desertbot import DesertBotFactory
+from bot import DesertBotFactory
 from config import Config
 from twisted.internet import reactor
 from twisted.python import log
