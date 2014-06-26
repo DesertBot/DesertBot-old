@@ -41,11 +41,13 @@ class Config(object):
         return self.configData[key]
 
     def checkRequiredValues(self):
-        # This needs to be rewritten as it is broken
         required = ["nickname", "username", "realname", "server"]
-        if required in self.configData.keys():
+        missing = []
+        for req in required:
+            if req not in self.configData.keys():
+                missing.append(req)
+        if len(missing) == 0:
             return True
         else:
-            missing = [data for data in required if data not in self.configData]
             log.err("Required config data \"{}\" not found in \"{}\"!".format(", ".join(missing), self.configFileName))
             return False
