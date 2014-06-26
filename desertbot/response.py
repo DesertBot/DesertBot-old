@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
-from channel import IRCChannel
+from desertbot.channel import IRCChannel
 from user import IRCUser
 
 
