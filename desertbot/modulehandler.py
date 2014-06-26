@@ -231,11 +231,11 @@ class ModuleHandler(object):
                 del self.loadedModules[name.lower()]
                 loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
                 log.msg(loadMsg)
-                return (True, loadMsg)
+                return True, loadMsg
             else:
                 errorMsg = "No module named \"{}\" is loaded!".format(name)
                 log.err(errorMsg)
-                return (False, errorMsg)
+                return False, errorMsg
         if interfaceName == u"IPost":
             if name.lower() in self.loadedPostProcesses:
                 try:
@@ -247,9 +247,9 @@ class ModuleHandler(object):
                 del self.loadedPostProcesses[name.lower()]
                 loadMsg = "Module \"{}\" was successfully unloaded!".format(module.name)
                 log.msg(loadMsg)
-                return (True, loadMsg)
+                return True, loadMsg
             else:
                 errorMsg = "No module named \"{}\" is loaded!".format(name)
                 log.err(errorMsg)
-                return (False, errorMsg)
+                return False, errorMsg
         
