@@ -318,8 +318,10 @@ class DesertBot(irc.IRCClient):
         channel.creationTimestamp = long(params[2])
 
     def irc_unknown(self, prefix, command, params):
+        blacklist = ["PONG", "RPL_ENDOFWHO"]
         # log unhandled commands
-        log.msg("Received unhandled command '{}' with params [{}], and prefix '{}'".format(command, ', '.join(params), prefix))
+        if command not in blacklist:
+            log.msg("Received unhandled command '{}' with params [{}], and prefix '{}'".format(command, ', '.join(params), prefix))
 
     def getChannel(self, channel):
         """
