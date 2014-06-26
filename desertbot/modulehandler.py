@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import operator
-
 from twisted.plugin import getPlugins
 from twisted.python import log
 from twisted.internet import threads
