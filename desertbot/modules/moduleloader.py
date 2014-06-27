@@ -56,3 +56,5 @@ class ModuleLoader(Module):
         else:
             return [IRCResponse(ResponseType.PRIVMSG, u"{} loaded successfully!".format(u", ".join(successes)), message.user, message.replyTo),
                     IRCResponse(ResponseType.PRIVMSG, u"{} failed to load.".format(u", ".join(failures)), message.user, message.replyTo)]
+
+moduleLoader = ModuleLoader()
