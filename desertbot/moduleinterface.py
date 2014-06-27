@@ -76,7 +76,7 @@ class Module(object):
         pass
     
     def shouldTrigger(self, message):
-        return True
+        return False
     
     def onModuleLoaded(self):
         pass
