@@ -18,6 +18,11 @@ class IPost(Interface):
     runInThread = Attribute("Specifies if this module should be run in a separate thread.")
     helpText = Attribute("The text that will be sent when a user requests help for this module.")
     
+    def hookBot(bot):
+        """
+        This function will hook a bot reference to this module.
+        """
+    
     def onTrigger(response):
         """
         This function will be executed when the API triggers this module.
@@ -45,6 +50,9 @@ class Module(object):
     modulePriority = ModulePriority.NORMAL
     runInThread = False
     helpText = u""
+    
+    def hookBot(self, bot):
+        pass
     
     def onTrigger(self, response):
         pass
