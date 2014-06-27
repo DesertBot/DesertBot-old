@@ -25,7 +25,7 @@ class BotHandler(object):
             #already on this server for some reason
             return False
         else: 
-            botfactory = DesertBotFactory(config)
+            botfactory = DesertBotFactory(self, config)
             reactor.connectTCP(config["server"], config["port"], botfactory)
             self.botfactories[config["server"]] = botfactory
             return True
