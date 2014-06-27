@@ -181,8 +181,8 @@ class ModuleHandler(object):
                 if module.name == name.lower():
                     self.loadedModules[module.name] = module
                     try:
-                        self.loadedModules[module.name].onModuleLoaded()
                         self.loadedModules[module.name].hookBot(self.bot)
+                        self.loadedModules[module.name].onModuleLoaded()
                     except Exception as e:
                         errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
                         log.err(errorMsg)
@@ -207,8 +207,8 @@ class ModuleHandler(object):
                 if module.name == name.lower():
                     self.loadedPostProcesses[module.name] = module
                     try:
-                        self.loadedPostProcesses[module.name].onModuleLoaded()
                         self.loadedPostProcesses[module.name].hookBot(self.bot)
+                        self.loadedPostProcesses[module.name].onModuleLoaded()
                     except Exception as e:
                         errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
                         log.err(errorMsg)
