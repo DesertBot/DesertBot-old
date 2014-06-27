@@ -45,7 +45,7 @@ class ModuleLoader(Module):
         failures = []
         for moduleName, returnTuple in returns.iteritems():
             if not returnTuple[0]:
-                failures.append(moduleName)
+                failures.append(u"\"{}, {}\"".format(moduleName, returnTuple[1]))
             else:
                 successes.append(moduleName)
 
