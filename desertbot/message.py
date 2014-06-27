@@ -32,13 +32,16 @@ class IRCMessage(object):
         if self.messageList[0].startswith(bot.commandChar):
             self.command = self.messageList[0][len(bot.commandChar):].lower()
             self.parameters = u' '.join(self.messageList[1:])
+        elif self.messageList[0].startswith(bot.nickname) and len(self.messageList) > 1:
+            self.command = self.messageList[1]
+            self.parameters = u' '.join(self.messageList[2:])
+            
+        if self.parameters.strip():
+            self.parameterList = self.parameters.split(" ")
+            self.parameterList = [param for param in self.parameterList if param != u'']
 
-            if self.parameters.strip():
-                self.parameterList = self.parameters.split(" ")
-                self.parameterList = [param for param in self.parameterList if param != u'']
-
-                if len(self.parameterList) == 1 and not self.parameterList[0]:
-                    self.parameterList = []
+            if len(self.parameterList) == 1 and not self.parameterList[0]:
+                self.parameterList = []
 
 
 class TargetType(Enum):
