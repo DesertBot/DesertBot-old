@@ -190,6 +190,9 @@ class ModuleHandler(object):
                         loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
                         log.msg(loadMsg)
                         return True, loadMsg
+            errorMsg = "No module named \"{}\" could be found!".format(name)
+            log.err(errorMsg)
+            return False, errorMsg
         elif interfaceName == u"IPost":
             if name.lower() not in self.loadedPostProcesses:
                 moduleReload = False
@@ -212,7 +215,9 @@ class ModuleHandler(object):
                         loadMsg = "Module \"{}\" was successfully loaded!".format(module.name)
                         log.msg(loadMsg)
                         return True, loadMsg
-            return False, "No module named \"{}\" could be found!".format(name)
+            errorMsg = "No module named \"{}\" could be found!".format(name)
+            log.err(errorMsg)
+            return False, errorMsg
             
     def _unload(self, name, interfaceName):
         """
@@ -239,7 +244,7 @@ class ModuleHandler(object):
                 errorMsg = "No module named \"{}\" is loaded!".format(name)
                 log.err(errorMsg)
                 return False, errorMsg
-        if interfaceName == u"IPost":
+        elif interfaceName == u"IPost":
             if name.lower() in self.loadedPostProcesses:
                 try:
                     self.loadedPostProcesses[name.lower()].onModuleUnloaded()
