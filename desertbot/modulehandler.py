@@ -44,9 +44,11 @@ class ModuleHandler(object):
         @type response: IRCResponse
         """
         newResponse = response
+        processed = False
         for post in sorted(self.loadedPostProcesses.values(), key=operator.attrgetter("modulePriority")):
             try:
                 if post.shouldExecute(newResponse):
+                    processed = True
                     if not post.runInThread:
                         newResponse = post.onTrigger(newResponse)
                         self.sendResponse(newResponse)
@@ -57,6 +59,8 @@ class ModuleHandler(object):
                 errorMsg = "An error occured while postprocessing: \"{}\" ({})".format(response.response, e)
                 log.err(errorMsg)
                 self.sendResponse(newResponse)
+        if not processed:
+            self.sendResponse(newResponse)
                 
     def sendResponse(self, response):
         """
