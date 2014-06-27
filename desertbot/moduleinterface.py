@@ -32,33 +32,34 @@ class IModule(Interface):
     modulePriority = Attribute("The module's priority.")
     runInThread = Attribute("Specifies if this module should be run in a separate thread.")
     helpText = Attribute("The text that will be sent when a user requests help for this module.")
-    
+
     def hookBot(bot):
         """
         This function will hook a bot reference to the module.
         """
-    
+
     def onTrigger(message):
         """
         This function will be executed when the API triggers this module.
         """
-    
+
     def shouldTrigger(message):
         """
         This function determines if this module should trigger on a message.
         It is only used for POSTPROCESS and UTILITY modules.
         """
-    
+
     def onModuleLoaded():
         """
         This function will be executed when the API loads this module.
         """
-        
+
     def onModuleUnloaded():
         """
         This function will be executed when the API unloads this module.
         """
-        
+
+
 class Module(object):
     name = u""
     triggers = []
@@ -68,18 +69,18 @@ class Module(object):
     modulePriority = ModulePriority.NORMAL
     runInThread = False
     helpText = u""
-    
+
     def hookBot(self, bot):
         self.bot = bot
-    
+
     def onTrigger(self, message):
         pass
-    
+
     def shouldTrigger(self, message):
         return False
-    
+
     def onModuleLoaded(self):
         pass
-    
+
     def onModuleUnloaded(self):
         pass

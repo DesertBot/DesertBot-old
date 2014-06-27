@@ -19,8 +19,10 @@ class Do(Module):
         @type message: IRCMessage
         """
         if len(message.parameterList) > 0:
-            return IRCResponse(ResponseType.ACTION, message.parameters, message.user, message.replyTo)
+            return IRCResponse(ResponseType.ACTION, message.parameters, message.user,
+                               message.replyTo)
         else:
             return IRCResponse(ResponseType.PRIVMSG, u"Do what?", message.user, message.replyTo)
+
 
 do = Do()

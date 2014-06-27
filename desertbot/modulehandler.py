@@ -21,12 +21,13 @@ class ModuleHandler(object):
         self.bot = bot
         self.loadedModules = {}
         self.loadedPostProcesses = {}
-        
+
     def handleMessage(self, message):
         """
         @type message: IRCMessage
         """
-        for module in sorted(self.loadedModules.values(), key=operator.attrgetter("modulePriority")):
+        for module in sorted(self.loadedModules.values(),
+                             key=operator.attrgetter("modulePriority")):
             try:
                 if self._shouldTrigger(module, message):
                     if not module.runInThread:
@@ -36,16 +37,18 @@ class ModuleHandler(object):
                         d = threads.deferToThread(module.onTrigger, message)
                         d.addCallback(self.postProcess)
             except Exception as e:
-                errorMsg = "An error occured while handling message: \"{}\" ({})".format(message.messageString, e)
+                errorMsg = "An error occured while handling message: \"{}\" ({})".format(
+                    message.messageString, e)
                 log.err(errorMsg)
-                
+
     def postProcess(self, response):
         """
         @type response: IRCResponse
         """
         newResponse = response
         processed = False
-        for post in sorted(self.loadedPostProcesses.values(), key=operator.attrgetter("modulePriority")):
+        for post in sorted(self.loadedPostProcesses.values(),
+                           key=operator.attrgetter("modulePriority")):
             try:
                 if post.shouldExecute(newResponse):
                     processed = True
@@ -56,18 +59,19 @@ class ModuleHandler(object):
                         d = threads.deferToThread(post.onTrigger, newResponse)
                         d.addCallback(self.sendResponse)
             except Exception as e:
-                errorMsg = "An error occured while postprocessing: \"{}\" ({})".format(response.response, e)
+                errorMsg = "An error occured while postprocessing: \"{}\" ({})".format(
+                    response.response, e)
                 log.err(errorMsg)
                 self.sendResponse(newResponse)
         if not processed:
             self.sendResponse(newResponse)
-                
+
     def sendResponse(self, response):
         """
         @type response: IRCResponse
         """
         responses = []
-        
+
         if hasattr(response, "__iter__"):
             for r in response:
                 if r is None or r.response is None or r.response == "":
@@ -75,11 +79,12 @@ class ModuleHandler(object):
                 responses.append(r)
         elif response is not None and response.response is not None and response.response != "":
             responses.append(response)
-            
+
         for response in responses:
             try:
                 if response.responseType == ResponseType.PRIVMSG:
-                    self.bot.msg(response.target, response.response) #response should be unicode here
+                    self.bot.msg(response.target, response.response)  # response should be
+                    # unicode here
                 elif response.responseType == ResponseType.ACTION:
                     self.bot.describe(response.target, response.response)
                 elif response.responseType == ResponseType.NOTICE:
@@ -87,15 +92,16 @@ class ModuleHandler(object):
                 elif response.responseType == ResponseType.RAW:
                     self.bot.sendLine(response.response)
             except Exception as e:
-                errorMsg = "An error occurred while sending response: \"{}\" ({})".format(response.response, e)
+                errorMsg = "An error occurred while sending response: \"{}\" ({})".format(
+                    response.response, e)
                 log.err(errorMsg)
-                
+
     def loadModule(self, name):
         """
         @type name: unicode
         """
         return self._load(name, u"IModule")
-        
+
     def loadPostProcess(self, name):
         """
         @type name: unicode
@@ -107,23 +113,23 @@ class ModuleHandler(object):
         @type name: unicode
         """
         return self._unload(name, u"IModule")
-        
+
     def unloadPostProcess(self, name):
         """
         @type name: unicode
         """
         return self._unload(name, u"IPost")
-        
+
     def loadAllModules(self):
         for module in getPlugins(IModule, modules):
             if module.name is not None and module.name != "" and module.name != u"":
                 self.loadModule(module.name)
-    
+
     def loadPostProcesses(self):
         for module in getPlugins(IPost, postprocesses):
             if module.name is not None and module.name != "" and module.name != u"":
                 self.loadPostProcess(module.name)
-                
+
     def _shouldTrigger(self, module, message):
         """
         @type message: IRCMessage
@@ -135,7 +141,8 @@ class ModuleHandler(object):
                 return False
             elif module.moduleType == ModuleType.ACTIVE:
                 for trigger in module.triggers:
-                    match = re.search(".*{}.*".format(trigger), message.messageString, re.IGNORECASE)
+                    match = re.search(".*{}.*".format(trigger), message.messageString,
+                                      re.IGNORECASE)
                     if match:
                         return True
                 return False
@@ -153,7 +160,7 @@ class ModuleHandler(object):
         """
         if user is None:
             return False
-        
+
         if module.accessLevel == AccessLevel.ANYONE:
             return True
 
@@ -162,7 +169,7 @@ class ModuleHandler(object):
                 if re.match(adminRegex, user.getUserString()):
                     return True
             return False
-                
+
     def _load(self, name, interfaceName):
         """
         @type name: unicode
@@ -184,7 +191,8 @@ class ModuleHandler(object):
                         self.loadedModules[module.name].hookBot(self.bot)
                         self.loadedModules[module.name].onModuleLoaded()
                     except Exception as e:
-                        errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
+                        errorMsg = "An error occurred while loading module \"{}\" ({})".format(
+                            module.name, e)
                         log.err(errorMsg)
                         return False, errorMsg
                     if moduleReload:
@@ -210,7 +218,8 @@ class ModuleHandler(object):
                         self.loadedPostProcesses[module.name].hookBot(self.bot)
                         self.loadedPostProcesses[module.name].onModuleLoaded()
                     except Exception as e:
-                        errorMsg = "An error occurred while loading module \"{}\" ({})".format(module.name, e)
+                        errorMsg = "An error occurred while loading module \"{}\" ({})".format(
+                            module.name, e)
                         log.err(errorMsg)
                         return False, errorMsg
                     if moduleReload:
@@ -224,7 +233,7 @@ class ModuleHandler(object):
             errorMsg = "No module named \"{}\" could be found!".format(name)
             log.err(errorMsg)
             return False, errorMsg
-            
+
     def _unload(self, name, interfaceName):
         """
         @type name: unicode
@@ -239,7 +248,8 @@ class ModuleHandler(object):
                 try:
                     self.loadedModules[name.lower()].onModuleUnloaded()
                 except Exception as e:
-                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(name, e)
+                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(name,
+                                                                                             e)
                     log.err(errorMsg)
                 # Unload module so it doesn't get stuck, but emit the error still.
                 del self.loadedModules[name.lower()]
@@ -255,7 +265,8 @@ class ModuleHandler(object):
                 try:
                     self.loadedPostProcesses[name.lower()].onModuleUnloaded()
                 except Exception as e:
-                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(name, e)
+                    errorMsg = "An error occurred while unloading module \"{}\" ({})".format(name,
+                                                                                             e)
                     log.err(errorMsg)
                 # Unload module so it doesn't get stuck, but emit the error still.
                 del self.loadedPostProcesses[name.lower()]
@@ -266,4 +277,3 @@ class ModuleHandler(object):
                 errorMsg = "No module named \"{}\" is loaded!".format(name)
                 log.err(errorMsg)
                 return False, errorMsg
-        

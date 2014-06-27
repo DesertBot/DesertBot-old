@@ -19,18 +19,20 @@ class Config(object):
                 configData = yaml.load(globalConfigFile)
             with open(os.path.join("config", self.configFileName), "r") as configFile:
                 configData.update(yaml.load(configFile))
-            
-            defaultValues = { "port" : 6667 }
+
+            defaultValues = {"port": 6667}
             for dKey, dValue in defaultValues.iteritems():
                 if dKey not in configData:
                     configData[dKey] = dValue
             self.configData = configData
             requiredValues = self.checkRequiredValues()
             if requiredValues:
-                log.msg("Config file file for {} was successfully loaded.".format(configData["server"]))
+                log.msg(
+                    "Config file file for {} was successfully loaded.".format(configData["server"]))
             return requiredValues
         except yaml.parser.ParserError as e:
-            log.err("An error occurred while reading file \"{}\": {}".format(self.configFileName, e))
+            log.err(
+                "An error occurred while reading file \"{}\": {}".format(self.configFileName, e))
             return False
 
     def __iter__(self):
@@ -48,5 +50,6 @@ class Config(object):
         if len(missing) == 0:
             return True
         else:
-            log.err("Required config data \"{}\" not found in \"{}\"!".format(", ".join(missing), self.configFileName))
+            log.err("Required config data \"{}\" not found in \"{}\"!".format(", ".join(missing),
+                                                                              self.configFileName))
             return False

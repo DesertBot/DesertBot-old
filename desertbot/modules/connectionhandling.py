@@ -3,7 +3,6 @@ from zope.interface import implements
 from twisted.plugin import IPlugin
 from desertbot.moduleinterface import IModule, Module, ModuleType, AccessLevel
 from desertbot.message import IRCMessage
-from desertbot.response import IRCResponse, ResponseType
 
 
 class ConnectionHandling(Module):
@@ -13,7 +12,8 @@ class ConnectionHandling(Module):
     triggers = [u"connect", u"quit", u"quitfrom", u"restart", u"shutdown"]
     moduleType = ModuleType.COMMAND
     accessLevel = AccessLevel.ADMINS
-    helpText = u"connect <server> <channel> / quit / quitfrom <server> / restart / shutdown - handle bot connections"
+    helpText = u"connect <server> <channel> / quit / quitfrom <server> / restart / shutdown - " \
+               u"handle bot connections"
 
     def onTrigger(self, message):
         """
@@ -29,5 +29,6 @@ class ConnectionHandling(Module):
             pass
         if message.command.lower() == u"shutdown":
             pass
+
 
 connectionhandling = ConnectionHandling()

@@ -35,7 +35,7 @@ class IRCMessage(object):
         elif self.messageList[0].startswith(bot.nickname) and len(self.messageList) > 1:
             self.command = self.messageList[1]
             self.parameters = u' '.join(self.messageList[2:])
-            
+
         if self.parameters.strip():
             self.parameterList = self.parameters.split(" ")
             self.parameterList = [param for param in self.parameterList if param != u'']
