@@ -18,7 +18,7 @@ class Say(Module):
         """
         @type message: IRCMessage
         """
-        if len(message.parameterlist) > 0:
+        if len(message.parameterList) > 0:
             return IRCResponse(ResponseType.PRIVMSG, message.parameters, message.user, message.replyTo)
         else:
             return IRCResponse(ResponseType.PRIVMSG, u"Say what?", message.user, message.replyTo)
