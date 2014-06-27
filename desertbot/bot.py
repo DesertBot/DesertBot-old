@@ -5,6 +5,7 @@ from twisted.words.protocols import irc
 from twisted.internet import protocol
 from twisted.python import log
 from desertbot import version_major, version_minor, version_patch
+from desertbot.bothandler import BotHandler
 from desertbot.channel import IRCChannel
 from desertbot.config import Config
 from desertbot.message import IRCMessage
@@ -353,12 +354,14 @@ class DesertBot(irc.IRCClient):
 class DesertBotFactory(protocol.ReconnectingClientFactory):
     protocol = DesertBot
 
-    def __init__(self, config):
+    def __init__(self, bothandler, config):
         """
+        @type bothandler: BotHandler
         @type config: Config
         """
         self.config = config
         self.bot = DesertBot(self)
+        self.bot.bothandler = bothandler
         self.shouldReconnect = True
 
     def startedConnecting(self, connector):
