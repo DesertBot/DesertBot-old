@@ -52,7 +52,7 @@ class Module(object):
     helpText = u""
     
     def hookBot(self, bot):
-        pass
+        self.bot = bot
     
     def onTrigger(self, response):
         pass
