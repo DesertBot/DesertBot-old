@@ -21,7 +21,43 @@ class ModuleHandler(object):
         self.bot = bot
         self.loadedModules = {}
         self.loadedPostProcesses = {}
-    
+        
+    def handleMessage(self, message):
+        """
+        @type message: IRCMessage
+        """
+        for module in sorted(self.loadedModules.values(), key=operator.attrgetter("modulePriority")):
+            try:
+                if self._shouldTrigger(module, message):
+                    if not module.runInThread:
+                        response = module.onTrigger(message)
+                        self.postProcess(response)
+                    else:
+                        d = threads.deferToThread(module.onTrigger, message)
+                        d.addCallback(self.postProcess)
+            except Exception as e:
+                errorMsg = "An error occured while handling message: \"{}\" ({})".format(message.messageString, e)
+                log.err(errorMsg)
+                
+    def postProcess(self, response):
+        """
+        @type response: IRCResponse
+        """
+        newResponse = response
+        for post in sorted(self.loadedPostProcesses.values(), key=operator.attrgetter("modulePriority")):
+            try:
+                if post.shouldExecute(newResponse):
+                    if not post.runInThread:
+                        newResponse = post.onTrigger(newResponse)
+                        self.sendResponse(newResponse)
+                    else:
+                        d = threads.deferToThread(post.onTrigger, newResponse)
+                        d.addCallback(self.sendResponse)
+            except Exception as e:
+                errorMsg = "An error occured while postprocessing: \"{}\" ({})".format(response.response, e)
+                log.err(errorMsg)
+                self.sendResponse(newResponse)
+                
     def sendResponse(self, response):
         """
         @type response: IRCResponse
@@ -49,42 +85,40 @@ class ModuleHandler(object):
             except Exception as e:
                 errorMsg = "An error occurred while sending response: \"{}\" ({})".format(response.response, e)
                 log.err(errorMsg)
-    
-    def postProcess(self, response):
+                
+    def loadModule(self, name):
         """
-        @type response: IRCResponse
+        @type name: unicode
         """
-        newResponse = response
-        for post in sorted(self.loadedPostProcesses.values(), key=operator.attrgetter("modulePriority")):
-            try:
-                if post.shouldExecute(newResponse):
-                    if not post.runInThread:
-                        newResponse = post.onTrigger(newResponse)
-                        self.sendResponse(newResponse)
-                    else:
-                        d = threads.deferToThread(post.onTrigger, newResponse)
-                        d.addCallback(self.sendResponse)
-            except Exception as e:
-                errorMsg = "An error occured while postprocessing: \"{}\" ({})".format(response.response, e)
-                log.err(errorMsg)
-                self.sendResponse(newResponse)
+        return self._load(name, u"IModule")
+        
+    def loadPostProcess(self, name):
+        """
+        @type name: unicode
+        """
+        return self._load(name, u"IPost")
 
-    def handleMessage(self, message):
+    def unloadModule(self, name):
         """
-        @type message: IRCMessage
+        @type name: unicode
         """
-        for module in sorted(self.loadedModules.values(), key=operator.attrgetter("modulePriority")):
-            try:
-                if self._shouldTrigger(module, message):
-                    if not module.runInThread:
-                        response = module.onTrigger(message)
-                        self.postProcess(response)
-                    else:
-                        d = threads.deferToThread(module.onTrigger, message)
-                        d.addCallback(self.postProcess)
-            except Exception as e:
-                errorMsg = "An error occured while handling message: \"{}\" ({})".format(message.messageString, e)
-                log.err(errorMsg)
+        return self._unload(name, u"IModule")
+        
+    def unloadPostProcess(self, name):
+        """
+        @type name: unicode
+        """
+        return self._unload(name, u"IPost")
+        
+    def loadAllModules(self):
+        for module in getPlugins(IModule, modules):
+            if module.name is not None and module.name != "" and module.name != u"":
+                self.loadModule(module.name)
+    
+    def loadPostProcesses(self):
+        for module in getPlugins(IPost, postprocesses):
+            if module.name is not None and module.name != "" and module.name != u"":
+                self.loadPostProcess(module.name)
                 
     def _shouldTrigger(self, module, message):
         """
@@ -124,40 +158,6 @@ class ModuleHandler(object):
                 if re.match(adminRegex, user.getUserString()):
                     return True
             return False
-
-    def loadModule(self, name):
-        """
-        @type name: unicode
-        """
-        return self._load(name, u"IModule")
-        
-    def loadPostProcess(self, name):
-        """
-        @type name: unicode
-        """
-        return self._load(name, u"IPost")
-
-    def unloadModule(self, name):
-        """
-        @type name: unicode
-        """
-        return self._unload(name, u"IModule")
-        
-    def unloadPostProcess(self, name):
-        """
-        @type name: unicode
-        """
-        return self._unload(name, u"IPost")
-        
-    def loadAllModules(self):
-        for module in getPlugins(IModule, modules):
-            if module.name is not None and module.name != "" and module.name != u"":
-                self.loadModule(module.name)
-    
-    def loadPostProcesses(self):
-        for module in getPlugins(IPost, postprocesses):
-            if module.name is not None and module.name != "" and module.name != u"":
-                self.loadPostProcess(module.name)
                 
     def _load(self, name, interfaceName):
         """
