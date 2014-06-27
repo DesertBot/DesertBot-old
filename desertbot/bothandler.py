@@ -41,10 +41,7 @@ class BotHandler(object):
         else:
             try:
                 self.botfactories[server].bot.quit(quitMessage)
-                for module in self.botfactories[server].bot.moduleHandler.loadedModules.values():
-                    module.onModuleUnloaded()
-                for post in self.botfactories[server].bot.moduleHandler.loadedPostProcesses.values():
-                    post.onModuleUnloaded()
+                self._unloadModules(self.botfactories[server])
             except:
                 #Bot is probably stuck mid-reconnection
                 self.botfactories[server].stopTrying()
@@ -62,13 +59,17 @@ class BotHandler(object):
     def restart(self, quitMessage=u'Restarting...'):
         for server, botfactory in self.botfactories.iteritems():
             botfactory.bot.quit(quitMessage)
-            for module in botfactory.bot.moduleHandler.loadedModules.values():
-                module.onModuleUnloaded()
-            for post in botfactory.bot.moduleHandler.loadedPostProcesses.values():
-                post.onModuleUnloaded()
-        reactor.callLater(2.0, self.replaceInstance)
+            self._unloadModules(botfactory)
+        reactor.callLater(2.0, self._replaceInstance)
 
-    def replaceInstance(self):
+    def _replaceInstance(self):
         reactor.stop()
         python = sys.executable
         os.execl(python, python, *sys.argv)
+        
+    def _unloadModules(self, botfactory):
+        for module in botfactory.bot.moduleHandler.loadedModules.values():
+            module.onModuleUnloaded()
+        for post in botfactory.bot.moduleHandler.loadedPostProcesses.values():
+            post.onModuleUnloaded()
+            
