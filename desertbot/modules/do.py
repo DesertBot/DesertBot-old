@@ -6,23 +6,23 @@ from desertbot.message import IRCMessage
 from desertbot.response import IRCResponse, ResponseType
 
 
-class Say(Module):
+class Do(Module):
     implements(IPlugin, IModule)
 
-    name = u"say"
-    triggers = [u"say"]
+    name = u"do"
+    triggers = [u"do"]
     moduleType = ModuleType.COMMAND
-    helpText = u"say <text> - makes the bot repeat the specified text"
+    helpText = u"do <text> - makes the bot do the specified thing"
 
     def onTrigger(self, message):
         """
         @type message: IRCMessage
         """
         if len(message.parameterList) > 0:
-            return IRCResponse(ResponseType.PRIVMSG, message.parameters, message.user,
+            return IRCResponse(ResponseType.ACTION, message.parameters, message.user,
                                message.replyTo)
         else:
-            return IRCResponse(ResponseType.PRIVMSG, u"Say what?", message.user, message.replyTo)
+            return IRCResponse(ResponseType.PRIVMSG, u"Do what?", message.user, message.replyTo)
 
 
-say = Say()
+do = Do()

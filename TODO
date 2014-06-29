@@ -19,10 +19,10 @@ are working on.
   [x] Command parsing
   [x] Numeric parsing
   [x] User/channel management
-[-] API implementation
+[x] API implementation
   [x] Interface implementation
-  [-] Handler implementation
-  [-] Response implementation
-  [-] Command authorization
-  [-] Module threading
-[ ] Module implementation
+  [x] Handler implementation (fix bugs as we test ported modules)
+  [x] Response implementation
+  [x] Command authorization
+  [x] Module threading
+[-] Module implementation

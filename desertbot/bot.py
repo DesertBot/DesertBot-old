@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 import platform
 import datetime
+
 from twisted.words.protocols import irc
 from twisted.internet import protocol
 from twisted.python import log
-from channel import IRCChannel
-from config import Config
-from message import IRCMessage
-from user import IRCUser
-from serverinfo import ServerInfo, ModeType
-from modulehandler import ModuleHandler
+from desertbot import version_major, version_minor, version_patch
+from desertbot.bothandler import BotHandler
+from desertbot.channel import IRCChannel
+from desertbot.config import Config
+from desertbot.message import IRCMessage
+from desertbot.user import IRCUser
+from desertbot.serverinfo import ServerInfo, ModeType
+from desertbot.modulehandler import ModuleHandler
 
 
 class DesertBot(irc.IRCClient):
@@ -21,7 +24,7 @@ class DesertBot(irc.IRCClient):
         self.channels = {}
         self.usermodes = {}
         self.commandChar = factory.config["commandChar"]
-        self.admins = [] #TODO Load/Save/Store admins in JSON
+        self.admins = []  # TODO Load/Save/Store admins in JSON
         self.serverInfo = ServerInfo(factory.config["server"])
         self.moduleHandler = ModuleHandler(self)
         self.moduleHandler.loadAllModules()
@@ -41,10 +44,10 @@ class DesertBot(irc.IRCClient):
         self.username = self.factory.config["username"]
         self.realname = self.factory.config["realname"]
         self.versionName = self.nickname
-        self.versionNum = "v{}.{}.{}".format(0, 2, 0)
+        self.versionNum = "v{}.{}.{}".format(version_major, version_minor, version_patch)
         self.versionEnv = platform.platform()
         log.msg("Connected to {}.".format(self.factory.config["server"]))
-        
+
         irc.IRCClient.connectionMade(self)
 
     def signedOn(self):
@@ -86,9 +89,10 @@ class DesertBot(irc.IRCClient):
         messageList = [arg for arg in args if arg is not None]
         operator = "+" if set else "-"
 
-        message = IRCMessage("MODE", modeUser, modeChannel, "{}{} {}".format(operator, modes, " ".join(messageList)), self)
+        message = IRCMessage("MODE", modeUser, modeChannel,
+                             "{}{} {}".format(operator, modes, " ".join(messageList)), self)
         self.moduleHandler.handleMessage(message)
-        
+
     def irc_TOPIC(self, prefix, params):
         user = self.getUser(prefix[:prefix.index("!")])
         channel = self.getChannel(params[1])
@@ -202,17 +206,20 @@ class DesertBot(irc.IRCClient):
         channel.ranks[user.nickname] = statusModes
 
     def privmsg(self, user, channel, msg):
-        message = IRCMessage('PRIVMSG', self._userFromPrefix(user), self.getChannel(channel), msg, self)
+        message = IRCMessage('PRIVMSG', self._userFromPrefix(user), self.getChannel(channel), msg,
+                             self)
         self.moduleHandler.handleMessage(message)
 
     def action(self, user, channel, msg):
-        message = IRCMessage('ACTION', self._userFromPrefix(user), self.getChannel(channel), msg, self)
+        message = IRCMessage('ACTION', self._userFromPrefix(user), self.getChannel(channel), msg,
+                             self)
         self.moduleHandler.handleMessage(message)
 
     def noticed(self, user, channel, msg):
-        message = IRCMessage('NOTICE', self._userFromPrefix(user), self.getChannel(channel), msg.upper(), self)
+        message = IRCMessage('NOTICE', self._userFromPrefix(user), self.getChannel(channel),
+                             msg.upper(), self)
         self.moduleHandler.handleMessage(message)
-        
+
     def irc_JOIN(self, prefix, params):
         channel = self.getChannel(params[0])
         if not channel:
@@ -221,7 +228,7 @@ class DesertBot(irc.IRCClient):
         user = self._userFromPrefix(prefix)
         if not user:
             user = IRCUser(prefix)
-          
+
         message = IRCMessage('JOIN', user, channel, u'', self)
         self.moduleHandler.handleMessage(message)
 
@@ -229,7 +236,7 @@ class DesertBot(irc.IRCClient):
             # Bot joins the channel, do initial setup
             self.sendLine("WHO {}".format(message.channel.name))
             self.sendLine("MODE {}".format(message.channel.name))
-        
+
         message.channel.users[message.user.nickname] = message.user
         message.channel.ranks[message.user.nickname] = ""
 
@@ -237,9 +244,10 @@ class DesertBot(irc.IRCClient):
         partMessage = u''
         if len(params) > 1:
             partMessage = u', message: ' + u' '.join(params[1:])
-        message = IRCMessage('PART', self._userFromPrefix(prefix), self.getChannel(params[0]), partMessage, self)
+        message = IRCMessage('PART', self._userFromPrefix(prefix), self.getChannel(params[0]),
+                             partMessage, self)
         self.moduleHandler.handleMessage(message)
-        
+
         if message.user.nickname == self.nickname:
             # The bot is leaving the channel
             del self.channels[message.channel.name]
@@ -252,9 +260,10 @@ class DesertBot(irc.IRCClient):
         kickMessage = u'{}'.format(kickee)
         if len(params) > 2:
             kickMessage = u'{}, message: '.format(kickee) + u' '.join(params[2:])
-        message = IRCMessage('KICK', self._userFromPrefix(prefix), self.getChannel(params[0]), kickMessage, self)
+        message = IRCMessage('KICK', self._userFromPrefix(prefix), self.getChannel(params[0]),
+                             kickMessage, self)
         self.moduleHandler.handleMessage(message)
-        
+
         if kickee == self.nickname:
             # The bot is kicked from the channel
             del self.channels[message.channel.name]
@@ -270,7 +279,7 @@ class DesertBot(irc.IRCClient):
 
         message = IRCMessage('QUIT', self._userFromPrefix(prefix), None, quitMessage, self)
         self.moduleHandler.handleMessage(message)
-        
+
         for channel in self.channels.itervalues():
             if message.user.nickname in channel.users:
                 del channel.users[message.user.nickname]
@@ -283,7 +292,7 @@ class DesertBot(irc.IRCClient):
 
         message = IRCMessage("NICK", self._userFromPrefix(prefix), None, oldnick, self)
         self.moduleHandler.handleMessage(message)
-        
+
         for channel in self.channels.itervalues():
             if oldnick in channel.users:
                 channel.users[newnick] = message.user
@@ -301,7 +310,8 @@ class DesertBot(irc.IRCClient):
         modeparams = params[3:]
 
         for mode in modestring:
-            if self.serverInfo.chanModes[mode] == ModeType.PARAM_SET or self.serverInfo.chanModes[mode] == ModeType.PARAM_SET_UNSET:
+            if self.serverInfo.chanModes[mode] == ModeType.PARAM_SET or self.serverInfo.chanModes[
+                mode] == ModeType.PARAM_SET_UNSET:
                 # Mode takes an argument
                 channel.modes[mode] = modeparams[0]
                 del modeparams[0]
@@ -321,7 +331,12 @@ class DesertBot(irc.IRCClient):
         blacklist = ["PONG", "RPL_ENDOFWHO"]
         # log unhandled commands
         if command not in blacklist:
-            log.msg("Received unhandled command '{}' with params [{}], and prefix '{}'".format(command, ', '.join(params), prefix))
+            log.msg(
+                "Received unhandled command '{}' with params [{}], and prefix '{}'".format(command,
+                                                                                           ', '
+                                                                                           ''.join(
+                                                                                               params),
+                                                                                           prefix))
 
     def getChannel(self, channel):
         """
@@ -352,12 +367,14 @@ class DesertBot(irc.IRCClient):
 class DesertBotFactory(protocol.ReconnectingClientFactory):
     protocol = DesertBot
 
-    def __init__(self, config):
+    def __init__(self, bothandler, config):
         """
+        @type bothandler: BotHandler
         @type config: Config
         """
         self.config = config
         self.bot = DesertBot(self)
+        self.bot.bothandler = bothandler
         self.shouldReconnect = True
 
     def startedConnecting(self, connector):

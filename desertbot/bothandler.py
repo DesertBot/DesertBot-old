@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import os, sys
-from desertbot import DesertBotFactory
-from config import Config
+import sys
+
+import os
+from desertbot.bot import DesertBotFactory
+from desertbot.config import Config
 from twisted.internet import reactor
-from twisted.python import log
 
 
 class BotHandler(object):
@@ -23,10 +24,10 @@ class BotHandler(object):
         @type config: Config
         """
         if config["server"] in self.botfactories:
-            #already on this server for some reason
+            # already on this server for some reason
             return False
-        else: 
-            botfactory = DesertBotFactory(config)
+        else:
+            botfactory = DesertBotFactory(self, config)
             reactor.connectTCP(config["server"], config["port"], botfactory)
             self.botfactories[config["server"]] = botfactory
             return True
@@ -37,14 +38,14 @@ class BotHandler(object):
         else:
             self.quitMessage = quitMessage
         if server not in self.botfactories:
-            #Not on this server at all!
+            # Not on this server at all!
             return False
         else:
             try:
                 self.botfactories[server].bot.quit(quitMessage)
-                #TODO Unload the modules aswell, incase we have onUnload stuff.
+                self._unloadModules(self.botfactories[server])
             except:
-                #Bot is probably stuck mid-reconnection
+                # Bot is probably stuck mid-reconnection
                 self.botfactories[server].stopTrying()
             self.unregisterFactory(server)
             return True
@@ -54,16 +55,22 @@ class BotHandler(object):
             del self.botfactories[server]
 
             if len(self.botfactories) == 0:
-                #no more open connections
+                # no more open connections
                 reactor.callLater(2.0, reactor.stop)
 
     def restart(self, quitMessage=u'Restarting...'):
         for server, botfactory in self.botfactories.iteritems():
             botfactory.bot.quit(quitMessage)
-            #TODO Once again, unload modules, or at least do module.onUnload()
-        reactor.callLater(2.0, self.replaceInstance)
+            self._unloadModules(botfactory)
+        reactor.callLater(2.0, self._replaceInstance)
 
-    def replaceInstance(self):
+    def _replaceInstance(self):
         reactor.stop()
         python = sys.executable
         os.execl(python, python, *sys.argv)
+
+    def _unloadModules(self, botfactory):
+        for module in botfactory.bot.moduleHandler.loadedModules.values():
+            module.onModuleUnloaded()
+        for post in botfactory.bot.moduleHandler.loadedPostProcesses.values():
+            post.onModuleUnloaded()
