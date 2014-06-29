@@ -59,7 +59,7 @@ class Module(object):
         pass
 
     def shouldTrigger(self, response):
-        if response.ResponseType in self.responseTypes:
+        if response.type in self.responseTypes:
             return True
 
     def onModuleLoaded(self):

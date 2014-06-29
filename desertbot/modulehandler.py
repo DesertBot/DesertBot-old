@@ -39,7 +39,7 @@ class ModuleHandler(object):
                         d.addCallback(self.postProcess)
             except Exception as e:
                 errorMsg = "An error occured while handling message: \"{}\" ({})".format(
-                    message.messageString, e)
+                    message.text, e)
                 log.err(errorMsg)
 
     def postProcess(self, response):
@@ -83,14 +83,14 @@ class ModuleHandler(object):
 
         for response in responses:
             try:
-                if response.responseType == ResponseType.PRIVMSG:
+                if response.type == ResponseType.PRIVMSG:
                     self.bot.msg(response.target, response.response)  # response should be
                     # unicode here
-                elif response.responseType == ResponseType.ACTION:
+                elif response.type == ResponseType.ACTION:
                     self.bot.describe(response.target, response.response)
-                elif response.responseType == ResponseType.NOTICE:
+                elif response.type == ResponseType.NOTICE:
                     self.bot.notice(response.target, response.response)
-                elif response.responseType == ResponseType.RAW:
+                elif response.type == ResponseType.RAW:
                     self.bot.sendLine(response.response)
             except Exception as e:
                 errorMsg = "An error occurred while sending response: \"{}\" ({})".format(
@@ -135,14 +135,14 @@ class ModuleHandler(object):
         """
         @type message: IRCMessage
         """
-        if message.messageType in module.messageTypes:
+        if message.type in module.messageTypes:
             if module.moduleType == ModuleType.PASSIVE:
                 return True
             elif message.user.nickname == self.bot.nickname:
                 return False
             elif module.moduleType == ModuleType.ACTIVE:
                 for trigger in module.triggers:
-                    match = re.search(".*{}.*".format(trigger), message.messageString,
+                    match = re.search(".*{}.*".format(trigger), message.text,
                                       re.IGNORECASE)
                     if match:
                         return True
