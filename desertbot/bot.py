@@ -7,7 +7,6 @@ from twisted.internet import protocol
 from twisted.python import log
 
 from version import version_major, version_minor, version_patch
-from bothandler import BotHandler
 from channel import IRCChannel
 from config import Config
 from message import IRCMessage
