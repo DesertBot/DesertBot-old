@@ -83,15 +83,16 @@ class ModuleHandler(object):
 
         for response in responses:
             try:
+                # the response needs to be encoded from unicode to utf-8 before we send it out
+                responseText = response.response.encode('utf-8')
                 if response.type == ResponseType.PRIVMSG:
-                    self.bot.msg(response.target, response.response)  # response should be
-                    # unicode here
+                    self.bot.msg(response.target, responseText)
                 elif response.type == ResponseType.ACTION:
-                    self.bot.describe(response.target, response.response)
+                    self.bot.describe(response.target, responseText)
                 elif response.type == ResponseType.NOTICE:
-                    self.bot.notice(response.target, response.response)
+                    self.bot.notice(response.target, responseText)
                 elif response.type == ResponseType.RAW:
-                    self.bot.sendLine(response.response)
+                    self.bot.sendLine(responseText)
             except Exception as e:
                 errorMsg = "An error occurred while sending response: \"{}\" ({})".format(
                     response.response, e)
