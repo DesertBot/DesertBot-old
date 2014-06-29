@@ -30,6 +30,10 @@ class IRCMessage(object):
             self.replyTo = channel.name
             self.targetType = TargetType.CHANNEL
 
+        self.command = ''
+        self.parameters = ''
+        self.parameterList = []
+        
         if self.messageList[0].startswith(bot.commandChar):
             self.command = self.messageList[0][len(bot.commandChar):].lower()
             self.parameters = u' '.join(self.messageList[1:])
