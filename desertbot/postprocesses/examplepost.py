@@ -16,7 +16,7 @@ class ExamplePost(Module):
         """
         @type response: IRCResponse
         """
-        return IRCResponse(response.responseType,
+        return IRCResponse(response.type,
                            u"{} - Sent from DesertBot".format(response.response), response.user,
                            response.target)
 
