@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from zope.interface import implements
 from twisted.plugin import IPlugin
+
 from desertbot.moduleinterface import IModule, Module, ModuleType, AccessLevel
 from desertbot.message import IRCMessage
 

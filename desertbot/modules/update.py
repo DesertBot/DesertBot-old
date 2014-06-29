@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import subprocess
+import re
 
 from zope.interface import implements
 from twisted.plugin import IPlugin
+
 from desertbot.moduleinterface import IModule, Module, ModuleType, AccessLevel
 from desertbot.message import IRCMessage
 from desertbot.response import IRCResponse, ResponseType
-import re
 
 
 class Update(Module):

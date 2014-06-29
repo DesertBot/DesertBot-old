@@ -5,14 +5,15 @@ import datetime
 from twisted.words.protocols import irc
 from twisted.internet import protocol
 from twisted.python import log
-from desertbot import version_major, version_minor, version_patch
-from desertbot.bothandler import BotHandler
-from desertbot.channel import IRCChannel
-from desertbot.config import Config
-from desertbot.message import IRCMessage
-from desertbot.user import IRCUser
-from desertbot.serverinfo import ServerInfo, ModeType
-from desertbot.modulehandler import ModuleHandler
+
+from version import version_major, version_minor, version_patch
+from bothandler import BotHandler
+from channel import IRCChannel
+from config import Config
+from message import IRCMessage
+from user import IRCUser
+from serverinfo import ServerInfo, ModeType
+from modulehandler import ModuleHandler
 
 
 class DesertBot(irc.IRCClient):

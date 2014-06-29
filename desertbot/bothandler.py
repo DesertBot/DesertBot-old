@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys
-
 import os
-from desertbot.bot import DesertBotFactory
-from desertbot.config import Config
+
 from twisted.internet import reactor
+
+from bot import DesertBotFactory
+from config import Config
 
 
 class BotHandler(object):

@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 import argparse
 import sys
-
 import os
-from desertbot.bothandler import BotHandler
+
 from twisted.python import log
+
+from desertbot.bothandler import BotHandler
 
 
 parser = argparse.ArgumentParser(description="An IRC bot written in Python.")
