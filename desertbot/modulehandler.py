@@ -51,7 +51,7 @@ class ModuleHandler(object):
         for post in sorted(self.loadedPostProcesses.values(),
                            key=operator.attrgetter("modulePriority")):
             try:
-                if post.shouldExecute(newResponse):
+                if post.shouldTrigger(newResponse):
                     processed = True
                     if not post.runInThread:
                         newResponse = post.onTrigger(newResponse)
