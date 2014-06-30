@@ -30,13 +30,13 @@ class ModuleLoader(Module):
 
         returns = {}
         for moduleName in message.parameterList:
-            if message.command.lower() == u"load" or message.command.lower() == u"reload":
+            if message.command == u"load" or message.command == u"reload":
                 isModule = self.bot.moduleHandler.loadModule(moduleName)
                 if not isModule[0]:
                     returns[moduleName] = self.bot.moduleHandler.loadPostProcess(moduleName)
                 else:
                     returns[moduleName] = isModule
-            if message.command.lower() == u"unload":
+            if message.command == u"unload":
                 if moduleName.lower() in self.bot.moduleHandler.loadedModules:
                     returns[moduleName] = self.bot.moduleHandler.unloadModule(moduleName)
                 elif moduleName.lower() in self.bot.moduleHandler.loadedPostProcesses:
