@@ -156,7 +156,7 @@ class ModuleHandler(object):
                         return True
                 return False
             elif module.moduleType == ModuleType.COMMAND:
-                if message.command in module.triggers and self._allowedToUse(module, message.user):
+                if message.command in module.triggers:
                     return True
                 else:
                     return False
