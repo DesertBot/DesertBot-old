@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from zope.interface import implements
 from twisted.plugin import IPlugin
 from twisted.python import log
@@ -46,13 +48,21 @@ class ConnectionHandling(Module):
                                        u"Could not connect to \"{}\" ({})".format(server, e),
                                        message.user, message.replyTo)
         if message.command == u"quit":
-            pass
+            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
+                self.bot.factory.shouldReconnect = False
+                self.bot.bothandler.stopBotFactory(self.bot.factory.config["server"], None)
         if message.command == u"quitfrom":
-            pass
+            if len(message.parameterList) == 0:
+                return IRCResponse(ResponseType.PRIVMSG, u"Quit from where?", message.user,
+                                   message.ReplyTo)
+            for server in message.parameterList:
+                pass
         if message.command == u"restart":
-            pass
+            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
+                self.bot.bothandler.restart()
         if message.command == u"shutdown":
-            pass
+            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
+                self.bot.bothandler.shutdown
 
 
 connectionhandling = ConnectionHandling()
