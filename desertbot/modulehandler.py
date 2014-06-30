@@ -165,7 +165,7 @@ class ModuleHandler(object):
         if module.accessLevel == AccessLevel.ANYONE:
             return True
             
-        is user is None:
+        if message.user is None:
             return True  # message is probably server stuff
             
         if module.accessLevel == AccessLevel.ADMINS:
