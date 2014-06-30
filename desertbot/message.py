@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 
-from user import IRCUser
-from channel import IRCChannel
+from desertbot.user import IRCUser
+from desertbot.channel import IRCChannel
 
 
 class IRCMessage(object):

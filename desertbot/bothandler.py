@@ -4,8 +4,8 @@ import os
 
 from twisted.internet import reactor
 
-from bot import DesertBotFactory
-from config import Config
+from desertbot.bot import DesertBotFactory
+from desertbot.config import Config
 
 
 class BotHandler(object):

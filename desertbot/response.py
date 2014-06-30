@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 
-from user import IRCUser
+from desertbot.user import IRCUser
 
 
 class ResponseType(Enum):

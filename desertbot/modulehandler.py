@@ -6,12 +6,12 @@ from twisted.plugin import getPlugins
 from twisted.python import log
 from twisted.internet import threads
 
-from moduleinterface import IModule, ModuleType, AccessLevel
-from postprocessinterface import IPost
-from response import IRCResponse, ResponseType
-from message import IRCMessage
-from user import IRCUser
-import modules, postprocesses
+from desertbot.moduleinterface import IModule, ModuleType, AccessLevel
+from desertbot.postprocessinterface import IPost
+from desertbot.response import IRCResponse, ResponseType
+from desertbot.message import IRCMessage
+from desertbot.user import IRCUser
+from desertbot import modules, postprocesses
 
 
 class ModuleHandler(object):
