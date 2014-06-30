@@ -56,7 +56,20 @@ class ConnectionHandling(Module):
                 return IRCResponse(ResponseType.PRIVMSG, u"Quit from where?", message.user,
                                    message.replyTo)
             for server in message.parameterList:
-                pass
+                if server == self.bot.factory.config["server"]:
+                    return IRCResponse(ResponseType.PRIVMSG, u"Can't quit from here with this!",
+                                       message.user, message.replyTo)
+                else:
+                    quitMessage = u"Killed from \"{}\"".format(self.bot.factory.config["server"])
+                    result = self.bot.bothandler.stopBotFactory(server, quitMessage)
+                    if result:
+                        return IRCResponse(ResponseType.PRIVMSG, 
+                                           u"Successfully quit from \"{}\".".format(server),
+                                           message.user, message.replyTo)
+                    else:
+                        return IRCResponse(ResponseType.PRIVMSG, 
+                                           u"I am not on \"{}\"!".format(server),
+                                           message.user, message.replyTo)
         if message.command == u"restart":
             if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
                 self.bot.bothandler.restart()
