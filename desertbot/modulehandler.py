@@ -30,12 +30,7 @@ class ModuleHandler(object):
         for module in sorted(self.loadedModules.values(),
                              key=operator.attrgetter("modulePriority")):
             try:
-                if not self._allowedToUse(module, message.user):
-                    response = IRCResponse(ResponseType.PRIVMSG,
-                                           u"Only my admins can use \"{}\"!".format(message.command),
-                                           message.user, message.replyTo)
-                    self.postProcess(response)
-                elif self._shouldTrigger(module, message):
+                if self._shouldTrigger(module, message):
                     if not module.runInThread:
                         response = module.onTrigger(message)
                         self.postProcess(response)
@@ -156,24 +151,32 @@ class ModuleHandler(object):
                         return True
                 return False
             elif module.moduleType == ModuleType.COMMAND:
-                if message.command in module.triggers:
+                if message.command in module.triggers and self._allowedToUse(module, message):
                     return True
                 else:
                     return False
             elif module.moduleType == ModuleType.UTILITY:
                 return module.shouldTrigger(message)
 
-    def _allowedToUse(self, module, user):
+    def _allowedToUse(self, module, message):
         """
-        @type user: IRCUser
+        @type message: IRCMessage
         """
         if module.accessLevel == AccessLevel.ANYONE:
             return True
             
+        is user is None:
+            return True  # message is probably server stuff
+            
         if module.accessLevel == AccessLevel.ADMINS:
             for adminRegex in self.bot.admins:
-                if re.match(adminRegex, user.getUserString()):
+                if re.match(adminRegex, message.user.getUserString()):
                     return True
+                    
+            response = IRCResponse(ResponseType.PRIVMSG,
+                                   u"Only my admins can use \"{}\"!".format(message.command),
+                                   message.user, message.replyTo)
+            self.postProcess(response)
             return False
 
     def _load(self, name, interfaceName):
