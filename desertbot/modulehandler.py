@@ -30,7 +30,12 @@ class ModuleHandler(object):
         for module in sorted(self.loadedModules.values(),
                              key=operator.attrgetter("modulePriority")):
             try:
-                if self._shouldTrigger(module, message):
+                if not self._allowedToUse(module, message.user):
+                    response = IRCResponse(ResponseType.PRIVMSG,
+                                           u"Only my admins can use \"{}\"!".format(message.command),
+                                           message.user, message.replyTo)
+                    self.postProcess(response)
+                elif self._shouldTrigger(module, message):
                     if not module.runInThread:
                         response = module.onTrigger(message)
                         self.postProcess(response)
