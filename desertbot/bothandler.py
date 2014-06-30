@@ -43,6 +43,7 @@ class BotHandler(object):
             return False
         else:
             try:
+                self.botfactories[server].shouldReconnect = False
                 self.botfactories[server].bot.quit(quitMessage)
                 self._unloadModules(self.botfactories[server])
             except:
@@ -61,9 +62,18 @@ class BotHandler(object):
 
     def restart(self, quitMessage=u'Restarting...'):
         for server, botfactory in self.botfactories.iteritems():
+            botfactory.shouldReconnect = False
             botfactory.bot.quit(quitMessage)
             self._unloadModules(botfactory)
         reactor.callLater(2.0, self._replaceInstance)
+        
+    def shutdown(self, quitMessage=u"Shutting down..."):
+        for server, botfactory in self.botfactories.iteritems():
+            botfactory.shouldReconnect = False
+            botfactory.bot.quit(quitMessage)
+            self._unloadModules(botfactory)
+        self.botfactories = {}
+        reactor.callLater(4.0, reactor.stop)
 
     def _replaceInstance(self):
         reactor.stop()
