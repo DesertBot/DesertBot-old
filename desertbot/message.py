@@ -38,7 +38,7 @@ class IRCMessage(object):
             self.command = self.messageList[0][len(bot.commandChar):].lower()
             self.parameters = u' '.join(self.messageList[1:])
         elif self.messageList[0].startswith(bot.nickname) and len(self.messageList) > 1:
-            self.command = self.messageList[1]
+            self.command = self.messageList[1].lower()
             self.parameters = u' '.join(self.messageList[2:])
 
         if self.parameters.strip():
