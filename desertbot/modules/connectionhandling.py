@@ -28,7 +28,7 @@ class ConnectionHandling(Module):
         if message.command == u"connect":
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Connect where?", message.user,
-                                   message.ReplyTo)
+                                   message.replyTo)
             for server in message.parameterList:
                 try:
                     config = Config("{}.yaml".format(server))
@@ -43,7 +43,7 @@ class ConnectionHandling(Module):
                                            u"Couldn't connect to \"{}\".".format(server),
                                            message.user, message.replyTo)
                 except Exception as e:
-                    log.err("Failed to connect to \"{}\" ({})".format(server, e)
+                    log.err("Failed to connect to \"{}\" ({})".format(server, e))
                     return IRCResponse(ResponseType.PRIVMSG, 
                                        u"Could not connect to \"{}\" ({})".format(server, e),
                                        message.user, message.replyTo)
@@ -54,7 +54,7 @@ class ConnectionHandling(Module):
         if message.command == u"quitfrom":
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Quit from where?", message.user,
-                                   message.ReplyTo)
+                                   message.replyTo)
             for server in message.parameterList:
                 pass
         if message.command == u"restart":
@@ -62,7 +62,7 @@ class ConnectionHandling(Module):
                 self.bot.bothandler.restart()
         if message.command == u"shutdown":
             if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
-                self.bot.bothandler.shutdown
+                self.bot.bothandler.shutdown()
 
 
 connectionhandling = ConnectionHandling()
