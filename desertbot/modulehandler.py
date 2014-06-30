@@ -167,12 +167,9 @@ class ModuleHandler(object):
         """
         @type user: IRCUser
         """
-        if user is None:
-            return False
-
         if module.accessLevel == AccessLevel.ANYONE:
             return True
-
+            
         if module.accessLevel == AccessLevel.ADMINS:
             for adminRegex in self.bot.admins:
                 if re.match(adminRegex, user.getUserString()):
