@@ -16,6 +16,7 @@ from modulehandler import ModuleHandler
 
 
 class DesertBot(irc.IRCClient):
+    startTime = datetime.datetime.min
     def __init__(self, factory):
         """
         @type factory: DesertBotFactory
@@ -29,6 +30,7 @@ class DesertBot(irc.IRCClient):
         self.moduleHandler = ModuleHandler(self)
         self.moduleHandler.loadAllModules()
         self.moduleHandler.loadPostProcesses()
+        self.startTime = datetime.datetime.utcnow()
 
     def hasSoul(self):
         return False
