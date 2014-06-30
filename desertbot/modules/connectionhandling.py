@@ -23,7 +23,7 @@ class ConnectionHandling(Module):
         """
         @type message: IRCMessage
         """
-        if message.command.lower() == u"connect":
+        if message.command == u"connect":
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Connect where?", message.user,
                                    message.ReplyTo)
@@ -45,13 +45,13 @@ class ConnectionHandling(Module):
                     return IRCResponse(ResponseType.PRIVMSG, 
                                        u"Could not connect to \"{}\" ({})".format(server, e),
                                        message.user, message.replyTo)
-        if message.command.lower() == u"quit":
+        if message.command == u"quit":
             pass
-        if message.command.lower() == u"quitfrom":
+        if message.command == u"quitfrom":
             pass
-        if message.command.lower() == u"restart":
+        if message.command == u"restart":
             pass
-        if message.command.lower() == u"shutdown":
+        if message.command == u"shutdown":
             pass
 
 
