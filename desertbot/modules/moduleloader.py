@@ -53,22 +53,29 @@ class ModuleLoader(Module):
             if not returnTuple[0]:
                 failures.append(u"\"{}, {}\"".format(moduleName, returnTuple[1]))
             else:
-                successes.append(moduleName)
+                successes.append(moduleName.lower())
 
         if len(failures) == 0:
             return IRCResponse(ResponseType.PRIVMSG,
-                               u"{} loaded successfully!".format(u", ".join(successes)),
+                               u"Module(s) \"{}\" {}loaded successfully!".format(u", "
+                                                                               u"".join(successes),
+                                                                    "un" if message.command ==
+                                                                            u"unload" else ""),
                                message.user, message.replyTo)
         elif len(successes) == 0:
             return IRCResponse(ResponseType.PRIVMSG,
-                               u"{} failed to load.".format(u", ".join(failures)), message.user,
+                               u"{}".format(u", ".join(failures)), message.user,
                                message.replyTo)
         else:
             return [IRCResponse(ResponseType.PRIVMSG,
-                                u"{} loaded successfully!".format(u", ".join(successes)),
+                                u"Module(s) \"{}\" {}loaded successfully!".format(u", "
+                                                                               u"".join(successes),
+                                                                    "un" if message.command ==
+                                                                            u"unload" else ""),
                                 message.user, message.replyTo),
                     IRCResponse(ResponseType.PRIVMSG,
-                                u"{} failed to load.".format(u", ".join(failures)), message.user,
+                                u"{}".format(u", ".join(failures)),
+                                message.user,
                                 message.replyTo)]
 
 
