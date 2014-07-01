@@ -25,8 +25,9 @@ class Update(Module):
         """
         subprocess.call(["git", "fetch"])
 
-        output = subprocess.check_output(["git", "whatchanged", "..origin/master"])
-        changes = re.findall("\n\n\s{4}(.+?)\n\n", output)
+        output = subprocess.check_output(["git", "log", "--no-merges", 
+                                         "--pretty=format:\"%s %b\"", "..origin/master"])
+        changes = output.splitlines()
 
         if len(changes) == 0:
             return IRCResponse(ResponseType.PRIVMSG, u"The bot is already up to date!",
@@ -35,7 +36,7 @@ class Update(Module):
         changes = list(reversed(changes))
         response = u"New commits: {}".format(u" | ".join(changes))
 
-        subprocess.call(["git", "pull"])
+        subprocess.call(["git", "merge"])
 
         return IRCResponse(ResponseType.PRIVMSG, response, message.user, message.replyTo)
 
