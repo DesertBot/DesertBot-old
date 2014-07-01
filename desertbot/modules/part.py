@@ -30,7 +30,7 @@ class Part(Module):
             
         elif message.command == u"partfrom":
             if len(message.parameterList) == 0:
-                return IRCResponse(ResponseType.Say,
+                return IRCResponse(ResponseType.PRIVMSG,
                                    u"You didn't give a channel for me to partfrom",
                                    message.user, message.replyTo)
                                    
