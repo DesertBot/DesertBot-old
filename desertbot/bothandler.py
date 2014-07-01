@@ -12,9 +12,12 @@ class BotHandler(object):
     def __init__(self, cmdArgs):
         self.configs = {}
         for configFileName in cmdArgs.servers:
-            config = Config("{}.yaml".format(configFileName))
+            if not configFileName.endswith(".yaml"):
+                config = Config("{}.yaml".format(configFileName))
+            else:
+                config = Config(configFileName)
             if config.loadConfig():
-                self.configs[configFileName] = config
+                self.configs[config.configFileName] = config
         self.botfactories = {}
         for configFileName, configObject in self.configs.iteritems():
             self.startBotFactory(configObject)
@@ -24,13 +27,13 @@ class BotHandler(object):
         """
         @type config: Config
         """
-        if config.configFileName[:-5] in self.botfactories:
+        if config.configFileName in self.botfactories:
             # already on this server for some reason
             return False
         else:
             botfactory = DesertBotFactory(self, config)
             reactor.connectTCP(config["server"], config["port"], botfactory)
-            self.botfactories[config.configFileName[:-5]] = botfactory
+            self.botfactories[config.configFileName] = botfactory
             return True
 
     def stopBotFactory(self, configFileName, quitMessage=None):
