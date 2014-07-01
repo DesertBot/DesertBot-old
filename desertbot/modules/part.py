@@ -24,7 +24,7 @@ class Part(Module):
         if message.command == u"part":
             partMessage = None
             if len(message.parameterList) > 0:
-                partMessage = message.parameters
+                partMessage = message.parameters.encode('utf-8')
                 
             self.bot.leave(message.replyTo, reason=partMessage)
             
@@ -37,7 +37,7 @@ class Part(Module):
             channel = message.parameterList[0]
             partMessage = None
             if len(message.parameterList) > 1:
-                partMessage = u" ".join(message.parameterList[1:])
+                partMessage = u" ".join(message.parameterList[1:]).encode('utf-8')
                 
             self.bot.leave(channel, reason=partMessage)
 
