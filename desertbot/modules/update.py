@@ -36,7 +36,7 @@ class Update(Module):
         changes = list(reversed(changes))
         response = u"New commits: {}".format(u" | ".join(changes))
 
-        subprocess.call(["git", "merge"])
+        subprocess.call(["git", "merge", "origin/master"])
 
         return IRCResponse(ResponseType.PRIVMSG, response, message.user, message.replyTo)
 
