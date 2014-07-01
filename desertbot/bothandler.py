@@ -38,16 +38,16 @@ class BotHandler(object):
 
     def stopBotFactory(self, configFileName, quitMessage=None):
         if quitMessage is None or not isinstance(quitMessage, unicode):
-            self.quitMessage = u"FINE. I'LL GO.".encode("utf-8")
+            quitMessage = u"FINE. I'LL GO.".encode("utf-8")
         else:
-            self.quitMessage = quitMessage.encode("utf-8")
+            quitMessage = quitMessage.encode("utf-8")
         if configFileName not in self.botfactories:
             # Not on this server at all!
             return False
         else:
             try:
                 self.botfactories[configFileName].shouldReconnect = False
-                self.botfactories[configFileName].bot.quit(self.quitMessage)
+                self.botfactories[configFileName].bot.quit(quitMessage)
                 self._unloadModules(self.botfactories[configFileName])
             except:
                 # Bot is probably stuck mid-reconnection
@@ -64,18 +64,18 @@ class BotHandler(object):
                 reactor.callLater(2.0, reactor.stop)
 
     def restart(self, quitMessage=u'Restarting...'):
-        self.quitMessage = quitMessage.encode("utf-8")
+        quitMessage = quitMessage.encode("utf-8")
         for server, botfactory in self.botfactories.iteritems():
             botfactory.shouldReconnect = False
-            botfactory.bot.quit(self.quitMessage)
+            botfactory.bot.quit(quitMessage)
             self._unloadModules(botfactory)
         reactor.callLater(2.0, self._replaceInstance)
         
     def shutdown(self, quitMessage=u"Shutting down..."):
-        self.quitMessage = quitMessage.encode("utf-8")
+        quitMessage = quitMessage.encode("utf-8")
         for server, botfactory in self.botfactories.iteritems():
             botfactory.shouldReconnect = False
-            botfactory.bot.quit(self.quitMessage)
+            botfactory.bot.quit(quitMessage)
             self._unloadModules(botfactory)
         self.botfactories = {}
         reactor.callLater(4.0, reactor.stop)
