@@ -25,8 +25,9 @@ class Part(Module):
             partMessage = None
             if len(message.parameterList) > 0:
                 partMessage = message.parameters.encode('utf-8')
-                
-            self.bot.leave(message.replyTo, reason=partMessage)
+            channel = message.replyTo.encode('utf-8')
+            
+            self.bot.leave(channel, reason=partMessage)
             
         elif message.command == u"partfrom":
             if len(message.parameterList) == 0:
@@ -34,7 +35,7 @@ class Part(Module):
                                    u"You didn't give a channel for me to partfrom",
                                    message.user, message.replyTo)
                                    
-            channel = message.parameterList[0]
+            channel = message.parameterList[0].encode('utf-8')
             partMessage = None
             if len(message.parameterList) > 1:
                 partMessage = u" ".join(message.parameterList[1:]).encode('utf-8')
