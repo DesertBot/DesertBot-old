@@ -18,8 +18,8 @@ class ConnectionHandling(Module):
     triggers = [u"connect", u"quit", u"quitfrom", u"restart", u"shutdown"]
     moduleType = ModuleType.COMMAND
     accessLevel = AccessLevel.ADMINS
-    helpText = u"connect <server> [server] / quit / quitfrom <server> / restart / shutdown - " \
-               u"handle bot connections"
+    helpText = u"connect <configfilename> / quit / quitfrom <configfilename> / restart / " \
+               u"shutdown - handle bot connections"
 
     def onTrigger(self, message):
         """
@@ -29,46 +29,46 @@ class ConnectionHandling(Module):
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Connect where?", message.user,
                                    message.replyTo)
-            for server in message.parameterList:
+            for configFileName in message.parameterList:
                 try:
-                    config = Config("{}.yaml".format(server))
+                    config = Config("{}.yaml".format(configFileName))
                     if config.loadConfig():
-                        self.bot.bothandler.configs[server] = config
+                        self.bot.bothandler.configs[configFileName] = config
                         self.bot.bothandler.startBotFactory(config)
                         return IRCResponse(ResponseType.PRIVMSG,
-                                           u"Connecting to \"{}\"...".format(server),
+                                           u"Connecting to \"{}\"...".format(configFileName),
                                            message.user, message.replyTo)
                     else:
                         return IRCResponse(ResponseType.PRIVMSG, 
-                                           u"Couldn't connect to \"{}\".".format(server),
+                                           u"Couldn't connect to \"{}\".".format(configFileName),
                                            message.user, message.replyTo)
                 except Exception as e:
-                    log.err("Failed to connect to \"{}\" ({})".format(server, e))
+                    log.err("Failed to connect to \"{}\" ({})".format(configFileName, e))
                     return IRCResponse(ResponseType.PRIVMSG, 
-                                       u"Could not connect to \"{}\" ({})".format(server, e),
+                                       u"Could not connect to \"{}\" ({})".format(configFileName, e),
                                        message.user, message.replyTo)
         if message.command == u"quit":
             if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
                 self.bot.factory.shouldReconnect = False
-                self.bot.bothandler.stopBotFactory(self.bot.factory.config["server"], None)
+                self.bot.bothandler.stopBotFactory(self.bot.factory.config.configFileName[:-5], None)
         if message.command == u"quitfrom":
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Quit from where?", message.user,
                                    message.replyTo)
-            for server in message.parameterList:
-                if server == self.bot.factory.config["server"]:
+            for configFileName in message.parameterList:
+                if configFileName == self.bot.factory.config.configFileName[:-5]:
                     return IRCResponse(ResponseType.PRIVMSG, u"Can't quit from here with this!",
                                        message.user, message.replyTo)
                 else:
                     quitMessage = u"Killed from \"{}\"".format(self.bot.factory.config["server"])
-                    result = self.bot.bothandler.stopBotFactory(server, quitMessage)
+                    result = self.bot.bothandler.stopBotFactory(configFileName, quitMessage)
                     if result:
                         return IRCResponse(ResponseType.PRIVMSG, 
-                                           u"Successfully quit from \"{}\".".format(server),
+                                           u"Successfully quit from \"{}\".".format(configFileName),
                                            message.user, message.replyTo)
                     else:
                         return IRCResponse(ResponseType.PRIVMSG, 
-                                           u"I am not on \"{}\"!".format(server),
+                                           u"I am not on \"{}\"!".format(configFileName),
                                            message.user, message.replyTo)
         if message.command == u"restart":
             if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
