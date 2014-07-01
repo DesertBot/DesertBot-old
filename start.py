@@ -10,8 +10,8 @@ from desertbot.bothandler import BotHandler
 
 
 parser = argparse.ArgumentParser(description="An IRC bot written in Python.")
-parser.add_argument("-s", "--servers", help="the IRC servers to connect to (required)", type=str,
-                    nargs="+", required=True)
+parser.add_argument("-s", "--servers", help="the config files to use for connections (required)", 
+                    type=str, nargs="+", required=True)
 parser.add_argument("-l", "--logfile",
                     help="the file the debug log will be written to (default desertbot.log)",
                     type=str, default="desertbot.log")
