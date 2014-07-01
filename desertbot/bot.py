@@ -208,18 +208,24 @@ class DesertBot(irc.IRCClient):
         channel.ranks[user.nickname] = statusModes
 
     def privmsg(self, user, channel, msg):
-        message = IRCMessage('PRIVMSG', self._userFromPrefix(user), self.getChannel(channel), msg,
-                             self)
+        messageUser = self._userFromPrefix(user)
+        if not messageUser:
+            messageUser = IRCUser(user)
+        message = IRCMessage('PRIVMSG', messageUser, self.getChannel(channel), msg, self)
         self.moduleHandler.handleMessage(message)
 
     def action(self, user, channel, msg):
-        message = IRCMessage('ACTION', self._userFromPrefix(user), self.getChannel(channel), msg,
-                             self)
+        messageUser = self._userFromPrefix(user)
+        if not messageUser:
+            messageUser = IRCUser(user)
+        message = IRCMessage('ACTION', messageUser, self.getChannel(channel), msg, self)
         self.moduleHandler.handleMessage(message)
 
     def noticed(self, user, channel, msg):
-        message = IRCMessage('NOTICE', self._userFromPrefix(user), self.getChannel(channel),
-                             msg.upper(), self)
+        messageUser = self._userFromPrefix(user)
+        if not messageUser:
+            messageUser = IRCUser(user)
+        message = IRCMessage('NOTICE', messageUser, self.getChannel(channel), msg.upper(), self)
         self.moduleHandler.handleMessage(message)
 
     def irc_JOIN(self, prefix, params):
