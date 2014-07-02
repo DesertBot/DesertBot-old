@@ -20,6 +20,11 @@ class Help(Module):
                                u"Loaded modules: {}".format(u", ".join(sorted(self.bot.moduleHandler.loadedModules))),
                                message.user, message.replyTo)
         else:
+            if message.parameterList[0].lower() in self.bot.moduleHandler.mappedTriggers:
+                return IRCResponse(ResponseType.PRIVMSG, 
+                                   self.bot.moduleHandler.mappedTriggers[message.parameterList[0].lower()].getHelp(message),
+                                   message.user, message.replyTo)
+                                   
             if message.parameterList[0].lower() in self.bot.moduleHandler.loadedModules:
                 return IRCResponse(ResponseType.PRIVMSG,
                                    self.bot.moduleHandler.loadedModules[message.parameterList[0].lower()].getHelp(message),
