@@ -23,6 +23,12 @@ class IPost(Interface):
         """
         This function will hook a bot reference to this module.
         """
+        
+    def getHelp(message):
+        """
+        This function returns the helpText for the module,
+        unless it has been overridden to do something else helpful.
+        """
 
     def onTrigger(response):
         """
@@ -54,6 +60,9 @@ class Module(object):
 
     def hookBot(self, bot):
         self.bot = bot
+        
+    def getHelp(self, message):
+        return self.helpText
 
     def onTrigger(self, response):
         pass
