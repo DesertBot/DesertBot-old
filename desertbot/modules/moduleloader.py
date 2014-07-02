@@ -14,11 +14,16 @@ class ModuleLoader(Module):
     name = u"moduleloader"
     triggers = [u"load", u"unload", u"reload"]
     moduleType = ModuleType.COMMAND
-    helpText = u"load/reload <command>, unload <command> - handles loading/unloading/reloading of " \
-               u"" \
-               u"commands. " \
-               u"Use 'all' with load/reload to reload all active commands"
     accessLevel = AccessLevel.ADMINS
+    
+    def getHelp(self, message):
+        helpDict = {
+            self.name: u"load/reload <module>, unload <module> - handles loading/unloading/reloading of modules",
+            u"load": u"load <module> [module]... - loads (or reloads) the specified module(s). Use 'all' to reload all active modules",
+            u"reload": u"reload <module> [module]... - reloads (or loads) the specified module(s). Use 'all' to reload all active modules",
+            u"unload": u"unload <module> [module]... - unloads the specified module(s)",
+        }
+        return helpDict[messahe.parameterList[0]]
 
     def onTrigger(self, message):
         """
