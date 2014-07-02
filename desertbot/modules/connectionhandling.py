@@ -18,8 +18,18 @@ class ConnectionHandling(Module):
     triggers = [u"connect", u"quit", u"quitfrom", u"restart", u"shutdown"]
     moduleType = ModuleType.COMMAND
     accessLevel = AccessLevel.ADMINS
-    helpText = u"connect <configfilename> / quit / quitfrom <configfilename> / restart / " \
-               u"shutdown - handle bot connections"
+               
+    def getHelp(self, message):
+        helpDict = {
+            self.name: u"connect <configfilename> / quit / quitfrom <configfilename> / restart / shutdown - handle bot connections",
+            u"connect": u"connect <configfilename> - connect to the server in the specified config file",
+            u"quit": u"quit - quits the bot instance connected to this server",
+            u"quitfrom": u"quitfrom <configfilename> - quits the bot instance connected to the server in the specified config file",
+            u"restart": u"restart - restarts every instance of the bot, with any code changes that may have happened since the bot started",
+            u"shutdown": u"shutdown - quit every instance of the bot on every server and end the process",
+        }
+        
+        return helpDict[message.parameterList[0]]
 
     def onTrigger(self, message):
         """
