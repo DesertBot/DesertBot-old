@@ -14,7 +14,7 @@ class Join(Module):
     name = u"join"
     triggers = [u"join"]
     moduleType = ModuleType.COMMAND
-    helpText = u"join <channel> [channel]..."
+    helpText = u"join <channel> [channel]... - makes the bot join the specified channel(s)"
 
     def onTrigger(self, message):
         """
