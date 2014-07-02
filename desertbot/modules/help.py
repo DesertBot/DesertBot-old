@@ -17,7 +17,7 @@ class Help(Module):
     def onTrigger(self, message):
         if len(message.parameterList) == 0:
             return IRCResponse(ResponseType.PRIVMSG, 
-                               u"Loaded modules: {}".format(u", ".join(self.bot.moduleHandler.loadedModules.keys())),
+                               u"Loaded modules: {}".format(u", ".join(sorted(self.bot.moduleHandler.loadedModules.keys()))),
                                message.user, message.replyTo)
         else:
             if message.parameterList[0].lower() in self.bot.moduleHandler.loadedModules.keys():
