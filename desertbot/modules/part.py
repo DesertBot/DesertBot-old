@@ -15,7 +15,13 @@ class Part(Module):
     triggers = [u"part", u"partfrom"]
     moduleType = ModuleType.COMMAND
     accessLevel = AccessLevel.ADMINS
-    helpText = u"part [message] / partfrom <channel> [message]"
+    
+    def getHelp(self, message):
+        helpDict = {
+            u"part": u"part [message] - leaves the current channel, with the (optional) specified message",
+            u"partfrom": u"partfrom <channel> [message] - leaves the specified channel, with the (optional) specified message",
+        }
+        return helpDict[message.parameterList[0]]
 
     def onTrigger(self, message):
         """
