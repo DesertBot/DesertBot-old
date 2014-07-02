@@ -37,6 +37,12 @@ class IModule(Interface):
         """
         This function will hook a bot reference to the module.
         """
+    
+    def getHelp(message):
+        """
+        This function returns the module's helpText, unless overridden to perform
+        more complex help-related tasks.
+        """
 
     def onTrigger(message):
         """
@@ -46,7 +52,7 @@ class IModule(Interface):
     def shouldTrigger(message):
         """
         This function determines if this module should trigger on a message.
-        It is only used for POSTPROCESS and UTILITY modules.
+        It is only used for UTILITY modules.
         """
 
     def onModuleLoaded():
@@ -72,6 +78,9 @@ class Module(object):
 
     def hookBot(self, bot):
         self.bot = bot
+        
+    def getHelp(self, message):
+        return self.helpText
 
     def onTrigger(self, message):
         pass
