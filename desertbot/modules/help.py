@@ -24,6 +24,11 @@ class Help(Module):
                 return IRCResponse(ResponseType.PRIVMSG,
                                    self.bot.moduleHandler.loadedModules[message.parameterList[0].lower()].getHelp(),
                                    message.user, message.replyTo)
+                                   
+            elif message.parameterList[0].lower() in self.bot.moduleHandler.loadedPostProcesses.keys():
+                return IRCResponse(ResponseType.PRIVMSG,
+                                   self.bot.moduleHandler.loadedPostProcesses[message.parameterList[0].lower()].getHelp(),
+                                   message.user, message.replyTo)
             else:
                 return IRCResponse(ResponseType.PRIVMSG,
                                    u"There is no module called \"{}\" currently loaded.".format(message.parameterList[0]),
