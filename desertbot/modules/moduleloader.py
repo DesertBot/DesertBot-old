@@ -23,7 +23,7 @@ class ModuleLoader(Module):
             u"reload": u"reload <module> [module]... - reloads (or loads) the specified module(s). Use 'all' to reload all active modules",
             u"unload": u"unload <module> [module]... - unloads the specified module(s)",
         }
-        return helpDict[messahe.parameterList[0]]
+        return helpDict[message.parameterList[0]]
 
     def onTrigger(self, message):
         """
