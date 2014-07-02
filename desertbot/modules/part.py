@@ -6,7 +6,7 @@ from twisted.python import log
 from desertbot.moduleinterface import IModule, Module, ModuleType, AccessLevel
 from desertbot.message import IRCMessage
 from desertbot.response import IRCResponse, ResponseType
-from desertbot.config import Config
+
 
 class Part(Module):
     implements(IPlugin, IModule)
