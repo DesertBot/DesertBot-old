@@ -17,15 +17,15 @@ class Help(Module):
     def onTrigger(self, message):
         if len(message.parameterList) == 0:
             return IRCResponse(ResponseType.PRIVMSG, 
-                               u"Loaded modules: {}".format(u", ".join(sorted(self.bot.moduleHandler.loadedModules.keys()))),
+                               u"Loaded modules: {}".format(u", ".join(sorted(self.bot.moduleHandler.loadedModules))),
                                message.user, message.replyTo)
         else:
-            if message.parameterList[0].lower() in self.bot.moduleHandler.loadedModules.keys():
+            if message.parameterList[0].lower() in self.bot.moduleHandler.loadedModules:
                 return IRCResponse(ResponseType.PRIVMSG,
                                    self.bot.moduleHandler.loadedModules[message.parameterList[0].lower()].getHelp(message),
                                    message.user, message.replyTo)
                                    
-            elif message.parameterList[0].lower() in self.bot.moduleHandler.loadedPostProcesses.keys():
+            elif message.parameterList[0].lower() in self.bot.moduleHandler.loadedPostProcesses:
                 return IRCResponse(ResponseType.PRIVMSG,
                                    self.bot.moduleHandler.loadedPostProcesses[message.parameterList[0].lower()].getHelp(message),
                                    message.user, message.replyTo)
