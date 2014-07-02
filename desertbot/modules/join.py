@@ -6,7 +6,7 @@ from twisted.python import log
 from desertbot.moduleinterface import IModule, Module, ModuleType, AccessLevel
 from desertbot.message import IRCMessage
 from desertbot.response import IRCResponse, ResponseType
-from desertbot.config import Config
+
 
 class Join(Module):
     implements(IPlugin, IModule)
@@ -14,7 +14,6 @@ class Join(Module):
     name = u"join"
     triggers = [u"join"]
     moduleType = ModuleType.COMMAND
-    accessLevel = AccessLevel.ANYONE
     helpText = u"join <channel> [channel]..."
 
     def onTrigger(self, message):
