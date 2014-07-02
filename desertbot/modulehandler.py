@@ -200,7 +200,7 @@ class ModuleHandler(object):
                     try:
                         self.loadedModules[module.name].hookBot(self.bot)
                         self.loadedModules[module.name].onModuleLoaded()
-                        if module.moduleType == ModuleType.COMMAND:
+                        if module.moduleType is ModuleType.COMMAND:
                             for trigger in module.triggers:
                                 self.mappedTriggers[trigger] = module
                     except Exception as e:
@@ -259,7 +259,7 @@ class ModuleHandler(object):
         if interfaceName == u"IModule":
             if name.lower() in self.loadedModules:
                 try:
-                    if module.moduleType = ModuleType.COMMAND:
+                    if module.moduleType is ModuleType.COMMAND:
                         for trigger in self.loadedModules[name.lower()].triggers:
                             del self.mappedTriggers[trigger]
                     self.loadedModules[name.lower()].onModuleUnloaded()
