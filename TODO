@@ -9,13 +9,14 @@ are working on.
   [x] Decide on language and framework (Discussed in issue #3) 
   [x] Persistent data storage (Discussed in issue #2) 
   [x] Library management (Discussed in issue #4) 
-  [-] Discuss and document the API (Discussed in issue #8)
+  [x] Discuss the API (Discussed in issue #8)
+  [?] Document the API
 [-] Core implementation
-  [?] Multiserver
-     [-] Server management
-     [?] Cross-server messaging (To be a module)
+  [-] Multiserver
+     [X] Server management (connectionhandling module)
+     [-] Cross-server messaging (To be a module)
   [x] Initial class setup
-  [-] Config loading
+  [X] Config loading
   [x] Command parsing
   [x] Numeric parsing
   [x] User/channel management
