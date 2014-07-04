@@ -49,6 +49,7 @@ class Admin(Module):
                 log.msg("Loaded {} admins from admins file for config \"{}\".".format(len(admins), configFileName))
             else:
                 log.msg("Admins file for config \"{}\" is empty.".format(configFileName))
+                self.bot.admins = []
         else:
             log.err("Admins file not found for config \"{}\"!".format(configFileName))
             self.bot.admins = []
