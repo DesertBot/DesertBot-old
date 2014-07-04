@@ -56,10 +56,10 @@ class Admin(Module):
 
     def onModuleUnloaded(self):
         configFileName = self.bot.factory.config.configFileName[:-5]
-        if os.path.exists(os.path.join("data", configFileName, "admins.json")):
-            with open(os.path.join("data", configFileName, "admins.json"), "w") as jsonFile:
-                json.dump(self.bot.admins, jsonFile)
-        else:
-            # Make dir and create empty json file
+        if not os.path.exists(os.path.join("data", configFileName, "admins.json")):
+            os.makedirs(os.path.join("data", configFileName))
+        with open(os.path.join("data", configFileName, "admins.json"), "w") as jsonFile:
+            json.dump(self.bot.admins, jsonFile)
+
         
 admin = Admin()
