@@ -34,9 +34,40 @@ class Admin(Module):
         """
         @type message: IRCMessage
         """
-        # TODO Command parsing
-        # TODO Make sure we always work against self.bot.admins as the admin-list
-        pass
+        if message.command == u"admin":
+            if len(message.parameterList) == 0:
+                return IRCResponse(ResponseType.PRIVMSG,
+                                   u"Admin who?",
+                                   message.user, message.replyTo)
+            else:
+                if message.parameterList[0] not in self.bot.admins:
+                    self.bot.admins.append(message.parameterList[0])
+                    return IRCResponse(ResponseType.PRIVMSG, 
+                                       u"Added \"{}\" to the admin list!".format(message.parameterList[0]), 
+                                       message.user, message.replyTo)
+                else:
+                    return IRCResponse(ResponseType.PRIVMSG,
+                                       u"That user is already an admin!",
+                                       message.user, message.replyTo)
+        elif message.command == u"unadmin":
+            if len(message.parameterList) == 0:
+                return IRCResponse(ResponseType.PRIVMSG,
+                                   u"Un-admin who?",
+                                   message.user, message.replyTo)
+            else:
+                if message.parameterList[0] in self.bot.admins:
+                    self.bot.admins.remove(message.parameterList[0])
+                    return IRCResponse(ResponseType.PRIVMSG,
+                                       u"Removed \"{}\" from the admin list.".format(message.parameterList[0]),
+                                       message.user, message.replyTo)
+                else:
+                    return IRCResponse(ResponseType.PRIVMSG,
+                                       u"That user is not on the admin list!",
+                                       message.user, message.replyTo)
+        elif message.command == u"admins":
+            return IRCResponse(ResponseType.PRIVMSG,
+                               u"Current admins: {}".format(u", ".join(self.bot.admins)),
+                               message.user, message.replyTo)
         
     def onModuleLoaded(self):
         configFileName = self.bot.factory.config.configFileName[:-5]
