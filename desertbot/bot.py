@@ -5,7 +5,6 @@ import datetime
 from twisted.words.protocols import irc
 from twisted.internet import protocol
 from twisted.python import log
-
 from desertbot import version_major, version_minor, version_patch
 from desertbot.channel import IRCChannel
 from desertbot.config import Config
@@ -17,6 +16,7 @@ from desertbot.modulehandler import ModuleHandler
 
 class DesertBot(irc.IRCClient):
     startTime = datetime.datetime.min
+
     def __init__(self, factory):
         """
         @type factory: DesertBotFactory

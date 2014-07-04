@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
+
 import os
-
 from twisted.internet import reactor
-
 from desertbot.bot import DesertBotFactory
 from desertbot.config import Config
 
@@ -70,7 +69,7 @@ class BotHandler(object):
             botfactory.bot.quit(quitMessage)
             self._unloadModules(botfactory)
         reactor.callLater(2.0, self._replaceInstance)
-        
+
     def shutdown(self, quitMessage=u"Shutting down..."):
         quitMessage = quitMessage.encode("utf-8")
         for server, botfactory in self.botfactories.iteritems():

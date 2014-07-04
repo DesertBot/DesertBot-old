@@ -4,7 +4,6 @@ import datetime
 from zope.interface import implements
 from twisted.plugin import IPlugin
 from twisted.python import log
-
 from desertbot.moduleinterface import IModule, Module, ModuleType, AccessLevel
 from desertbot.message import IRCMessage
 from desertbot.response import IRCResponse, ResponseType
@@ -18,17 +17,22 @@ class ConnectionHandling(Module):
     triggers = [u"connect", u"quit", u"quitfrom", u"restart", u"shutdown"]
     moduleType = ModuleType.COMMAND
     accessLevel = AccessLevel.ADMINS
-               
+
     def getHelp(self, message):
         helpDict = {
-            self.name: u"connect <configfilename> / quit / quitfrom <configfilename> / restart / shutdown - handle bot connections",
-            u"connect": u"connect <configfilename> - connect to the server in the specified config file",
+            self.name: u"connect <configfilename> / quit / quitfrom <configfilename> / restart / "
+                       u"shutdown - handle bot connections",
+            u"connect": u"connect <configfilename> - connect to the server in the specified "
+                        u"config file",
             u"quit": u"quit - quits the bot instance connected to this server",
-            u"quitfrom": u"quitfrom <configfilename> - quits the bot instance connected to the server in the specified config file",
-            u"restart": u"restart - restarts every instance of the bot, with any code changes that may have happened since the bot started",
-            u"shutdown": u"shutdown - quit every instance of the bot on every server and end the process",
+            u"quitfrom": u"quitfrom <configfilename> - quits the bot instance connected to the "
+                         u"server in the specified config file",
+            u"restart": u"restart - restarts every instance of the bot, with any code changes "
+                        u"that may have happened since the bot started",
+            u"shutdown": u"shutdown - quit every instance of the bot on every server and end the "
+                         u"process",
         }
-        
+
         return helpDict[message.parameterList[0]]
 
     def onTrigger(self, message):
@@ -49,19 +53,22 @@ class ConnectionHandling(Module):
                         self.bot.bothandler.configs[config.configFileName] = config
                         self.bot.bothandler.startBotFactory(config)
                         return IRCResponse(ResponseType.PRIVMSG,
-                                           u"Using \"{}\" for new connection...".format(config.configFileName),
+                                           u"Using \"{}\" for new connection...".format(
+                                               config.configFileName),
                                            message.user, message.replyTo)
                     else:
-                        return IRCResponse(ResponseType.PRIVMSG, 
-                                           u"\"{}\" was not correct. Aborting.".format(config.configFileName),
+                        return IRCResponse(ResponseType.PRIVMSG,
+                                           u"\"{}\" was not correct. Aborting.".format(
+                                               config.configFileName),
                                            message.user, message.replyTo)
                 except Exception as e:
                     log.err("Connecting with \"{}\" failed. ({})".format(config.configFileName, e))
-                    return IRCResponse(ResponseType.PRIVMSG, 
-                                       u"Connecting with \"{}\" failed. ({})".format(config.configFileName, e),
+                    return IRCResponse(ResponseType.PRIVMSG,
+                                       u"Connecting with \"{}\" failed. ({})".format(
+                                           config.configFileName, e),
                                        message.user, message.replyTo)
         if message.command == u"quit":
-            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
+            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds=10):
                 self.bot.factory.shouldReconnect = False
                 self.bot.bothandler.stopBotFactory(self.bot.factory.config.configFileName, None)
         if message.command == u"quitfrom":
@@ -80,18 +87,18 @@ class ConnectionHandling(Module):
                     quitMessage = u"Killed from \"{}\"".format(self.bot.factory.config["server"])
                     result = self.bot.bothandler.stopBotFactory(quitFromConfig, quitMessage)
                     if result:
-                        return IRCResponse(ResponseType.PRIVMSG, 
+                        return IRCResponse(ResponseType.PRIVMSG,
                                            u"Successfully quit from \"{}\".".format(configFileName),
                                            message.user, message.replyTo)
                     else:
-                        return IRCResponse(ResponseType.PRIVMSG, 
+                        return IRCResponse(ResponseType.PRIVMSG,
                                            u"I am not on \"{}\"!".format(configFileName),
                                            message.user, message.replyTo)
         if message.command == u"restart":
-            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
+            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds=10):
                 self.bot.bothandler.restart()
         if message.command == u"shutdown":
-            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds = 10):
+            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds=10):
                 self.bot.bothandler.shutdown()
 
 

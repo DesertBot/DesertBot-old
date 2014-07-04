@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 import operator
-import re
 
+import re
 from twisted.plugin import getPlugins
 from twisted.python import log
 from twisted.internet import threads
-
 from desertbot.moduleinterface import IModule, ModuleType, AccessLevel
 from desertbot.postprocessinterface import IPost
 from desertbot.response import IRCResponse, ResponseType
 from desertbot.message import IRCMessage
-from desertbot.user import IRCUser
 from desertbot import modules, postprocesses
 
 
@@ -165,15 +163,15 @@ class ModuleHandler(object):
         """
         if module.accessLevel == AccessLevel.ANYONE:
             return True
-            
+
         if message.user is None:
             return True  # message is probably server stuff
-            
+
         if module.accessLevel == AccessLevel.ADMINS:
             for adminRegex in self.bot.admins:
                 if re.match(adminRegex, message.user.getUserString()):
                     return True
-                    
+
             response = IRCResponse(ResponseType.PRIVMSG,
                                    u"Only my admins can use \"{}\"!".format(message.command),
                                    message.user, message.replyTo)

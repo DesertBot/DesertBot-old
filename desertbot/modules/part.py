@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from zope.interface import implements
 from twisted.plugin import IPlugin
-from twisted.python import log
 
 from desertbot.moduleinterface import IModule, Module, ModuleType, AccessLevel
 from desertbot.message import IRCMessage
@@ -15,11 +14,13 @@ class Part(Module):
     triggers = [u"part", u"partfrom"]
     moduleType = ModuleType.COMMAND
     accessLevel = AccessLevel.ADMINS
-    
+
     def getHelp(self, message):
         helpDict = {
-            u"part": u"part [message] - leaves the current channel, with the (optional) specified message",
-            u"partfrom": u"partfrom <channel> [message] - leaves the specified channel, with the (optional) specified message",
+            u"part": u"part [message] - leaves the current channel, with the (optional) specified "
+                     u"message",
+            u"partfrom": u"partfrom <channel> [message] - leaves the specified channel, with the "
+                         u"(optional) specified message",
         }
         return helpDict[message.parameterList[0]]
 
@@ -32,21 +33,22 @@ class Part(Module):
             if len(message.parameterList) > 0:
                 partMessage = message.parameters.encode('utf-8')
             channel = message.replyTo.encode('utf-8')
-            
+
             self.bot.leave(channel, reason=partMessage)
-            
+
         elif message.command == u"partfrom":
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG,
                                    u"You didn't give a channel for me to partfrom",
                                    message.user, message.replyTo)
-                                   
+
             channel = message.parameterList[0].encode('utf-8')
             partMessage = None
             if len(message.parameterList) > 1:
                 partMessage = u" ".join(message.parameterList[1:]).encode('utf-8')
-                
+
             self.bot.leave(channel, reason=partMessage)
+
 
 part = Part()
         

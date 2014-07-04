@@ -15,12 +15,15 @@ class ModuleLoader(Module):
     triggers = [u"load", u"unload", u"reload"]
     moduleType = ModuleType.COMMAND
     accessLevel = AccessLevel.ADMINS
-    
+
     def getHelp(self, message):
         helpDict = {
-            self.name: u"load/reload <module>, unload <module> - handles loading/unloading/reloading of modules",
-            u"load": u"load <module> [module]... - loads (or reloads) the specified module(s). Use 'all' to reload all active modules",
-            u"reload": u"reload <module> [module]... - reloads (or loads) the specified module(s). Use 'all' to reload all active modules",
+            self.name: u"load/reload <module>, unload <module> - handles "
+                       u"loading/unloading/reloading of modules",
+            u"load": u"load <module> [module]... - loads (or reloads) the specified module(s). "
+                     u"Use 'all' to reload all active modules",
+            u"reload": u"reload <module> [module]... - reloads (or loads) the specified module("
+                       u"s). Use 'all' to reload all active modules",
             u"unload": u"unload <module> [module]... - unloads the specified module(s)",
         }
         return helpDict[message.parameterList[0]]
@@ -63,9 +66,11 @@ class ModuleLoader(Module):
         if len(failures) == 0:
             return IRCResponse(ResponseType.PRIVMSG,
                                u"Module(s) \"{}\" {}loaded successfully!".format(u", "
-                                                                               u"".join(successes),
-                                                                    "un" if message.command ==
-                                                                            u"unload" else ""),
+                                                                                 u"".join(
+                                   successes),
+                                                                                 "un" if
+                                                                                 message.command ==
+                                                                                         u"unload" else ""),
                                message.user, message.replyTo)
         elif len(successes) == 0:
             return IRCResponse(ResponseType.PRIVMSG,
@@ -74,9 +79,11 @@ class ModuleLoader(Module):
         else:
             return [IRCResponse(ResponseType.PRIVMSG,
                                 u"Module(s) \"{}\" {}loaded successfully!".format(u", "
-                                                                               u"".join(successes),
-                                                                    "un" if message.command ==
-                                                                            u"unload" else ""),
+                                                                                  u"".join(
+                                    successes),
+                                                                                  "un" if
+                                                                                  message.command ==
+                                                                                          u"unload" else ""),
                                 message.user, message.replyTo),
                     IRCResponse(ResponseType.PRIVMSG,
                                 u"{}".format(u", ".join(failures)),

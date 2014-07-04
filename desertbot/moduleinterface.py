@@ -37,7 +37,7 @@ class IModule(Interface):
         """
         This function will hook a bot reference to the module.
         """
-    
+
     def getHelp(message):
         """
         This function returns the module's helpText, unless overridden to perform
@@ -78,7 +78,7 @@ class Module(object):
 
     def hookBot(self, bot):
         self.bot = bot
-        
+
     def getHelp(self, message):
         return self.helpText
 
