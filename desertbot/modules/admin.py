@@ -24,7 +24,6 @@ class Admin(Module):
         @type message: IRCMessage
         """
         helpDict = {
-            self.name: u"admin <user>, unadmin <user>, admins -- adds/removes from admins and lists current ones.",
             u"admin": u"admin <user> -- adds the specified userstring to the admins list.",
             u"unadmin": u"unadmin <user> -- removes the specified userstring from the admins list.",
             u"admins": u"admins -- gives you a list of current admins",
