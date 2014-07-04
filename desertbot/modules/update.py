@@ -15,7 +15,7 @@ class Update(Module):
     triggers = [u"update"]
     moduleType = ModuleType.COMMAND
     accessLevel = AccessLevel.ADMINS
-    helpText = u"update - updates the bot with the latest code from github"
+    helpText = u"update - updates the bot with the latest code from GitHub."
 
     def onTrigger(self, message):
         """

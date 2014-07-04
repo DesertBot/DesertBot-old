@@ -13,7 +13,7 @@ class Do(Module):
     name = u"do"
     triggers = [u"do"]
     moduleType = ModuleType.COMMAND
-    helpText = u"do <text> - makes the bot do the specified thing"
+    helpText = u"do <text> - makes the bot do the specified thing."
 
     def onTrigger(self, message):
         """

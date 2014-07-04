@@ -18,9 +18,9 @@ class Part(Module):
     def getHelp(self, message):
         helpDict = {
             u"part": u"part [message] - leaves the current channel, with the (optional) specified "
-                     u"message",
+                     u"message.",
             u"partfrom": u"partfrom <channel> [message] - leaves the specified channel, with the "
-                         u"(optional) specified message",
+                         u"(optional) specified message.",
         }
         return helpDict[message.parameterList[0]]
 

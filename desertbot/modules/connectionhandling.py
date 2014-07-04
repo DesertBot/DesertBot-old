@@ -21,16 +21,16 @@ class ConnectionHandling(Module):
     def getHelp(self, message):
         helpDict = {
             self.name: u"connect <configfilename> / quit / quitfrom <configfilename> / restart / "
-                       u"shutdown - handle bot connections",
+                       u"shutdown - handle bot connections.",
             u"connect": u"connect <configfilename> - connect to the server in the specified "
-                        u"config file",
-            u"quit": u"quit - quits the bot instance connected to this server",
+                        u"config file.",
+            u"quit": u"quit - quits the bot instance connected to this server.",
             u"quitfrom": u"quitfrom <configfilename> - quits the bot instance connected to the "
-                         u"server in the specified config file",
+                         u"server in the specified config file.",
             u"restart": u"restart - restarts every instance of the bot, with any code changes "
-                        u"that may have happened since the bot started",
+                        u"that may have happened since the bot started.",
             u"shutdown": u"shutdown - quit every instance of the bot on every server and end the "
-                         u"process",
+                         u"process.",
         }
 
         return helpDict[message.parameterList[0]]

@@ -13,7 +13,7 @@ class Say(Module):
     name = u"say"
     triggers = [u"say"]
     moduleType = ModuleType.COMMAND
-    helpText = u"say <text> - makes the bot repeat the specified text"
+    helpText = u"say <text> - makes the bot repeat the specified text."
 
     def onTrigger(self, message):
         """

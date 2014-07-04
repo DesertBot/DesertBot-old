@@ -19,12 +19,12 @@ class ModuleLoader(Module):
     def getHelp(self, message):
         helpDict = {
             self.name: u"load/reload <module>, unload <module> - handles "
-                       u"loading/unloading/reloading of modules",
+                       u"loading/unloading/reloading of modules.",
             u"load": u"load <module> [module]... - loads (or reloads) the specified module(s). "
-                     u"Use 'all' to reload all active modules",
+                     u"Use 'all' to reload all active modules.",
             u"reload": u"reload <module> [module]... - reloads (or loads) the specified module("
-                       u"s). Use 'all' to reload all active modules",
-            u"unload": u"unload <module> [module]... - unloads the specified module(s)",
+                       u"s). Use 'all' to reload all active modules.",
+            u"unload": u"unload <module> [module]... - unloads the specified module(s).",
         }
         return helpDict[message.parameterList[0]]
 
