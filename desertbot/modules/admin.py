@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
+import os
 
 from zope.interface import implements
 from twisted.plugin import IPlugin
+from twisted.python import log
 
 from desertbot.moduleinterface import IModule, Module, ModuleType, AccessLevel
 from desertbot.message import IRCMessage
@@ -38,11 +40,25 @@ class Admin(Module):
         pass
         
     def onModuleLoaded(self):
-        # TODO Load admins in from JSON (data/admins.json?) and store as self.bot.admins
-        pass
+        configFileName = self.bot.factory.config.configFileName[:-5]
+        if os.path.exists(os.path.join("data", configFileName, "admins.json")):
+            with open(os.path.join("data", configFileName, "admins.json")) as jsonFile:
+                admins = json.load(jsonFile)
+            if len(admins) != 0:
+                self.bot.admins = admins
+                log.msg("Loaded {} admins from admins file for config \"{}\".".format(len(admins), configFileName))
+            else:
+                log.msg("Admins file for config \"{}\" is empty.".format(configFileName))
+        else:
+            log.err("Admins file not found for config \"{}\"!".format(configFileName))
+            self.bot.admins = []
 
     def onModuleUnloaded(self):
-        # TODO Store admins to JSON (data/admins.json?) from self.bot.admins
-        pass
+        configFileName = self.bot.factory.config.configFileName[:-5]
+        if os.path.exists(os.path.join("data", configFileName, "admins.json")):
+            with open(os.path.join("data", configFileName, "admins.json"), "w") as jsonFile:
+                json.dump(self.bot.admins, jsonFile)
+        else:
+            # Make dir and create empty json file
         
 admin = Admin()
