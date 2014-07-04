@@ -2,10 +2,10 @@
 from urllib import urlencode
 from urllib2 import build_opener, Request, urlopen, URLError
 from urlparse import urlparse
-import time
 
 from zope.interface import implements
 from twisted.plugin import IPlugin
+from twisted.python import log
 from desertbot.moduleinterface import IModule, Module, ModuleType
 import re
 
@@ -34,7 +34,7 @@ def fetchURL(url, extraHeaders=None):
     if extraHeaders:
         for header in extraHeaders:
             # For whatever reason headers are defined in different way in opener than they are in
-            #  a normal urlopen
+            # a normal urlopen
             headers.append((header, extraHeaders[header]))
     try:
         opener = build_opener()
@@ -55,13 +55,12 @@ def fetchURL(url, extraHeaders=None):
             response.close()
 
     except URLError as e:
-        today = time.strftime("[%H:%M:%S]")
         reason = None
         if hasattr(e, "reason"):
             reason = "We failed to reach the server, reason: {}".format(e.reason)
         elif hasattr(e, "code"):
             reason = "The server couldn't fulfill the request, code: {}".format(e.code)
-        print "{} [WebUtils] ERROR: Fetch from \"{}\" failed: {}".format(today, url, reason)
+        log.err("ERROR: Fetch from \"{}\" failed: {}".format(url, reason))
 
 
 def postURL(url, values, extraHeaders=None):
@@ -90,13 +89,12 @@ def postURL(url, values, extraHeaders=None):
             response.close()
 
     except URLError as e:
-        today = time.strftime("[%H:%M:%S]")
         reason = None
         if hasattr(e, "reason"):
             reason = "We failed to reach the server, reason: {}".format(e.reason)
         elif hasattr(e, "code"):
             reason = "The server couldn't fulfill the request, code: {}".format(e.code)
-        print "{} [WebUtils] ERROR: Post to \"{}\" failed: {}".format(today, url, reason)
+        log.err("ERROR: Post to \"{}\" failed: {}".format(url, reason))
 
 
 urlutils = URLUtils()
