@@ -44,4 +44,4 @@ class Help(Module):
                                    message.user, message.replyTo)
 
 
-help = Help()
+helpModule = Help()
