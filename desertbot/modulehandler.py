@@ -68,7 +68,7 @@ class ModuleHandler(object):
 
     def sendResponse(self, response):
         """
-        @type response: IRCResponse
+        @type response: IRCResponse, list[IRCResponse]
         """
         responses = []
 
@@ -256,11 +256,12 @@ class ModuleHandler(object):
             return False, errorMsg
         if interfaceName == u"IModule":
             if name.lower() in self.loadedModules:
+                module = self.loadedModules[name.lower()]
                 try:
                     if module.moduleType is ModuleType.COMMAND:
-                        for trigger in self.loadedModules[name.lower()].triggers:
+                        for trigger in module.triggers:
                             del self.mappedTriggers[trigger]
-                    self.loadedModules[name.lower()].onModuleUnloaded()
+                    module.onModuleUnloaded()
                 except Exception as e:
                     errorMsg = "An error occurred while unloading module \"{}\" ({})".format(name,
                                                                                              e)
