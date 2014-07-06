@@ -10,13 +10,13 @@ from desertbot.bothandler import BotHandler
 
 
 parser = argparse.ArgumentParser(description="An IRC bot written in Python.")
-parser.add_argument("-s", "--servers", help="the config files to use for connections (required)", 
+parser.add_argument("-c", "--configs", help="the config files to use for connections (required)",
                     type=str, nargs="+", required=True)
 parser.add_argument("-l", "--logfile",
                     help="the file the debug log will be written to (default desertbot.log)",
                     type=str, default="desertbot.log")
 parser.add_argument("-v", "--verbose", help="log to console (default False)", type=bool,
-                    default=False)
+                    action="store_true")
 cmdArgs = parser.parse_args()
 
 if __name__ == "__main__":

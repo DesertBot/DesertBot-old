@@ -66,4 +66,6 @@ docs/_build/
 
 # Bot
 config/
-!config/global.yaml.example
+!config/*.example
+data/*
+!data/example/*
