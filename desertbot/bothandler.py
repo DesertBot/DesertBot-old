@@ -10,7 +10,7 @@ from desertbot.config import Config
 class BotHandler(object):
     def __init__(self, cmdArgs):
         self.configs = {}
-        for configFileName in cmdArgs.servers:
+        for configFileName in cmdArgs.configs:
             if not configFileName.endswith(".yaml"):
                 config = Config("{}.yaml".format(configFileName))
             else:
