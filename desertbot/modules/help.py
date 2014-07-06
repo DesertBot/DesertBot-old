@@ -46,9 +46,10 @@ class Help(Module):
         """
         if len(message.parameterList) == 0:
             modules = []
-            # only list non-utility modules here (ie, modules the user can actually interact with)
+            # only list modules with triggers here
+            # (ie, modules the user can actually interact with)
             for moduleName, module in self.bot.moduleHandler.loadedModules.iteritems():
-                if module.moduleType is not ModuleType.UTILITY:
+                if len(module.triggers) != 0:
                     modules.append(moduleName)
             return IRCResponse(ResponseType.PRIVMSG,
                                u"Loaded modules: {}".format(
