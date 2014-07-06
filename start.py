@@ -15,8 +15,7 @@ parser.add_argument("-c", "--configs", help="the config files to use for connect
 parser.add_argument("-l", "--logfile",
                     help="the file the debug log will be written to (default desertbot.log)",
                     type=str, default="desertbot.log")
-parser.add_argument("-v", "--verbose", help="log to console (default False)", type=bool,
-                    action="store_true")
+parser.add_argument("-v", "--verbose", help="log to console (default False)", action="store_true")
 cmdArgs = parser.parse_args()
 
 if __name__ == "__main__":
