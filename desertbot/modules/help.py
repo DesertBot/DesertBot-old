@@ -82,9 +82,10 @@ class Help(Module):
         """
         @type message: IRCMessage
         """
+        modules = list(self.bot.moduleHandler.loadedModules) + list(self.bot.moduleHandler.loadedPostProcesses)
         return IRCResponse(ResponseType.PRIVMSG,
                            u"Loaded modules: {}".format(
-                               u", ".join(sorted(self.bot.moduleHandler.loadedModules))),
+                               u", ".join(sorted(modules))),
                            message.user, message.replyTo)
 
     def _commands(self, message):
