@@ -41,7 +41,7 @@ are working on.
       [x] Channel Part
       [ ] Nick changing
       [ ] Command character changing
-      [ ] User ignore management
+      [?] User ignore management (Discussing in issue #21)
     [-] Help & Information
       [x] Help
       [?] Channel Logging
@@ -67,7 +67,7 @@ are working on.
       [ ] MoronBot's Torrent
     [?] Chain
     [ ] Choose
-    [ ] Cross-server messaging
+    [ ] Cross-server messaging (Discussing in issue #5)
     [x] Do
     [ ] Find
     [ ] GeoLocation/GPSLookup
@@ -88,6 +88,12 @@ are working on.
       [ ] Wikipedia
       [ ] YouTube
     [ ] WolframAlpha
+  [ ] Utility Modules
+    [ ] Site-specific url fetching (for URLFollow and other modules interacting with those sites)
+    [?] URLUtils (Discussing in issue #20)
+  [ ] Post-Process Modules
+    [ ] AutoPasteEE
+    [ ] StripColour
   [-] MoronBot modules
     [ ] ChatMap
     [ ] DBCalc
