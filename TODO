@@ -2,7 +2,7 @@ In this document we'll keep a list of everything that needs to be done, as well
 as who does what. Feel free to add things that aren't on this list yet that you
 are working on.
 
-- = in progress, x = finished, ? = needs to be discussed
+' ' = not started, - = in progress, x = finished, ? = needs to be discussed
 
 [-] Design
   [x] Decide on a name (Discussed in issue #1)
@@ -13,10 +13,10 @@ are working on.
   [?] Document the API
 [-] Core implementation
   [-] Multiserver
-     [X] Server management (connectionhandling module)
-     [-] Cross-server messaging (To be a module)
+     [x] Server management (connectionhandling module)
+     [ ] Cross-server messaging (To be a module)
   [x] Initial class setup
-  [X] Config loading
+  [x] Config loading
   [x] Command parsing
   [x] Numeric parsing
   [x] User/channel management
@@ -27,3 +27,107 @@ are working on.
   [x] Command authorization
   [x] Module threading
 [-] Module implementation
+  [-] 'Core' modules
+    [?] Login management
+      [ ] NickServ identification
+      [ ] PASS
+      [ ] SASL
+    [-] Bot management
+      [x] Multiserver connection handling
+      [x] Module load/unload
+      [x] Admin management
+      [x] Self-update
+      [x] Channel Join
+      [x] Channel Part
+      [ ] Nick changing
+      [ ] Command character changing
+      [ ] User ignore management
+    [-] Help & Information
+      [x] Help
+      [?] Channel Logging
+        [ ] Incoming message logging
+        [ ] Outgoing message logging
+        [ ] Log retrieval
+          [ ] Via PM
+        [?] Log search (we need better names for a lot of these subitems)
+          [ ] LastSeen
+          [ ] LastSaw
+          [ ] LastSaid
+          [ ] LastMentioned
+          [ ] SaidBefore
+          [ ] SeenBefore
+        [ ] Stats (if we log in a standard format this would be easier)
+      [ ] Source (could be an alias but I think it should be separate - MatthewCox)
+  [-] Common/DesertBot modules
+    [?] Alias management
+      [ ] Alias help
+      [ ] Hubbot's Servers
+      [ ] Hubbot's Silly
+      [ ] Hubbot's Timer (Delay + Say)
+    [?] Chain
+    [ ] Choose
+    [ ] Cross-server messaging
+    [x] Do
+    [ ] Find
+    [ ] GeoLocation/GPSLookup
+    [ ] Googl/Shorten
+    [?] HangoutTracker
+    [x] Say
+    [?] TriggerOn
+    [ ] Uptime
+    [?] URLFollow
+      [ ] Basic title fetching
+      [ ] Imgur
+      [ ] KickStarter
+      [ ] MTG Gatherer
+      [ ] Steam
+      [ ] Twitch
+      [ ] Twitter
+      [ ] UrbanDictionary
+      [ ] Wikipedia
+      [ ] YouTube
+    [ ] WolframAlpha
+  [-] MoronBot modules
+    [ ] ChatMap
+    [ ] DBCalc
+    [?] Delay
+    [ ] Dinner
+    [ ] DominosPizza
+    [ ] Down
+    [ ] EightBall
+    [ ] Etymology
+    [ ] Gif
+    [ ] LRR/LRRChecker
+    [ ] Mtg
+    [ ] Rainbow (not convinced we need this :P)
+    [?] Responses (for simple(ish) responses that could in theory be trigger aliases,
+                   but we want more control for spammability reasons)
+      [ ] Actions
+      [ ] Conversation
+      [ ] Responses
+        [ ] Hubbot's Nope
+    [ ] Roll
+    [ ] Sed
+    [ ] Tango (not convinced we need this :P)
+    [ ] Torrent (just make it an alias?)
+    [?] Twitter
+    [ ] Urban
+    [ ] Wikipedia
+  [-] HeufyBot modules
+    [ ] Aww
+    [ ] Event
+    [ ] NowPlaying
+    [ ] OutOfContext
+    [ ] Tell
+    [ ] Time (chatmap aware and non-chatmap)
+    [ ] Translate
+    [ ] TranslationParty
+    [ ] UserLocation
+    [ ] Weather (chatmap aware and non-chatmap)
+  [-] Hubbot modules
+    [?] Grapheme
+    [ ] Headcanon
+    [ ] Hugs
+    [ ] IdentCheck
+    [ ] RPG/List
+    [ ] Rustle
