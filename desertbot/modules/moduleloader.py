@@ -20,11 +20,11 @@ class ModuleLoader(Module):
         helpDict = {
             self.name: u"load/reload <module>, unload <module> - handles "
                        u"loading/unloading/reloading of modules.",
-            u"load": u"load <module> [module]... - loads (or reloads) the specified module(s). "
+            u"load": u"load <module> [module]... - loads (or reloads) the given module(s). "
                      u"Use 'all' to reload all active modules.",
-            u"reload": u"reload <module> [module]... - reloads (or loads) the specified module("
-                       u"s). Use 'all' to reload all active modules.",
-            u"unload": u"unload <module> [module]... - unloads the specified module(s).",
+            u"reload": u"reload <module> [module]... - reloads (or loads) the given module(s). "
+                       u"Use 'all' to reload all active modules.",
+            u"unload": u"unload <module> [module]... - unloads the given module(s).",
         }
         return helpDict[message.parameterList[0]]
 
@@ -33,7 +33,7 @@ class ModuleLoader(Module):
         @type message: IRCMessage
         """
         if len(message.parameterList) == 0:
-            return IRCResponse(ResponseType.PRIVMSG, u"You didn't specify a module name!",
+            return IRCResponse(ResponseType.PRIVMSG, u"You didn't give a module name!",
                                message.user, message.replyTo)
 
         returns = {}
