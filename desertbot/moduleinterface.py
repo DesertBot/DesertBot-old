@@ -80,6 +80,9 @@ class Module(object):
         self.bot = bot
 
     def getHelp(self, message):
+        if self.helpText == u"":
+            return u"{} doesn't have any help text yet. Tell my admins to stop being lazy!".format(
+                self.name)
         return self.helpText
 
     def onTrigger(self, message):
