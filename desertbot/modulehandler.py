@@ -169,15 +169,16 @@ class ModuleHandler(object):
         if module.accessLevel == AccessLevel.ADMINS:
             if len(self.bot.admins) == 0:
                 return True
-            for adminRegex in self.bot.admins:
-                if re.match(adminRegex, message.user.getUserString()):
-                    return True
+            else:
+                for adminRegex in self.bot.admins:
+                    if re.match(adminRegex, message.user.getUserString()):
+                        return True
 
-            response = IRCResponse(ResponseType.PRIVMSG,
-                                   u"Only my admins can use \"{}\"!".format(message.command),
-                                   message.user, message.replyTo)
-            self.postProcess(response)
-            return False
+                response = IRCResponse(ResponseType.PRIVMSG,
+                                       u"Only my admins can use \"{}\"!".format(message.command),
+                                       message.user, message.replyTo)
+                self.postProcess(response)
+                return False
 
     def _load(self, name, interfaceName):
         """
