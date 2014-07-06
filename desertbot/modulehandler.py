@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import operator
-
 import re
 from twisted.plugin import getPlugins
 from twisted.python import log
@@ -168,6 +167,8 @@ class ModuleHandler(object):
             return True  # message is probably server stuff
 
         if module.accessLevel == AccessLevel.ADMINS:
+            if len(self.bot.admins) == 0:
+                return True
             for adminRegex in self.bot.admins:
                 if re.match(adminRegex, message.user.getUserString()):
                     return True
