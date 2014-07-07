@@ -63,7 +63,7 @@ are working on.
       [ ] Alias help
       [ ] Hubbot's Servers
       [ ] Hubbot's Silly
-      [ ] Hubbot's Timer (Delay + Say)
+      [ ] Hubbot's Timer (Chained Delay and Say)
       [ ] MoronBot's Torrent
     [?] Chain
     [ ] Choose
@@ -75,6 +75,7 @@ are working on.
     [?] HangoutTracker
     [x] Say
     [?] TriggerOn
+      [ ] Boops? (TriggerOn calling List)
     [ ] Uptime
     [?] URLFollow
       [ ] Basic title fetching
@@ -113,6 +114,7 @@ are working on.
       [ ] Conversation
       [ ] Responses
         [ ] Hubbot's Nope
+        [ ] MoronBot's many, many responses
     [ ] Roll
     [ ] Sed
     [ ] Tango (not convinced we need this :P)
