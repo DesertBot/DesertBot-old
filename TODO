@@ -39,7 +39,7 @@ are working on.
       [x] Self-update
       [x] Channel Join
       [x] Channel Part
-      [ ] Nick changing
+      [x] Nick changing
       [ ] Command character changing
       [?] User ignore management (Discussing in issue #21)
     [-] Help & Information
