@@ -73,6 +73,7 @@ are working on.
     [ ] GeoLocation/GPSLookup
     [ ] Googl/Shorten
     [?] HangoutTracker
+    [ ] Repeat
     [x] Say
     [?] TriggerOn
       [ ] Boops? (TriggerOn calling List)
