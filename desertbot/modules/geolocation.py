@@ -42,8 +42,8 @@ class GeoLocation(Module):
             return None
 
     def _getJSON(self, url):
-        if "urlutils" in self.bot.moduleInterface.modules:
-            urlutils = self.bot.moduleInterface.modules["urlutils"]
+        if "urlutils" in self.bot.moduleInterface.loadedModules:
+            urlutils = self.bot.moduleInterface.loadedModules["urlutils"]
             return json.loads(urlutils.fetchURL(url).body)
         else:
             log.err("WARNING: Module \"urlutils\" is required for the \"geolocation\" module to "
