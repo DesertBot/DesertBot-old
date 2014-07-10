@@ -48,6 +48,17 @@ class IRCMessage(object):
             if len(self.parameterList) == 1 and not self.parameterList[0]:
                 self.parameterList = []
 
+    def clear(self):
+        self.user = None
+        self.channel = None
+        self.messageList = []
+        self.text = u""
+        self.replyTo = u""
+        self.targetType = None
+        self.command = u""
+        self.parameters = u""
+        self.parameterList = []
+
 
 class TargetType(Enum):
     CHANNEL = 1
