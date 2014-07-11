@@ -92,7 +92,7 @@ are working on.
     [ ] WolframAlpha
   [ ] Utility Modules
     [ ] Site-specific url fetching (for URLFollow and other modules interacting with those sites)
-    [?] URLUtils (Discussing in issue #20)
+    [-] URLUtils (Discussing in issue #20)
   [ ] Post-Process Modules
     [ ] AutoPasteEE
     [ ] StripColour
@@ -125,7 +125,7 @@ are working on.
   [-] HeufyBot modules
     [ ] Aww
     [ ] Event
-    [ ] NowPlaying
+    [-] NowPlaying
     [ ] OutOfContext
     [ ] Tell
     [ ] Time (chatmap aware and non-chatmap)
