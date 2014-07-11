@@ -34,7 +34,12 @@ class Update(Module):
         changes = list(reversed(changes))
         response = u"New commits: {}".format(u" | ".join(changes))
 
-        subprocess.call(["git", "merge", "origin/master"])
+        returnCode = subprocess.call(["git", "merge", "origin/master"])
+
+        if returnCode != 0:
+            return IRCResponse(ResponseType.PRIVMSG,
+                               u"Merge after update failed, please merge manually.",
+                               message.user, message.replyTo)
 
         return IRCResponse(ResponseType.PRIVMSG, response, message.user, message.replyTo)
 
