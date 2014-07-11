@@ -1,21 +1,12 @@
 # -*- coding: utf-8 -*-
-from urllib import urlencode
-from urllib2 import build_opener, Request, urlopen, URLError
 from urlparse import urlparse
+import requests
 
 from zope.interface import implements
 from twisted.plugin import IPlugin
 from twisted.python import log
 from desertbot.moduleinterface import IModule, Module, ModuleType
 import re
-
-
-class URLResponse(object):
-    def __init__(self, body, domain, responseHeaders):
-        self.body = body
-        self.domain = domain
-        self.responseHeaders = responseHeaders
-
 
 class URLUtils(Module):
     implements(IPlugin, IModule)
@@ -29,71 +20,67 @@ class URLUtils(Module):
         return
 
 
-    def fetchURL(self, url, extraHeaders=None):
-        headers = [( "User-agent", "Mozilla/5.0" )]
+    def fetchURL(self, url, params=None, extraHeaders=None):
+        """
+        @type url: str
+        @type params: dict[str, str]
+        @type extraHeaders: dict[str, str]
+        @rtype: requests.Response
+        """
+        headers = {"user-agent": "Mozilla/5.0"}
         if extraHeaders:
-            for header in extraHeaders:
-                # For whatever reason headers are defined in different way in opener than they are in
-                # a normal urlopen
-                headers.append((header, extraHeaders[header]))
+            headers.update(extraHeaders)
         try:
-            opener = build_opener()
-            opener.addheaders = headers
-            response = opener.open(url)
-            responseHeaders = response.info().dict
-            pageType = responseHeaders["content-type"]
+            r = requests.get(url, params=params, headers=extraHeaders, stream=True)
 
-            # Make sure we don't download any unwanted things
-            if re.match(
-                    "^(text/.*|application/((rss|atom|rdf)\+)?xml(;.*)?|application/(.*)json(;.*)?)$",
-                    pageType):
-                urlResponse = URLResponse(response.read(), urlparse(response.geturl()).hostname,
-                                          responseHeaders)
-                response.close()
-                return urlResponse
+            # Only allow certain kinds of data to be read
+            if re.match("^("
+                        "text/.*|"              # any kind of text
+                        "application/(.*)xml|"  # any kind of xml
+                        "application/(.*)json"  # any kind of json
+                        ")(;.*)?$",
+                        r.headers["content-type"]):
+                # Force data to be read so the response object will close when we're done with it
+                content = r.content
+                r.close()
+                return r
             else:
-                response.close()
+                r.close()
 
-        except URLError as e:
+        except requests.RequestException as e:
             reason = None
-            if hasattr(e, "reason"):
-                reason = "We failed to reach the server, reason: {}".format(e.reason)
-            elif hasattr(e, "code"):
-                reason = "The server couldn't fulfill the request, code: {}".format(e.code)
             log.err("ERROR: Fetch from \"{}\" failed: {}".format(url, reason))
 
 
-    def postURL(self, url, values, extraHeaders=None):
-        headers = {"User-agent": "Mozilla/5.0"}
+    def postURL(self, url, data, extraHeaders=None):
+        """
+        @type url: str
+        @type data: T
+        @type extraHeaders: dict[str, str]
+        @rtype: requests.Response
+        """
+        headers = {"user-agent": "Mozilla/5.0"}
         if extraHeaders:
-            for header in extraHeaders:
-                headers[header] = extraHeaders[header]
-
-        data = urlencode(values)
+            headers.update(extraHeaders)
 
         try:
-            request = Request(url, data, headers)
-            response = urlopen(request)
-            responseHeaders = response.info().dict
-            pageType = responseHeaders["content-type"]
+            r = requests.post(url, data=data, headers=headers, stream=True)
 
-            # Make sure we don't download any unwanted things
-            if re.match(
-                    '^(text/.*|application/((rss|atom|rdf)\+)?xml(;.*)?|application/(.*)json(;.*)?)$',
-                    pageType):
-                urlResponse = URLResponse(response.read(), urlparse(response.geturl()).hostname,
-                                          responseHeaders)
-                response.close()
-                return urlResponse
+            # Only allow certain kinds of data to be read
+            if re.match("^("
+                        "text/.*|"              # any kind of text
+                        "application/(.*)xml|"  # any kind of xml
+                        "application/(.*)json"  # any kind of json
+                        ")(;.*)?$",
+                        r.headers["content-type"]):
+                content = r.content
+                r.close()
+                return r
             else:
-                response.close()
+                r.close()
 
-        except URLError as e:
+        except requests.RequestException as e:
             reason = None
-            if hasattr(e, "reason"):
-                reason = "We failed to reach the server, reason: {}".format(e.reason)
-            elif hasattr(e, "code"):
-                reason = "The server couldn't fulfill the request, code: {}".format(e.code)
             log.err("ERROR: Post to \"{}\" failed: {}".format(url, reason))
 
 

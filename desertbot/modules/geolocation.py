@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
 
 from zope.interface import implements
 from twisted.plugin import IPlugin
@@ -16,20 +15,21 @@ class GeoLocation(Module):
     helpText = u"Provides utility functions for looking up geographical locations using the " \
                u"Google Maps geocoding API."
 
-    baseAPIAddress = "http://maps.googleapis.com/maps/api/geocode/json?"
+    baseAPIAddress = "http://maps.googleapis.com/maps/api/geocode/json"
 
     def onTrigger(self, message):
         return
 
     def getGeoLocationFromLatLon(self, latitude, longitude):
-        url = "{}latlng={},{}&sensor=false&language=english".format(self.baseAPIAddress, latitude,
-                                                                    longitude)
-        return self._getLocationFromJSON(self._getJSON(url))
+        params = {"latlng": ",".join([latitude, longitude]),
+                  "sensor": "false",
+                  "language": "english"}
+        return self._getLocationFromJSON(self._getJSON(self.baseAPIAddress, params))
 
     def getGeoLocationFromPlace(self, place):
-        place = place.replace(" ", "+")
-        url = "{}address={}&sensor=false".format(self.baseAPIAddress, place)
-        return self._getLocationFromJSON(self._getJSON(url))
+        params = {"address": place.replace(" ", "+"),
+                  "sensor": "false"}
+        return self._getLocationFromJSON(self._getJSON(self.baseAPIAddress, params))
 
     def _getLocationFromJSON(self, jsonString):
         if jsonString["status"] == "OK":
@@ -41,10 +41,10 @@ class GeoLocation(Module):
         else:
             return None
 
-    def _getJSON(self, url):
-        if "urlutils" in self.bot.moduleInterface.loadedModules:
-            urlutils = self.bot.moduleInterface.loadedModules["urlutils"]
-            return json.loads(urlutils.fetchURL(url).body)
+    def _getJSON(self, url, params):
+        if "urlutils" in self.bot.moduleHandler.loadedModules:
+            urlutils = self.bot.moduleHandler.loadedModules["urlutils"]
+            return urlutils.fetchURL(url, params=params).json()
         else:
             log.err("WARNING: Module \"urlutils\" is required for the \"geolocation\" module to "
                     "work.")
