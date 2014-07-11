@@ -17,8 +17,6 @@ class NowPlaying(Module):
     moduleType = ModuleType.COMMAND
     helpText = u"np <last.fm user> - retrieves the last song the given last.fm user played"
 
-    baseAPIAddress = "http://ws.audioscrobbler.com/1.0/user/"
-
     def onTrigger(self, message):
         """
         @type message: IRCMessage
