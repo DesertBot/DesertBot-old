@@ -79,3 +79,5 @@ class UserAlias(Module):
             os.makedirs(os.path.join("data", configFileName))
         with open(os.path.join("data", configFileName, "userAliases.json"), "w") as jsonFile:
             json.dump(self.userAliases, jsonFile)
+
+userAlias = UserAlias()
