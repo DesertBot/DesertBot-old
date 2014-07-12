@@ -4,7 +4,7 @@ import re
 from twisted.plugin import getPlugins
 from twisted.python import log
 from twisted.internet import threads
-from desertbot.moduleinterface import IModule, ModuleType, AccessLevel
+from desertbot.moduleinterface import IModule, ModuleType
 from desertbot.postprocessinterface import IPost
 from desertbot.response import IRCResponse, ResponseType
 from desertbot.message import IRCMessage
@@ -149,36 +149,12 @@ class ModuleHandler(object):
                         return True
                 return False
             elif module.moduleType == ModuleType.COMMAND:
-                if message.command in module.triggers and self._allowedToUse(module, message):
+                if message.command in module.triggers:
                     return True
                 else:
                     return False
             elif module.moduleType == ModuleType.UTILITY:
                 return module.shouldTrigger(message)
-
-    def _allowedToUse(self, module, message):
-        """
-        @type message: IRCMessage
-        """
-        if module.accessLevel == AccessLevel.ANYONE:
-            return True
-
-        if message.user is None:
-            return True  # message is probably server stuff
-
-        if module.accessLevel == AccessLevel.ADMINS:
-            if len(self.bot.admins) == 0:
-                return True
-            else:
-                for adminRegex in self.bot.admins:
-                    if re.match(adminRegex, message.user.getUserString()):
-                        return True
-
-                response = IRCResponse(ResponseType.PRIVMSG,
-                                       u"Only my admins can use \"{}\"!".format(message.command),
-                                       message.user, message.replyTo)
-                self.postProcess(response)
-                return False
 
     def _load(self, name, interfaceName):
         """
