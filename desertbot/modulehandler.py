@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import operator
 import re
 from twisted.plugin import getPlugins
@@ -20,6 +21,12 @@ class ModuleHandler(object):
         self.loadedModules = {}
         self.loadedPostProcesses = {}
         self.mappedTriggers = {}
+
+    def getModule(self, moduleName):
+        if moduleName.lower() in self.loadedModules:
+            return self.loadedModules[moduleName.lower()]
+        else:
+            return None
 
     def handleMessage(self, message):
         """

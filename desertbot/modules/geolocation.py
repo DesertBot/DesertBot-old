@@ -42,13 +42,13 @@ class GeoLocation(Module):
             return None
 
     def _getJSON(self, url, params):
-        if "urlutils" in self.bot.moduleHandler.loadedModules:
-            urlutils = self.bot.moduleHandler.loadedModules["urlutils"]
-            return urlutils.fetchURL(url, params=params).json()
-        else:
+        urlutils = self.bot.moduleHandler.getModule(u"urlutils")
+        if not urlutils:
             log.err("WARNING: Module \"urlutils\" is required for the \"geolocation\" module to "
                     "work.")
             return {"status": "ERROR"}
+        else:
+            return urlutils.fetchURL(url, params=params).json()
 
     def _siftForCreepy(self, addressComponents):
         locationInfo = []
