@@ -39,9 +39,8 @@ class NowPlaying(Module):
                                message.user, message.replyTo)
 
     def _getSong(self, user):
-        if "urlutils" in self.bot.moduleHandler.loadedModules:
-            urlutils = self.bot.moduleHandler.loadedModules["urlutils"]
-
+        urlutils = self.bot.moduleHandler.getModule("urlutils")
+        if urlutils:
             url = "http://ws.audioscrobbler.com/1.0/user/" + user + "/recenttracks.rss"
 
             feed = BeautifulSoup(urlutils.fetchURL(url).text)
