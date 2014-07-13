@@ -57,11 +57,12 @@ class Ignore(Module):
                 if re.match(userRegex, message.user.getUserString()):
                     if self.ignores[userRegex] == u"all":
                         message.clear()
-                    for moduleName in self.ignores[userRegex]:
-                        module = self.bot.moduleHandler.getModule(moduleName)
-                        if module is not None:
-                            if self.bot.moduleHandler._shouldTrigger(module, message):
-                                message.clear()
+                    else:
+                        for moduleName in self.ignores[userRegex]:
+                            module = self.bot.moduleHandler.getModule(moduleName)
+                            if module is not None:
+                                if self.bot.moduleHandler._shouldTrigger(module, message):
+                                    message.clear()
 
     def onModuleLoaded(self):
         configFileName = self.bot.factory.config.configFileName[:-5]
