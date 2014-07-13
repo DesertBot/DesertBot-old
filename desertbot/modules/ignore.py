@@ -60,7 +60,7 @@ class Ignore(Module):
                     for moduleName in self.ignores[userRegex]:
                         module = self.bot.moduleHandler.getModule(moduleName)
                         if module is not None:
-                            if message.messageList[0] in module.triggers:
+                            if self.bot.moduleHandler._shouldTrigger(module, message):
                                 message.clear()
 
     def onModuleLoaded(self):
