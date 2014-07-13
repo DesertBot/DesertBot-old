@@ -51,6 +51,9 @@ class ModuleHandler(object):
         """
         @type response: IRCResponse
         """
+        if response is None:
+            return
+
         newResponse = response
         processed = False
         for post in sorted(self.loadedPostProcesses.values(),
@@ -90,8 +93,8 @@ class ModuleHandler(object):
             try:
                 # the response needs to be encoded from unicode to a
                 # utf-8 string before we send it out
-                responseText = response.response.encode('utf-8')
-                responseTarget = response.target.encode('utf-8')
+                responseText = response.response.encode("utf-8")
+                responseTarget = response.target.encode("utf-8")
                 if response.type == ResponseType.PRIVMSG:
                     self.bot.msg(responseTarget, responseText)
                 elif response.type == ResponseType.ACTION:
@@ -172,11 +175,14 @@ class ModuleHandler(object):
             errorMsg = "Module name not specified!"
             log.err(errorMsg)
             return False, errorMsg
+
         if interfaceName == u"IModule":
             if name.lower() not in self.loadedModules:
                 moduleReload = False
             else:
                 moduleReload = True
+                self._unload(name.lower(), interfaceName)
+
             for module in getPlugins(IModule, modules):
                 if module.name == name.lower():
                     self.loadedModules[module.name] = module
@@ -207,6 +213,8 @@ class ModuleHandler(object):
                 moduleReload = False
             else:
                 moduleReload = True
+                self._unload(name.lower(), interfaceName)
+
             for module in getPlugins(IPost, postprocesses):
                 if module.name == name.lower():
                     self.loadedPostProcesses[module.name] = module
@@ -239,6 +247,7 @@ class ModuleHandler(object):
             errorMsg = "Module name not specified!"
             log.err(errorMsg)
             return False, errorMsg
+
         if interfaceName == u"IModule":
             if name.lower() in self.loadedModules:
                 module = self.loadedModules[name.lower()]
