@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-from collections import OrderedDict
-import datetime
-from dateutil.tz import tzutc
-
 from zope.interface import implements
 from twisted.plugin import IPlugin
 from twisted.python import log
@@ -37,8 +33,9 @@ class NextFanstream(Module):
                                message.replyTo)
 
         return IRCResponse(ResponseType.PRIVMSG,
-                           u"Next scheduled fanstream: {} in {}".format(nextEvent["summary"],
-                                                                        nextEvent["till"]),
+                           u"Next scheduled fanstream: {} at {} ({})".format(nextEvent["summary"],
+                                                                             nextEvent["start"].strftime("%a %I:%M %p %Z"),
+                                                                             nextEvent["till"]),
                            message.user,
                            message.replyTo)
 
