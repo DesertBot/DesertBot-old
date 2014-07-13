@@ -49,6 +49,7 @@ class IRCMessage(object):
                 self.parameterList = []
 
     def clear(self):
+        self.type = None
         self.user = None
         self.channel = None
         self.messageList = []
