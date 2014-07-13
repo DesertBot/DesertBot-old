@@ -53,7 +53,7 @@ class Next(Module):
 
         shortDate = nextEvent["start"].strftime("%a %I:%M %p %Z")
 
-        if nextEvent["timezone"] is None:
+        if nextEvent["timezoneParsed"] is False:
             tzMessage = u" (failed to parse '{}')".format(message.parameterList[0])
         else:
             tzMessage = u""
