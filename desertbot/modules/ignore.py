@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import re
 from zope.interface import implements
 from twisted.plugin import IPlugin
 from twisted.python import log
@@ -23,7 +24,8 @@ class Ignore(Module):
         @type message: IRCMessage
         """
         helpDict = {
-            u"ignore": u"ignore <user> [user] - ignores the specified user(s) completely.",
+            u"ignore": u"ignore <user> <module> [module] - prevents the specified user "
+            u"from using the specified module(s).",
             u"unignore": u"unignore <user> - stops ignoring the specified user."
         }
         return helpDict[message.parameterList[0]]
@@ -36,10 +38,9 @@ class Ignore(Module):
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Ignore who?", message.user, message.replyTo)
             else:
-                for user in message.parameterList:
-                    self.ignores.append(user)
+                self.ignores[message.parameterList[0]] = message.parameterList[1:]
                 return IRCResponse(ResponseType.PRIVMSG,
-                                   u"Now ignoring: \"{}\".".format(u", ".join(message.parameterList)),
+                                   u"Now ignoring: \"{}\".".format(message.parameterList[0]),
                                    message.user, message.replyTo)
         elif message.command == u"unignore":
             if len(message.parameterList) == 0:
@@ -48,12 +49,18 @@ class Ignore(Module):
                 return IRCResponse(ResponseType.PRIVMSG, u"I am not ignoring \"{}\"!".format(message.parameterList[0]),
                                    message.user, message.replyTo)
             else:
-                self.ignores.remove(message.parameterList[0])
+                del self.ignores[(message.parameterList[0])]
                 return IRCResponse(ResponseType.PRIVMSG, u"No longer ignoring \"{}\".".format(message.parameterList[0]),
                                    message.user, message.replyTo)
         else:
-            if message.user.nickname in self.ignores:
-                message.clear()
+            for userRegex in self.ignores.keys():
+                if re.match(userRegex, message.user.getUserString()):
+                    if self.ignores[userRegex] == u"all":
+                        message.clear()
+                    for moduleName, module in self.bot.moduleHandler.loadedModules.iteritems():
+                        if moduleName in self.ignores[userRegex]:
+                            message.clear()
+
 
     def onModuleLoaded(self):
         configFileName = self.bot.factory.config.configFileName[:-5]
@@ -66,10 +73,10 @@ class Ignore(Module):
                                                                                         configFileName))
             else:
                 log.msg("Ignores file for config \"{}\" is empty.".format(configFileName))
-                self.ignores = []
+                self.ignores = {}
         else:
             log.err("Ignores file not found for config \"{}\"!".format(configFileName))
-            self.ignores = []
+            self.ignores = {}
 
     def onModuleUnloaded(self):
         configFileName = self.bot.factory.config.configFileName[:-5]
