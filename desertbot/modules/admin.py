@@ -96,7 +96,7 @@ class Admin(Module):
         configFileName = self.bot.factory.config.configFileName[:-5]
         if not os.path.exists(os.path.join("data", configFileName, "admins.json")):
             os.makedirs(os.path.join("data", configFileName))
-        with open(os.path.join("data", configFileName, "admins.json"), "w") as jsonFile:
+        with open(os.path.join("data", configFileName, "admins.json"), "w+") as jsonFile:
             json.dump(self.admins, jsonFile)
 
     def _allowedToUse(self, message):
