@@ -17,6 +17,11 @@ from desertbot.modulehandler import ModuleHandler
 class DesertBot(irc.IRCClient):
     startTime = datetime.datetime.min
 
+    # a property to make config access nicer from modules
+    @property
+    def config(self):
+        return self.factory.config
+
     def __init__(self, factory):
         """
         @type factory: DesertBotFactory
