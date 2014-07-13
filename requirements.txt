@@ -3,3 +3,5 @@ Twisted>=14.0.0
 enum34>=1.0
 requests>=2.3.0
 beautifulsoup4>=4.3.2
+google-api-python-client>=1.2
+python-dateutil>=2.2
