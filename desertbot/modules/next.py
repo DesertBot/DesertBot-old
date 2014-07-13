@@ -19,8 +19,9 @@ class Next(Module):
         @type message: IRCMessage
         """
         helpDict = {
-            u"next": u"next - fetches the next event from the LRR streaming calendar",
-            u"nextfan": u"nextfan - fetches the next event from the LRR Fan-streamers calendar",
+            u"next": u"next [timezone] - fetches the next event from the LRR streaming calendar",
+            u"nextfan": u"nextfan [timezone] - fetches the next event from the "
+                        u"LRR Fan-streamers calendar",
         }
         return helpDict[message.parameterList[0]]
 
@@ -39,7 +40,10 @@ class Next(Module):
         elif message.command == u"nextfan":
             calendar = "caffeinatedlemur@gmail.com"
 
-        nextEvent = cal.getNextEvent(calendar)
+        if len(message.parameterList) > 0:  # timezone specified?
+            nextEvent = cal.getNextEvent(calendar, message.parameterList[0])
+        else:
+            nextEvent = cal.getNextEvent(calendar)
 
         if nextEvent is None:
             return IRCResponse(ResponseType.PRIVMSG,
