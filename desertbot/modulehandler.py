@@ -43,8 +43,8 @@ class ModuleHandler(object):
                         d = threads.deferToThread(module.onTrigger, message)
                         d.addCallback(self.postProcess)
             except Exception as e:
-                errorMsg = "An error occured while handling message: \"{}\" ({})".format(
-                    message.text, e)
+                errorMsg = "An error occured while {} was handling message: \"{}\" ({})".format(
+                    module.name, message.text, e)
                 log.err(errorMsg)
 
     def postProcess(self, response):
@@ -68,8 +68,8 @@ class ModuleHandler(object):
                         d = threads.deferToThread(post.onTrigger, newResponse)
                         d.addCallback(self.sendResponse)
             except Exception as e:
-                errorMsg = "An error occured while postprocessing: \"{}\" ({})".format(
-                    response.response, e)
+                errorMsg = "An error occured while {} was postprocessing: \"{}\" ({})".format(
+                    post.name, response.response, e)
                 log.err(errorMsg)
                 self.sendResponse(newResponse)
         if not processed:
