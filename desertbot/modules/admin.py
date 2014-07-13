@@ -104,6 +104,11 @@ class Admin(Module):
         if len(self.admins) == 0:
             return True
 
+        if message.user is None:
+            # The message likely hails from the server itself.
+            # These shouldn't trigger any modules, but just in case lets ignore them.
+            return True
+
         if message.command in self.bot.moduleHandler.mappedTriggers:
             module = self.bot.moduleHandler.mappedTriggers[message.command]
             if module.accessLevel is not AccessLevel.ADMINS:
