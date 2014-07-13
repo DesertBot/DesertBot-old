@@ -37,7 +37,7 @@ class ModuleHandler(object):
             try:
                 if message.type is None:
                     return  # a module has cleared the message, no further processing is possible
-                
+
                 if self._shouldTrigger(module, message):
                     if not module.runInThread:
                         response = module.onTrigger(message)

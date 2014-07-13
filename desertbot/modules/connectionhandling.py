@@ -70,7 +70,7 @@ class ConnectionHandling(Module):
         if message.command == u"quit":
             if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds=10):
                 self.bot.factory.shouldReconnect = False
-                self.bot.bothandler.stopBotFactory(self.bot.factory.config.configFileName, None)
+                self.bot.bothandler.stopBotFactory(self.bot.config.configFileName, None)
         if message.command == u"quitfrom":
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Quit from where?", message.user,
@@ -80,11 +80,11 @@ class ConnectionHandling(Module):
                     quitFromConfig = "{}.yaml".format(configFileName)
                 else:
                     quitFromConfig = configFileName
-                if quitFromConfig == self.bot.factory.config.configFileName:
+                if quitFromConfig == self.bot.config.configFileName:
                     return IRCResponse(ResponseType.PRIVMSG, u"Can't quit from here with this!",
                                        message.user, message.replyTo)
                 else:
-                    quitMessage = u"Killed from \"{}\"".format(self.bot.factory.config["server"])
+                    quitMessage = u"Killed from \"{}\"".format(self.bot.config["server"])
                     result = self.bot.bothandler.stopBotFactory(quitFromConfig, quitMessage)
                     if result:
                         return IRCResponse(ResponseType.PRIVMSG,

@@ -30,4 +30,3 @@ class Join(Module):
 
 
 join = Join()
-        
