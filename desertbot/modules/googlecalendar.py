@@ -30,8 +30,11 @@ class GoogleCalendar(Module):
 
         self._service = build(serviceName="calendar", version="v3", developerKey=devkey)
 
-    def getNextEvent(self, calendarID):
-        tz = gettz("America/Vancouver")
+    def getNextEvent(self, calendarID, timezone="America/Vancouver"):
+        if calendarID is None:
+            return None
+
+        tz = gettz(timezone)
         now = datetime.datetime.now(tz)
         query = self._service.events().list(calendarId=calendarID,
                                             maxResults=2,  # we fetch 2 in case there's one running
