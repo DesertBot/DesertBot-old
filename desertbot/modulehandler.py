@@ -23,6 +23,9 @@ class ModuleHandler(object):
         self.mappedTriggers = {}
 
     def getModule(self, moduleName):
+        """
+        @rtype: desertbot.moduleinterface.Module | None
+        """
         if moduleName.lower() in self.loadedModules:
             return self.loadedModules[moduleName.lower()]
         else:
