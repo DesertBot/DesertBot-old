@@ -3,6 +3,7 @@ import sys
 
 import os
 from twisted.internet import reactor
+from twisted.python import log
 from desertbot.bot import DesertBotFactory
 from desertbot.config import Config
 
@@ -86,6 +87,14 @@ class BotHandler(object):
 
     def _unloadModules(self, botfactory):
         for module in botfactory.bot.moduleHandler.loadedModules.values():
-            module.onModuleUnloaded()
+            try:
+                module.onModuleUnloaded()
+            except Exception as e:
+                errorMsg = "An error occured while unloading \"{}\" ({})".format(module.name, e)
+                log.err(errorMsg)
         for post in botfactory.bot.moduleHandler.loadedPostProcesses.values():
-            post.onModuleUnloaded()
+            try:
+                post.onModuleUnloaded()
+            except Exception as e:
+                errorMsg = "An error occured while unloading \"{}\" ({})".format(module.name, e)
+                log.err(errorMsg)
