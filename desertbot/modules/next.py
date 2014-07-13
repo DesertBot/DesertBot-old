@@ -52,10 +52,17 @@ class Next(Module):
                                message.replyTo)
 
         shortDate = nextEvent["start"].strftime("%a %I:%M %p %Z")
+
+        if nextEvent["timezone"] is None:
+            tzMessage = u" (failed to parse '{}')".format(message.parameterList[0])
+        else:
+            tzMessage = u""
+
         return IRCResponse(ResponseType.PRIVMSG,
-                           u"Next scheduled stream: {} at {} ({})".format(nextEvent["summary"],
-                                                                          shortDate,
-                                                                          nextEvent["till"]),
+                           u"Next scheduled stream: {} at {}{} ({})".format(nextEvent["summary"],
+                                                                            shortDate,
+                                                                            tzMessage,
+                                                                            nextEvent["till"]),
                            message.user,
                            message.replyTo)
 

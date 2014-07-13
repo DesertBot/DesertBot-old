@@ -34,9 +34,11 @@ class GoogleCalendar(Module):
         if calendarID is None:
             return None
 
+        tzFailed = False
         tz = gettz(timezone)
         if tz is None:
             tz = gettz("America/Vancouver")  # default to PST/PDT
+            tzFailed = True
 
         now = datetime.datetime.now(tz)
 
@@ -63,6 +65,9 @@ class GoogleCalendar(Module):
                     event["till"] = u"{} ago".format(self._deltaTimeToString(-timeTill))
                 else:
                     event["till"] = u"{} from now".format(self._deltaTimeToString(timeTill))
+
+                event["timezone"] = tz
+
                 return event
 
         return None
