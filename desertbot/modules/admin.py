@@ -100,13 +100,21 @@ class Admin(Module):
             json.dump(self.admins, jsonFile)
 
     def _allowedToUse(self, message):
+        # with no admins defined we allow access to all modules
         if len(self.admins) == 0:
             return True
-        for moduleName, module in self.bot.moduleHandler.loadedModules.iteritems():
-            if message.command in module.triggers and module.accessLevel is AccessLevel.ADMINS:
-                for adminRegex in self.admins:
-                    if re.match(adminRegex, message.user.getUserString()):
-                        return True
-                return False
+
+        if message.command in self.bot.moduleHandler.mappedTriggers:
+            module = self.bot.moduleHandler.mappedTriggers[message.command]
+            if module.accessLevel is not AccessLevel.ADMINS:
+                return True
+
+            for adminRegex in self.admins:
+                if re.match(adminRegex, message.user.getUserString()):
+                    return True
+
+            return False
+
+        return True
 
 admin = Admin()
