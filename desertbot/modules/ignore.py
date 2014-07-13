@@ -57,8 +57,9 @@ class Ignore(Module):
                 if re.match(userRegex, message.user.getUserString()):
                     if self.ignores[userRegex] == u"all":
                         message.clear()
-                    for moduleName, module in self.bot.moduleHandler.loadedModules.iteritems():
-                        if moduleName in self.ignores[userRegex]:
+                    if message.command in self.bot.moduleHandler.mappedTriggers:
+                        module = self.bot.moduleHandler.mappedTriggers[message.command]
+                        if module.name in self.ignores[userRegex]:
                             message.clear()
 
 
