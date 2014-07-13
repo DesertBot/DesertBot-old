@@ -35,10 +35,10 @@ class GoogleCalendar(Module):
             return None
 
         tz = gettz(timezone)
-        if tz is not None:
-            now = datetime.datetime.now(tz)
-        else:
-            now = datetime.datetime.now(gettz("America/Vancouver"))  # default to PST/PDT
+        if tz is None:
+            tz = gettz("America/Vancouver")  # default to PST/PDT
+
+        now = datetime.datetime.now(tz)
 
         query = self._service.events().list(calendarId=calendarID,
                                             maxResults=2,  # we fetch 2 in case there's one running
