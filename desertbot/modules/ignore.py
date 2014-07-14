@@ -38,27 +38,27 @@ class Ignore(Module):
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Ignore who?", message.user, message.replyTo)
             else:
-                self.ignores[message.parameterList[0]] = message.parameterList[1:]
+                self.bot.dataStore["ignores"][message.parameterList[0]] = message.parameterList[1:]
                 return IRCResponse(ResponseType.PRIVMSG,
                                    u"Now ignoring: \"{}\".".format(message.parameterList[0]),
                                    message.user, message.replyTo)
         elif message.command == u"unignore":
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Unignore who?", message.user, message.replyTo)
-            elif message.parameterList[0] not in self.ignores:
+            elif message.parameterList[0] not in self.bot.dataStore["ignores"]:
                 return IRCResponse(ResponseType.PRIVMSG, u"I am not ignoring \"{}\"!".format(message.parameterList[0]),
                                    message.user, message.replyTo)
             else:
-                del self.ignores[(message.parameterList[0])]
+                del self.bot.dataStore["ignores"][(message.parameterList[0])]
                 return IRCResponse(ResponseType.PRIVMSG, u"No longer ignoring \"{}\".".format(message.parameterList[0]),
                                    message.user, message.replyTo)
         else:
-            for userRegex in self.ignores.keys():
+            for userRegex in self.bot.dataStore["ignores"].keys():
                 if re.match(userRegex, message.user.getUserString()):
-                    if self.ignores[userRegex] == u"all":
+                    if self.bot.dataStore["ignores"][userRegex] == u"all":
                         message.clear()
                     else:
-                        for moduleName in self.ignores[userRegex]:
+                        for moduleName in self.bot.dataStore["ignores"][userRegex]:
                             module = self.bot.moduleHandler.getModule(moduleName)
                             if module is not None:
                                 if self.bot.moduleHandler._shouldTrigger(module, message):
@@ -70,22 +70,22 @@ class Ignore(Module):
             with open(os.path.join("data", configFileName, "ignores.json")) as jsonFile:
                 ignores = json.load(jsonFile)
             if len(ignores) != 0:
-                self.ignores = ignores
+                self.bot.dataStore["ignores"] = ignores
                 log.msg("Loaded {} ignores from ignores file for config \"{}\".".format(len(ignores),
                                                                                         configFileName))
             else:
                 log.msg("Ignores file for config \"{}\" is empty.".format(configFileName))
-                self.ignores = {}
+                self.bot.dataStore["ignores"] = {}
         else:
             log.err("Ignores file not found for config \"{}\"!".format(configFileName))
-            self.ignores = {}
+            self.bot.dataStore["ignores"] = {}
 
     def onModuleUnloaded(self):
         configFileName = self.bot.factory.config.configFileName[:-5]
         if not os.path.exists(os.path.join("data", configFileName)):
             os.makedirs(os.path.join("data", configFileName))
         with open(os.path.join("data", configFileName, "admins.json"), "w") as jsonFile:
-            json.dump(self.ignores, jsonFile)
+            json.dump(self.bot.dataStore["ignores"], jsonFile)
 
 
 ignore = Ignore()

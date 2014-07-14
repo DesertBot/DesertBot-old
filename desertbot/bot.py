@@ -28,6 +28,7 @@ class DesertBot(irc.IRCClient):
         """
         self.factory = factory
         self.channels = {}
+        self.dataStore = {}
         self.usermodes = {}
         self.commandChar = factory.config["commandChar"]
         self.admins = []

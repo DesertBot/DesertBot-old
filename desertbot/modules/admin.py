@@ -40,8 +40,8 @@ class Admin(Module):
                                    u"Admin who?",
                                    message.user, message.replyTo)
             else:
-                if message.parameterList[0] not in self.admins:
-                    self.admins.append(message.parameterList[0])
+                if message.parameterList[0] not in self.bot.dataStore["admins"]:
+                    self.bot.dataStore["admins"].append(message.parameterList[0])
                     return IRCResponse(ResponseType.PRIVMSG,
                                        u"Added \"{}\" to the admin list!".format(
                                            message.parameterList[0]),
@@ -56,8 +56,8 @@ class Admin(Module):
                                    u"Un-admin who?",
                                    message.user, message.replyTo)
             else:
-                if message.parameterList[0] in self.admins:
-                    self.admins.remove(message.parameterList[0])
+                if message.parameterList[0] in self.bot.dataStore["admins"]:
+                    self.bot.dataStore["admins"].remove(message.parameterList[0])
                     return IRCResponse(ResponseType.PRIVMSG,
                                        u"Removed \"{}\" from the admin list.".format(
                                            message.parameterList[0]),
@@ -68,7 +68,7 @@ class Admin(Module):
                                        message.user, message.replyTo)
         elif message.command == u"admins":
             return IRCResponse(ResponseType.PRIVMSG,
-                               u"Current admins: {}".format(u", ".join(self.admins)),
+                               u"Current admins: {}".format(u", ".join(self.bot.dataStore["admins"])),
                                message.user, message.replyTo)
         else:
             if not self._allowedToUse(message):
@@ -82,26 +82,26 @@ class Admin(Module):
             with open(os.path.join("data", configFileName, "admins.json")) as jsonFile:
                 admins = json.load(jsonFile)
             if len(admins) != 0:
-                self.admins = admins
+                self.bot.dataStore["admins"] = admins
                 log.msg("Loaded {} admins from admins file for config \"{}\".".format(len(admins),
                                                                                       configFileName))
             else:
                 log.msg("Admins file for config \"{}\" is empty.".format(configFileName))
-                self.admins = []
+                self.bot.dataStore["admins"] = []
         else:
             log.err("Admins file not found for config \"{}\"!".format(configFileName))
-            self.admins = []
+            self.bot.dataStore["admins"] = []
 
     def onModuleUnloaded(self):
         configFileName = self.bot.factory.config.configFileName[:-5]
         if not os.path.exists(os.path.join("data", configFileName)):
             os.makedirs(os.path.join("data", configFileName))
         with open(os.path.join("data", configFileName, "admins.json"), "w") as jsonFile:
-            json.dump(self.admins, jsonFile)
+            json.dump(self.bot.dataStore["admins"], jsonFile)
 
     def _allowedToUse(self, message):
         # with no admins defined we allow access to all modules
-        if len(self.admins) == 0:
+        if len(self.bot.dataStore["admins"]) == 0:
             return True
 
         if message.user is None:
@@ -114,7 +114,7 @@ class Admin(Module):
             if module.accessLevel is not AccessLevel.ADMINS:
                 return True
 
-            for adminRegex in self.admins:
+            for adminRegex in self.bot.dataStore["admins"]:
                 if re.match(adminRegex, message.user.getUserString()):
                     return True
 
