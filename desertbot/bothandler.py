@@ -96,5 +96,5 @@ class BotHandler(object):
             try:
                 post.onModuleUnloaded()
             except Exception as e:
-                errorMsg = "An error occured while unloading \"{}\" ({})".format(module.name, e)
+                errorMsg = "An error occured while unloading \"{}\" ({})".format(post.name, e)
                 log.err(errorMsg)
