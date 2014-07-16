@@ -24,8 +24,8 @@ class Update(Module):
         subprocess.call(["git", "fetch"])
 
         output = subprocess.check_output(["git", "log", "--no-merges",
-                                          "--pretty=format:\"%s %b\"", "..origin/master"])
-        changes = output.splitlines()
+                                          "--pretty=format:%s %b", "..origin/master"])
+        changes = [s.strip() for s in output.splitlines()]
 
         if len(changes) == 0:
             return IRCResponse(ResponseType.PRIVMSG, u"The bot is already up to date!",
@@ -40,6 +40,8 @@ class Update(Module):
             return IRCResponse(ResponseType.PRIVMSG,
                                u"Merge after update failed, please merge manually.",
                                message.user, message.replyTo)
+
+        subprocess.call(["pip", "install", "-r", "requirements.txt"])
 
         return IRCResponse(ResponseType.PRIVMSG, response, message.user, message.replyTo)
 
