@@ -50,8 +50,8 @@ class ConnectionHandling(Module):
                     else:
                         config = Config(configFileName)
                     if config.loadConfig():
-                        self.bot.bothandler.configs[config.configFileName] = config
-                        self.bot.bothandler.startBotFactory(config)
+                        message.bot.bothandler.configs[config.configFileName] = config
+                        message.bot.bothandler.startBotFactory(config)
                         return IRCResponse(ResponseType.PRIVMSG,
                                            u"Using \"{}\" for new connection...".format(
                                                config.configFileName),
@@ -62,15 +62,15 @@ class ConnectionHandling(Module):
                                                config.configFileName),
                                            message.user, message.replyTo)
                 except Exception as e:
-                    log.err("Connecting with \"{}\" failed. ({})".format(config.configFileName, e))
+                    log.err("Connecting with \"{}\" failed. ({})".format(configFileName, e))
                     return IRCResponse(ResponseType.PRIVMSG,
                                        u"Connecting with \"{}\" failed. ({})".format(
-                                           config.configFileName, e),
+                                           configFileName, e),
                                        message.user, message.replyTo)
         if message.command == u"quit":
-            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds=10):
-                self.bot.factory.shouldReconnect = False
-                self.bot.bothandler.stopBotFactory(self.bot.config.configFileName, None)
+            if datetime.datetime.utcnow() > message.bot.startTime + datetime.timedelta(seconds=10):
+                message.bot.factory.shouldReconnect = False
+                message.bot.bothandler.stopBotFactory(message.bot.config.configFileName, None)
         if message.command == u"quitfrom":
             if len(message.parameterList) == 0:
                 return IRCResponse(ResponseType.PRIVMSG, u"Quit from where?", message.user,
@@ -80,12 +80,12 @@ class ConnectionHandling(Module):
                     quitFromConfig = "{}.yaml".format(configFileName)
                 else:
                     quitFromConfig = configFileName
-                if quitFromConfig == self.bot.config.configFileName:
+                if quitFromConfig == message.bot.config.configFileName:
                     return IRCResponse(ResponseType.PRIVMSG, u"Can't quit from here with this!",
                                        message.user, message.replyTo)
                 else:
-                    quitMessage = u"Killed from \"{}\"".format(self.bot.config["server"])
-                    result = self.bot.bothandler.stopBotFactory(quitFromConfig, quitMessage)
+                    quitMessage = u"Killed from \"{}\"".format(message.bot.config["server"])
+                    result = message.bot.bothandler.stopBotFactory(quitFromConfig, quitMessage)
                     if result:
                         return IRCResponse(ResponseType.PRIVMSG,
                                            u"Successfully quit from \"{}\".".format(configFileName),
@@ -95,11 +95,11 @@ class ConnectionHandling(Module):
                                            u"I am not on \"{}\"!".format(configFileName),
                                            message.user, message.replyTo)
         if message.command == u"restart":
-            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds=10):
-                self.bot.bothandler.restart()
+            if datetime.datetime.utcnow() > message.bot.startTime + datetime.timedelta(seconds=10):
+                message.bot.bothandler.restart()
         if message.command == u"shutdown":
-            if datetime.datetime.utcnow() > self.bot.startTime + datetime.timedelta(seconds=10):
-                self.bot.bothandler.shutdown()
+            if datetime.datetime.utcnow() > message.bot.startTime + datetime.timedelta(seconds=10):
+                message.bot.bothandler.shutdown()
 
 
 connectionhandling = ConnectionHandling()

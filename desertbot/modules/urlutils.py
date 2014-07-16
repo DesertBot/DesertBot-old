@@ -8,6 +8,7 @@ from twisted.python import log
 from desertbot.moduleinterface import IModule, Module, ModuleType
 import re
 
+
 class URLUtils(Module):
     implements(IPlugin, IModule)
 
@@ -18,7 +19,6 @@ class URLUtils(Module):
 
     def onTrigger(self, message):
         return
-
 
     def fetchURL(self, url, params=None, extraHeaders=None):
         """
@@ -50,7 +50,6 @@ class URLUtils(Module):
         except requests.RequestException as e:
             reason = None
             log.err("ERROR: Fetch from \"{}\" failed: {}".format(url, reason))
-
 
     def postURL(self, url, data, extraHeaders=None):
         """

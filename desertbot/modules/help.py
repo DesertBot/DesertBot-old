@@ -48,7 +48,7 @@ class Help(Module):
             modules = []
             # only list modules with triggers here
             # (ie, modules the user can actually interact with)
-            for moduleName, module in self.bot.moduleHandler.loadedModules.iteritems():
+            for moduleName, module in message.bot.moduleHandler.loadedModules.iteritems():
                 if len(module.triggers) != 0:
                     modules.append(moduleName)
             return IRCResponse(ResponseType.PRIVMSG,
@@ -56,21 +56,21 @@ class Help(Module):
                                    u", ".join(sorted(modules))),
                                message.user, message.replyTo)
         else:
-            if message.parameterList[0].lower() in self.bot.moduleHandler.mappedTriggers:
+            if message.parameterList[0].lower() in message.bot.moduleHandler.mappedTriggers:
                 return IRCResponse(ResponseType.PRIVMSG,
-                                   self.bot.moduleHandler.mappedTriggers[
+                                   message.bot.moduleHandler.mappedTriggers[
                                        message.parameterList[0].lower()].getHelp(message),
                                    message.user, message.replyTo)
 
-            if message.parameterList[0].lower() in self.bot.moduleHandler.loadedModules:
+            if message.parameterList[0].lower() in message.bot.moduleHandler.loadedModules:
                 return IRCResponse(ResponseType.PRIVMSG,
-                                   self.bot.moduleHandler.loadedModules[
+                                   message.bot.moduleHandler.loadedModules[
                                        message.parameterList[0].lower()].getHelp(message),
                                    message.user, message.replyTo)
 
-            elif message.parameterList[0].lower() in self.bot.moduleHandler.loadedPostProcesses:
+            elif message.parameterList[0].lower() in message.bot.moduleHandler.loadedPostProcesses:
                 return IRCResponse(ResponseType.PRIVMSG,
-                                   self.bot.moduleHandler.loadedPostProcesses[
+                                   message.bot.moduleHandler.loadedPostProcesses[
                                        message.parameterList[0].lower()].getHelp(message),
                                    message.user, message.replyTo)
             else:
@@ -83,8 +83,8 @@ class Help(Module):
         """
         @type message: IRCMessage
         """
-        modules = list(self.bot.moduleHandler.loadedModules) + \
-                  list(self.bot.moduleHandler.loadedPostProcesses)
+        modules = list(message.bot.moduleHandler.loadedModules) + \
+                  list(message.bot.moduleHandler.loadedPostProcesses)
         return IRCResponse(ResponseType.PRIVMSG,
                            u"Loaded modules: {}".format(
                                u", ".join(sorted(modules))),
@@ -101,8 +101,8 @@ class Help(Module):
                                message.user, message.replyTo)
 
         module = message.parameterList[0].lower()
-        if module in self.bot.moduleHandler.loadedModules:
-            triggers = self.bot.moduleHandler.loadedModules[module].triggers
+        if module in message.bot.moduleHandler.loadedModules:
+            triggers = message.bot.moduleHandler.loadedModules[module].triggers
             if len(triggers) > 0:
                 return IRCResponse(ResponseType.PRIVMSG,
                                    u"Commands provided by {}: {}".format(

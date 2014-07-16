@@ -26,7 +26,7 @@ class Nick(Module):
                                u"You didn't give a nick for me to change to.",
                                message.user, message.replyTo)
 
-        self.bot.setNick(message.parameterList[0].encode('utf-8'))
+        message.bot.setNick(message.parameterList[0].encode('utf-8'))
 
 
 nick = Nick()

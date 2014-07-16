@@ -193,8 +193,7 @@ class ModuleHandler(object):
                 if module.name == name.lower():
                     self.loadedModules[module.name] = module
                     try:
-                        self.loadedModules[module.name].hookBot(self.bot)
-                        self.loadedModules[module.name].onModuleLoaded()
+                        self.loadedModules[module.name].onModuleLoaded(self.bot)
                         if module.moduleType is ModuleType.COMMAND:
                             for trigger in module.triggers:
                                 self.mappedTriggers[trigger] = module
@@ -225,8 +224,7 @@ class ModuleHandler(object):
                 if module.name == name.lower():
                     self.loadedPostProcesses[module.name] = module
                     try:
-                        self.loadedPostProcesses[module.name].hookBot(self.bot)
-                        self.loadedPostProcesses[module.name].onModuleLoaded()
+                        self.loadedPostProcesses[module.name].onModuleLoaded(self.bot)
                     except Exception as e:
                         errorMsg = "An error occurred while loading module \"{}\" ({})".format(
                             module.name, e)
@@ -261,7 +259,7 @@ class ModuleHandler(object):
                     if module.moduleType is ModuleType.COMMAND:
                         for trigger in module.triggers:
                             del self.mappedTriggers[trigger]
-                    module.onModuleUnloaded()
+                    module.onModuleUnloaded(self.bot)
                 except Exception as e:
                     errorMsg = "An error occurred while unloading module \"{}\" ({})".format(name,
                                                                                              e)
@@ -278,7 +276,7 @@ class ModuleHandler(object):
         elif interfaceName == u"IPost":
             if name.lower() in self.loadedPostProcesses:
                 try:
-                    self.loadedPostProcesses[name.lower()].onModuleUnloaded()
+                    self.loadedPostProcesses[name.lower()].onModuleUnloaded(self.bot)
                 except Exception as e:
                     errorMsg = "An error occurred while unloading module \"{}\" ({})".format(name,
                                                                                              e)

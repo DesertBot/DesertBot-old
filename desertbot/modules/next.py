@@ -29,7 +29,7 @@ class Next(Module):
         """
         @type message: IRCMessage
         """
-        cal = self.bot.moduleHandler.getModule("googlecalendar")
+        cal = message.bot.moduleHandler.getModule("googlecalendar")
         if not cal:
             log.err("The \"googlecalendar\" module is required for \"next\" to work.")
             return

@@ -43,7 +43,7 @@ class UserAlias(Module):
                 if len(message.parameterList) != 3:
                     return IRCResponse(ResponseType.PRIVMSG, u"Improper use.", message.user, message.replyTo)
                 else:
-                    self.userAliases[message.parameterList[1]] = message.parameterList[2]
+                    message.bot.dataStore["userAliases"][message.parameterList[1]] = message.parameterList[2]
                     return IRCResponse(ResponseType.PRIVMSG,
                                        u"Okay, I will remember that \"{}\" is actually \"{}\".".format(
                                            message.parameterList[1], message.parameterList[2]), message.user,
@@ -52,32 +52,32 @@ class UserAlias(Module):
                 if len(message.parameterList) != 2:
                     return IRCResponse(ResponseType.PRIVMSG, u"Improper use.", message.user, message.replyTo)
                 else:
-                    del self.userAliases[message.parameterList[1]]
+                    del message.bot.dataStore["userAliases"][message.parameterList[1]]
                     return IRCResponse(ResponseType.PRIVMSG,
                                        u"Okay, I will forget who \"{}\" actually is.".format(message.parameterList[1]),
                                        message.user, message.replyTo)
 
-    def onModuleLoaded(self):
-        configFileName = self.bot.factory.config.configFileName[:-5]
+    def onModuleLoaded(self, bot):
+        configFileName = bot.factory.config.configFileName[:-5]
         if os.path.exists(os.path.join("data", configFileName, "userAliases.json")):
             with open(os.path.join("data", configFileName, "userAliases.json")) as jsonFile:
                 userAliases = json.load(jsonFile)
             if len(userAliases) != 0:
-                self.userAliases = userAliases
+                bot.dataStore["userAliases"] = userAliases
                 log.msg("Loaded {} userAliases from userAliases file for config \"{}\".".format(len(userAliases),
                                                                                                 configFileName))
             else:
                 log.msg("UserAliases file for config \"{}\" is empty.".format(configFileName))
-                self.userAliases = {}
+                bot.dataStore["userAliases"] = {}
         else:
             log.err("UserAliases file not found for config \"{}\"!".format(configFileName))
-            self.userAliases = {}
+            bot.dataStore["userAliases"] = {}
 
-    def onModuleUnloaded(self):
-        configFileName = self.bot.factory.config.configFileName[:-5]
+    def onModuleUnloaded(self, bot):
+        configFileName = bot.factory.config.configFileName[:-5]
         if not os.path.exists(os.path.join("data", configFileName)):
             os.makedirs(os.path.join("data", configFileName))
         with open(os.path.join("data", configFileName, "userAliases.json"), "w") as jsonFile:
-            json.dump(self.userAliases, jsonFile)
+            json.dump(bot.dataStore["userAliases"], jsonFile)
 
 userAlias = UserAlias()

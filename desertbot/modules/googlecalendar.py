@@ -18,12 +18,12 @@ class GoogleCalendar(Module):
     moduleType = ModuleType.UTILITY
     helpText = u"Provides utility functions for reading data from google calendars."
 
-    def onModuleLoaded(self):
+    def onModuleLoaded(self, bot):
         # Build a service object for interacting with the API. Visit
         # the Google Developers Console
         # to get a developerKey for your own application.
         try:
-            devkey = self.bot.config["apikeys"]["google"]["devkey"]
+            devkey = bot.config["apikeys"]["google"]["devkey"]
         except KeyError as e:
             log.err("Google API devkey missing")
             return

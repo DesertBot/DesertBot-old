@@ -14,6 +14,7 @@ class IRCMessage(object):
         @type text: unicode
         @type bot: desertbot.DesertBot
         """
+        self.bot = bot
         self.type = messageType
         self.user = user
         self.channel = channel

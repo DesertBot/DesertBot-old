@@ -88,13 +88,13 @@ class BotHandler(object):
     def _unloadModules(self, botfactory):
         for module in botfactory.bot.moduleHandler.loadedModules.values():
             try:
-                module.onModuleUnloaded()
+                module.onModuleUnloaded(botfactory.bot)
             except Exception as e:
                 errorMsg = "An error occured while unloading \"{}\" ({})".format(module.name, e)
                 log.err(errorMsg)
         for post in botfactory.bot.moduleHandler.loadedPostProcesses.values():
             try:
-                post.onModuleUnloaded()
+                post.onModuleUnloaded(botfactory.bot)
             except Exception as e:
                 errorMsg = "An error occured while unloading \"{}\" ({})".format(post.name, e)
                 log.err(errorMsg)

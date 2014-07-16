@@ -26,7 +26,7 @@ class Join(Module):
                                message.user, message.replyTo)
 
         for channel in message.parameterList:
-            self.bot.join(channel.encode('utf-8'))
+            message.bot.join(channel.encode('utf-8'))
 
 
 join = Join()

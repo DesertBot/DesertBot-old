@@ -26,7 +26,7 @@ class NowPlaying(Module):
                                u"You didn't give me a last.fm user to check.",
                                message.user, message.replyTo)
 
-        song = self._getSong(message.parameterList[0])
+        song = self._getSong(message)
 
         if song is not None:
             return IRCResponse(ResponseType.PRIVMSG,
@@ -38,8 +38,9 @@ class NowPlaying(Module):
                                u"or hasn't scrobbled any music".format(message.parameters),
                                message.user, message.replyTo)
 
-    def _getSong(self, user):
-        urlutils = self.bot.moduleHandler.getModule("urlutils")
+    def _getSong(self, message):
+        user = message.parameterList[0]
+        urlutils = message.moduleHandler.getModule("urlutils")
         if urlutils:
             url = "http://ws.audioscrobbler.com/1.0/user/" + user + "/recenttracks.rss"
 

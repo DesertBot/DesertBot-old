@@ -20,16 +20,16 @@ class GeoLocation(Module):
     def onTrigger(self, message):
         return
 
-    def getGeoLocationFromLatLon(self, latitude, longitude):
+    def getGeoLocationFromLatLon(self, latitude, longitude, bot):
         params = {"latlng": ",".join([latitude, longitude]),
                   "sensor": "false",
                   "language": "english"}
-        return self._getLocationFromJSON(self._getJSON(self.baseAPIAddress, params))
+        return self._getLocationFromJSON(self._getJSON(self.baseAPIAddress, params, bot))
 
-    def getGeoLocationFromPlace(self, place):
+    def getGeoLocationFromPlace(self, place, bot):
         params = {"address": place.replace(" ", "+"),
                   "sensor": "false"}
-        return self._getLocationFromJSON(self._getJSON(self.baseAPIAddress, params))
+        return self._getLocationFromJSON(self._getJSON(self.baseAPIAddress, params, bot))
 
     def _getLocationFromJSON(self, jsonString):
         if jsonString["status"] == "OK":
@@ -41,8 +41,8 @@ class GeoLocation(Module):
         else:
             return None
 
-    def _getJSON(self, url, params):
-        urlutils = self.bot.moduleHandler.getModule(u"urlutils")
+    def _getJSON(self, url, params, bot):
+        urlutils = bot.moduleHandler.getModule(u"urlutils")
         if not urlutils:
             log.err("WARNING: Module \"urlutils\" is required for the \"geolocation\" module to "
                     "work.")

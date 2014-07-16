@@ -33,11 +33,6 @@ class IModule(Interface):
     runInThread = Attribute("Specifies if this module should be run in a separate thread.")
     helpText = Attribute("The text that will be sent when a user requests help for this module.")
 
-    def hookBot(bot):
-        """
-        This function will hook a bot reference to the module.
-        """
-
     def getHelp(message):
         """
         This function returns the module's helpText, unless overridden to perform
@@ -55,12 +50,12 @@ class IModule(Interface):
         It is only used for UTILITY modules.
         """
 
-    def onModuleLoaded():
+    def onModuleLoaded(bot):
         """
         This function will be executed when the API loads this module.
         """
 
-    def onModuleUnloaded():
+    def onModuleUnloaded(bot):
         """
         This function will be executed when the API unloads this module.
         """
@@ -76,9 +71,6 @@ class Module(object):
     runInThread = False
     helpText = u""
 
-    def hookBot(self, bot):
-        self.bot = bot
-
     def getHelp(self, message):
         if self.helpText == u"":
             return u"{} doesn't have any help text yet. Tell my admins to stop being lazy!".format(
@@ -91,8 +83,8 @@ class Module(object):
     def shouldTrigger(self, message):
         return False
 
-    def onModuleLoaded(self):
+    def onModuleLoaded(self, bot):
         pass
 
-    def onModuleUnloaded(self):
+    def onModuleUnloaded(self, bot):
         pass
