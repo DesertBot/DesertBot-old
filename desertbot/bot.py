@@ -244,15 +244,16 @@ class DesertBot(irc.IRCClient):
             user = IRCUser(prefix)
 
         message = IRCMessage('JOIN', user, channel, u'', self)
-        self.moduleHandler.handleMessage(message)
 
         if message.user.nickname == self.nickname:
             # Bot joins the channel, do initial setup
             self.sendLine("WHO {}".format(message.channel.name))
             self.sendLine("MODE {}".format(message.channel.name))
 
-        message.channel.users[message.user.nickname] = message.user
-        message.channel.ranks[message.user.nickname] = ""
+        channel.users[message.user.nickname] = message.user
+        channel.ranks[message.user.nickname] = ""
+
+        self.moduleHandler.handleMessage(message)
 
     def irc_PART(self, prefix, params):
         partMessage = u''
@@ -260,14 +261,16 @@ class DesertBot(irc.IRCClient):
             partMessage = u', message: ' + u' '.join(params[1:])
         message = IRCMessage('PART', self._userFromPrefix(prefix), self.getChannel(params[0]),
                              partMessage, self)
-        self.moduleHandler.handleMessage(message)
 
         if message.user.nickname == self.nickname:
             # The bot is leaving the channel
             del self.channels[message.channel.name]
         else:
-            del message.channel.users[message.user.nickname]
-            del message.channel.ranks[message.user.nickname]
+            channel = self.getChannel(message.channel.name)
+            del channel.users[message.user.nickname]
+            del channel.ranks[message.user.nickname]
+
+        self.moduleHandler.handleMessage(message)
 
     def irc_KICK(self, prefix, params):
         kickee = params[1]
@@ -276,15 +279,17 @@ class DesertBot(irc.IRCClient):
             kickMessage = u'{}, message: '.format(kickee) + u' '.join(params[2:])
         message = IRCMessage('KICK', self._userFromPrefix(prefix), self.getChannel(params[0]),
                              kickMessage, self)
-        self.moduleHandler.handleMessage(message)
 
         if kickee == self.nickname:
             # The bot is kicked from the channel
             del self.channels[message.channel.name]
         else:
             # Someone else is kicking someone from the channel
-            del message.channel.users[kickee]
-            del message.channel.ranks[kickee]
+            channel = self.getChannel(message.channel.name)
+            del channel.users[kickee]
+            del channel.ranks[kickee]
+
+        self.moduleHandler.handleMessage(message)
 
     def irc_QUIT(self, prefix, params):
         quitMessage = u''
@@ -292,12 +297,13 @@ class DesertBot(irc.IRCClient):
             quitMessage = u', message: ' + u' '.join(params[0])
 
         message = IRCMessage('QUIT', self._userFromPrefix(prefix), None, quitMessage, self)
-        self.moduleHandler.handleMessage(message)
 
         for channel in self.channels.itervalues():
             if message.user.nickname in channel.users:
                 del channel.users[message.user.nickname]
                 del channel.ranks[message.user.nickname]
+
+        self.moduleHandler.handleMessage(message)
 
     def irc_NICK(self, prefix, params):
         user = self._userFromPrefix(prefix)
@@ -305,7 +311,6 @@ class DesertBot(irc.IRCClient):
         newnick = params[0]
 
         message = IRCMessage("NICK", self._userFromPrefix(prefix), None, oldnick, self)
-        self.moduleHandler.handleMessage(message)
 
         for channel in self.channels.itervalues():
             if oldnick in channel.users:
@@ -315,6 +320,9 @@ class DesertBot(irc.IRCClient):
                 del channel.ranks[oldnick]
 
         message.user.nickname = newnick
+
+        self.moduleHandler.handleMessage(message)
+
         # call the superclass function to ensure self.nickname is synced
         irc.IRCClient.irc_NICK(self, prefix, params)
 
@@ -357,7 +365,7 @@ class DesertBot(irc.IRCClient):
         @type channel: str
         @rtype: IRCChannel
         """
-        if channel in self.channels:
+        if channel in self.channels.keys():
             return self.channels[channel]
         return None
 
@@ -366,9 +374,9 @@ class DesertBot(irc.IRCClient):
         @type user: str
         @rtype: IRCUser
         """
-        for channel in self.channels:
-            if user in self.channels[channel].users:
-                return self.channels[channel].users[user]
+        for channel in self.channels.values():
+            if user in channel.users:
+                return channel.users[user]
         return None
 
     def _userFromPrefix(self, prefix):
