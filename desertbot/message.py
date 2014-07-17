@@ -12,7 +12,7 @@ class IRCMessage(object):
         @type user: IRCUser | None
         @type channel: IRCChannel | None
         @type text: unicode
-        @type bot: desertbot.DesertBot
+        @type bot: desertbot.bot.DesertBot
         """
         self.bot = bot
         self.type = messageType

@@ -40,8 +40,8 @@ are working on.
       [x] Channel Join
       [x] Channel Part
       [x] Nick changing
-      [ ] Command character changing
-      [?] User ignore management (Discussing in issue #21)
+      [x] Command character changing
+      [-] User ignore management (Discussing in issue #21)
     [-] Help & Information
       [x] Help
       [?] Channel Logging
