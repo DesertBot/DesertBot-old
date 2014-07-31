@@ -2,7 +2,7 @@ from desertbot.bot import DesertBot
 import pydle
 
 if __name__ == "__main__":
-    pool = pydle.client.ClientPool()
+    pool = pydle.ClientPool()
 
     client = DesertBot('DesertBotPydle', realname='My Bot')
     client.connect('irc.desertbus.org', 6697, tls=True, tls_verify=False)
