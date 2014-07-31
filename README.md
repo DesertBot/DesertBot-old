@@ -10,4 +10,4 @@ To poke around with it, do the following:
 3. Within the virtualenv, run `pip install -r requirements.txt`. You might have to run `pip install tornado` first, as Pydle depends on it and this dependency is not handled well by pip.
 4. Run the bot using `python3 start.py`
 
-For any bug reports, comments or talk about the bot, drop by in the #desertbot channel on heufneutje.net (port 6667)
+For any bug reports, comments or talk about the bot, drop by in the #desertbot channel on heufneutje.net at port 6667 (or 6697 for SSL)
