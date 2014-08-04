@@ -61,9 +61,6 @@ docs/_build/
 # PyCharm
 .idea/*
 
-# Twisted
-*dropin.cache
-
 # Bot
 config/
 !config/*.example
