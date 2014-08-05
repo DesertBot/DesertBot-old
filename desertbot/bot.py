@@ -26,7 +26,10 @@ class DesertBot(object):
         self.pool.add(connection)
 
     def stopConnection(self, server):
-        pass
+        connection = self.connections[server]
+        connection.disconnect()
+        self.pool.remove(connection)
+        del self.connections[server]
 
     def quit(self, restart = False):
         pass
