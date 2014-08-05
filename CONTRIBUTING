@@ -28,8 +28,6 @@ Update these in agreement if necessary.
   Use your best judgement.
 - Always end files with a newline. Some editors will have this behaviour by
   default, but mostly on Windows you're going to have to pay attention to this.
-- Always start source files with "# -*- coding: utf-8 -*-", as unicode should
-  be used consistently to prevent encoding errors.
 - Naming conventions:
   * Python file names should be all_lowercase
   * Class names should follow CapitalizedWords
