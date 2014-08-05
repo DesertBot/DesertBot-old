@@ -19,7 +19,12 @@ class DesertBot(object):
 
     def startConnection(self, server):
         config = self.configs[server]
-        connection = DesertBotConnection(config["nicknames"][0], config["nicknames"][1:], username = config["username"], realname = config["realname"])
+        nicknames = config["nicknames"]
+        if len(nicknames) > 1:
+            fallback = nicknames[1:]
+        else:
+            fallback = []
+        connection = DesertBotConnection(nicknames[0], fallback, username = config["username"], realname = config["realname"])
 
         connection.connect(config["server"], config["port"], tls=False, tls_verify=False)
         self.connections[config["server"]] = connection
