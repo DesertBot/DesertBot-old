@@ -1,13 +1,19 @@
+import argparse
+import os
+
 from desertbot.bot import DesertBot
-import pydle
+from desertbot.botconnection import DesertBotConnection
+
+
+parser = argparse.ArgumentParser(description="A modular IRC bot written in Python, using Pydle as its backend.")
+cmdArgs = parser.parse_args()
 
 if __name__ == "__main__":
-    pool = pydle.ClientPool()
+    # Create folders
+    if not os.path.exists(os.path.join("config")):
+        os.makedirs("config")
 
-    client = DesertBot('DesertBotPydle', realname='My Bot')
-    client.connect('irc.desertbus.org', 6697, tls=True, tls_verify=False)
-    client2 = DesertBot('DesertBotPydle', realname='My Bot')
-    client2.connect('heufneutje.net', 6697, tls=True, tls_verify=False)
-    pool.add(client)
-    pool.add(client2)
-    pool.handle_forever()
+    # TODO: Start logging here
+
+    # Create the bot to get started
+    desertbot = DesertBot(cmdArgs)
