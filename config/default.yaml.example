@@ -3,4 +3,4 @@ username: "DesertBot"
 realname: "DesertBot"
 server: ""
 port: 6667
-ssl: False
+tls: False
