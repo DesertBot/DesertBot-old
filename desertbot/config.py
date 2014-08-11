@@ -39,7 +39,7 @@ class ConfigHandler(object):
                                   format("\", \"".join(missing)))
 
     def _validateConfig(self, serverConfigData):
-        required = ["nickname", "username", "realname", "server"]
+        required = ["nicknames", "username", "realname", "server"]
         missing = []
         for req in required:
             if req not in serverConfigData.keys():
