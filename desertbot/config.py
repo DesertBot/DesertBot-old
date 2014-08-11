@@ -35,9 +35,8 @@ class ConfigHandler(object):
         if len(missing) == 0:
             return serverConfigData
         else:
-            raise ConfigException(serverConfig, "Required values {} were not found in {}".
-                                  format(", ".join(missing),
-                                         serverConfig))
+            raise ConfigException(serverConfig, "Required values \"{}\" were not found".
+                                  format("\", \"".join(missing)))
 
     def _validateConfig(self, serverConfigData):
         required = ["nickname", "username", "realname", "server"]
@@ -45,7 +44,20 @@ class ConfigHandler(object):
         for req in required:
             if req not in serverConfigData.keys():
                 missing.append(req)
-            return missing
+        return missing
+
+    def getConfigList(self, defaultConfig):
+        root = os.path.join("config")
+        configs = []
+        for item in os.listdir(root):
+            if not os.path.isfile(os.path.join(root, item)):
+                continue
+            if not item.endswith(".yaml"):
+                continue
+            if item == defaultConfig:
+                continue
+            configs.append(item)
+        return configs
 
 
 class ConfigException(Exception):

@@ -6,6 +6,9 @@ from desertbot.config import ConfigHandler, ConfigException
 
 
 class DesertBot(object):
+    # Static variable for the default config. Could make this a command line arg in the future.
+    DEFAULT_CONFIG = "default.yaml"
+
     def __init__(self, cmdArgs):
         self.connections = {}
         self.configs = {}
@@ -19,11 +22,22 @@ class DesertBot(object):
         self.pool.handle_forever()
 
     def _loadConfigs(self):
+        logging.info("Loading configs...")
         try:
-            self.configHandler.loadDefaultConfig("default.yaml")
+            self.configHandler.loadDefaultConfig(self.DEFAULT_CONFIG)
+            logging.info("Loaded default config file {}".format(self.DEFAULT_CONFIG))
         except ConfigException as e:
             logging.error("Could not read config file {}, reason: {}".format(e.configFile,
                                                                              e.reason))
+
+        for serverConfig in self.configHandler.getConfigList(self.DEFAULT_CONFIG):
+            try:
+                config = self.configHandler.loadServerConfig(serverConfig)
+                logging.info("Loaded server config file {}".format(serverConfig))
+            except ConfigException as e:
+                logging.error("Could not read config file {}, reason: {}. Skipping this file...".
+                              format(e.configFile,
+                                     e.reason))
 
     def startConnection(self, server):
         config = self.configs[server]
