@@ -5,7 +5,8 @@ import os
 from desertbot.bot import DesertBot
 
 
-parser = argparse.ArgumentParser(description="A modular IRC bot written in Python, using Pydle as its backend.")
+parser = argparse.ArgumentParser(description="A modular IRC bot written in Python, using Pydle as "
+                                             "its backend.")
 cmdArgs = parser.parse_args()
 
 if __name__ == "__main__":
@@ -14,7 +15,8 @@ if __name__ == "__main__":
         os.makedirs("config")
 
     # Initialize logging
-    logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
+    logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s] "
+                                     " %(message)s")
     logger = logging.getLogger("")
     logger.setLevel(logging.DEBUG)
 
