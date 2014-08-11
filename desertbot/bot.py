@@ -10,9 +10,6 @@ class DesertBot(object):
     """
     The main class that will keep track of all open connections and configs.
     """
-    # Static variable for the default config. Could make this a command line arg in the future.
-    DEFAULT_CONFIG = "default.yaml"
-
     def __init__(self, cmdArgs):
         """
         Creates a bot.
@@ -39,15 +36,15 @@ class DesertBot(object):
         """
         logging.info("Loading configs...")
         try:
-            self.configHandler.loadDefaultConfig(self.DEFAULT_CONFIG)
-            logging.info("Loaded default config file {}".format(self.DEFAULT_CONFIG))
+            self.configHandler.loadDefaultConfig(self.cmdArgs.configfile)
+            logging.info("Loaded default config file {}".format(self.cmdArgs.configfile))
         except ConfigException as e:
             logging.error("Could not read config file {}, reason: {}".format(e.configFile,
                                                                              e.reason))
             # No need to continue without a default config file
             sys.exit(-1)
 
-        for serverConfig in self.configHandler.getConfigList(self.DEFAULT_CONFIG):
+        for serverConfig in self.configHandler.getConfigList(self.cmdArgs.configfile):
             try:
                 config = self.configHandler.loadServerConfig(serverConfig)
                 self.configs[config["server"]] = config

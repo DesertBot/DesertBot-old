@@ -7,6 +7,11 @@ from desertbot.bot import DesertBot
 
 parser = argparse.ArgumentParser(description="A modular IRC bot written in Python, using Pydle as "
                                              "its backend.")
+parser.add_argument("-c", "--configfile",
+                    help="The default config file that will be used for all config files (default "
+                         "default.yaml.",
+                    type=str,
+                    default="default.yaml")
 parser.add_argument("-f", "--logfile", help="The file the debug log will be written to (default "
                                             "desertbot.log).", type=str, default="desertbot.log")
 parser.add_argument("-l", "--loglevel", help="The logging level that will be used while running "
