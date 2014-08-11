@@ -7,10 +7,18 @@ from desertbot.config import ConfigHandler, ConfigException
 
 
 class DesertBot(object):
+    """
+    The main class that will keep track of all open connections and configs.
+    """
     # Static variable for the default config. Could make this a command line arg in the future.
     DEFAULT_CONFIG = "default.yaml"
 
     def __init__(self, cmdArgs):
+        """
+        Creates a bot.
+        :param cmdArgs: The arguments parsed from the command line
+        :return:
+        """
         self.connections = {}
         self.configs = {}
         self.cmdArgs = cmdArgs
@@ -24,6 +32,11 @@ class DesertBot(object):
         self.pool.handle_forever()
 
     def _loadConfigs(self):
+        """
+        Tells the config handler to load the default config file and all server config files it
+        can find.
+        :return:
+        """
         logging.info("Loading configs...")
         try:
             self.configHandler.loadDefaultConfig(self.DEFAULT_CONFIG)
@@ -45,25 +58,47 @@ class DesertBot(object):
                                      e.reason))
 
     def _intializeConnections(self):
+        """
+        Starts up connections for all servers that have valid config files loaded in. This could
+        be changed later to only make certain servers connect or an "autoconnect" field could be
+        added to the config.
+        :return:
+        """
         for config in self.configs.keys():
             self.startConnection(config)
 
     def startConnection(self, server):
+        """
+        Creates a new server connection. The address has to be specified. All other settings will
+        then be read from the config.
+        :param server: The address of the server to connect to.
+        :return:
+        """
         config = self.configs[server]
         nicknames = config["nicknames"]
+        # Check for fallback nicknames should the initial one be taken
         if len(nicknames) > 1:
             fallback = nicknames[1:]
         else:
             fallback = []
+
+        # Intialize the connection
         connection = DesertBotConnection(nicknames[0], fallback, username=config["username"],
                                          realname=config["realname"])
-
         logging.info("Connecting to {}...".format(server))
+
+        # Connect and add the connection to the client pool and the connections dictionary
         connection.connect(config["server"], config["port"], tls=config["tls"], tls_verify=False)
         self.connections[config["server"]] = connection
         self.pool.add(connection)
 
     def stopConnection(self, server):
+        """
+        Closes a server connection.
+        :param server: The address of the server to disconnect from.
+        :return:
+        """
+        # Disconnect and remove the connection from the dictionary and client pool
         connection = self.connections[server]
         connection.disconnect()
         self.pool.remove(connection)
