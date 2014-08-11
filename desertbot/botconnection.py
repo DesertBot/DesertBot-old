@@ -1,5 +1,6 @@
-from pydle import Client
+import pydle
 
 
-class DesertBotConnection(Client):
-    pass
+class DesertBotConnection(pydle.Client):
+    def __init__(self):
+        pass

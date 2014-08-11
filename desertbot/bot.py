@@ -1,6 +1,6 @@
 import pydle
 
-from botconnection import DesertBotConnection
+from desertbot.botconnection import DesertBotConnection
 
 
 class DesertBot(object):
