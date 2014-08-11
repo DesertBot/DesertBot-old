@@ -1,5 +1,6 @@
 import pydle
 import logging
+import sys
 
 from desertbot.botconnection import DesertBotConnection
 from desertbot.config import ConfigHandler, ConfigException
@@ -18,6 +19,7 @@ class DesertBot(object):
         self.configHandler = ConfigHandler()
 
         self._loadConfigs()
+        self._intializeConnections()
 
         self.pool.handle_forever()
 
@@ -29,15 +31,22 @@ class DesertBot(object):
         except ConfigException as e:
             logging.error("Could not read config file {}, reason: {}".format(e.configFile,
                                                                              e.reason))
+            # No need to continue without a default config file
+            sys.exit(-1)
 
         for serverConfig in self.configHandler.getConfigList(self.DEFAULT_CONFIG):
             try:
                 config = self.configHandler.loadServerConfig(serverConfig)
+                self.configs[config["server"]] = config
                 logging.info("Loaded server config file {}".format(serverConfig))
             except ConfigException as e:
                 logging.error("Could not read config file {}, reason: {}. Skipping this file...".
                               format(e.configFile,
                                      e.reason))
+
+    def _intializeConnections(self):
+        for config in self.configs.keys():
+            self.startConnection(config)
 
     def startConnection(self, server):
         config = self.configs[server]
@@ -46,7 +55,8 @@ class DesertBot(object):
             fallback = nicknames[1:]
         else:
             fallback = []
-        connection = DesertBotConnection(nicknames[0], fallback, username = config["username"], realname = config["realname"])
+        connection = DesertBotConnection(nicknames[0], fallback, username=config["username"],
+                                         realname=config["realname"])
 
         connection.connect(config["server"], config["port"], tls=config["tls"], tls_verify=False)
         self.connections[config["server"]] = connection
