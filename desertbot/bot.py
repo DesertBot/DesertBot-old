@@ -58,6 +58,7 @@ class DesertBot(object):
         connection = DesertBotConnection(nicknames[0], fallback, username=config["username"],
                                          realname=config["realname"])
 
+        logging.info("Connecting to {}...".format(server))
         connection.connect(config["server"], config["port"], tls=config["tls"], tls_verify=False)
         self.connections[config["server"]] = connection
         self.pool.add(connection)

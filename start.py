@@ -18,18 +18,18 @@ if __name__ == "__main__":
     logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s] "
                                      " %(message)s")
     logger = logging.getLogger("")
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     # Set up file logging
     fileHandler = logging.FileHandler("desertbot.log")
     fileHandler.setFormatter(logFormatter)
-    fileHandler.setLevel(logging.DEBUG)
+    fileHandler.setLevel(logging.INFO)
     logger.addHandler(fileHandler)
 
     # Set up console logging
     consoleHandler = logging.StreamHandler()
     consoleHandler.setFormatter(logFormatter)
-    consoleHandler.setLevel(logging.DEBUG)
+    consoleHandler.setLevel(logging.INFO)
     logger.addHandler(consoleHandler)
 
     # Create the bot to get started
