@@ -25,10 +25,11 @@ if __name__ == "__main__":
 
     # Determine the logging level
     numeric_level = getattr(logging, cmdArgs.loglevel.upper(), None)
-    if isinstance(numeric_level, int):
-        logger.setLevel(numeric_level)
-    else:
-        raise ValueError("Invalid log level {}".format(cmdArgs.loglevel))
+    invalidLogLevel = False
+    if not isinstance(numeric_level, int):
+        numeric_level = logging.INFO
+        invalidLogLevel = True
+    logger.setLevel(numeric_level)
 
     # Set up file logging
     fileHandler = logging.FileHandler(cmdArgs.logfile)
@@ -41,6 +42,10 @@ if __name__ == "__main__":
     consoleHandler.setFormatter(logFormatter)
     consoleHandler.setLevel(numeric_level)
     logger.addHandler(consoleHandler)
+
+    # Yell at the user if they specified an invalid log level
+    if invalidLogLevel:
+        logger.warning("Found invalid log level {}; defaulting to INFO.".format(cmdArgs.loglevel))
 
     # Create the bot to get started
     desertbot = DesertBot(cmdArgs)
