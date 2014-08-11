@@ -1,8 +1,8 @@
 import argparse
+import logging
 import os
 
 from desertbot.bot import DesertBot
-from desertbot.botconnection import DesertBotConnection
 
 
 parser = argparse.ArgumentParser(description="A modular IRC bot written in Python, using Pydle as its backend.")
@@ -13,7 +13,22 @@ if __name__ == "__main__":
     if not os.path.exists(os.path.join("config")):
         os.makedirs("config")
 
-    # TODO: Start logging here
+    # Initialize logging
+    logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
+    logger = logging.getLogger("")
+    logger.setLevel(logging.DEBUG)
+
+    # Set up file logging
+    fileHandler = logging.FileHandler("desertbot.log")
+    fileHandler.setFormatter(logFormatter)
+    fileHandler.setLevel(logging.DEBUG)
+    logger.addHandler(fileHandler)
+
+    # Set up console logging
+    consoleHandler = logging.StreamHandler()
+    consoleHandler.setFormatter(logFormatter)
+    consoleHandler.setLevel(logging.DEBUG)
+    logger.addHandler(consoleHandler)
 
     # Create the bot to get started
     desertbot = DesertBot(cmdArgs)
