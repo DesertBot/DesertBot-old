@@ -37,7 +37,9 @@ if __name__ == "__main__":
     logger.setLevel(numeric_level)
 
     # Set up file logging
-    fileHandler = logging.FileHandler(cmdArgs.logfile)
+    fileHandler = logging.handlers.TimedRotatingFileHandler(cmdArgs.logfile, when="D", interval=1,
+                                                           backupCount=4, encoding=None,
+                                                           delay=False, utc=True, atTime=None)
     fileHandler.setFormatter(logFormatter)
     fileHandler.setLevel(numeric_level)
     logger.addHandler(fileHandler)
