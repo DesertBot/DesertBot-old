@@ -1,5 +1,5 @@
-import pydle
 import logging
+import pydle
 import sys
 
 from desertbot.botconnection import DesertBotConnection
