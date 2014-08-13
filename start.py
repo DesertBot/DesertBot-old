@@ -5,7 +5,7 @@ import os
 from desertbot.bot import DesertBot
 
 
-parser = argparse.ArgumentParser(description="A modular IRC bot written in Python, using Pydle as "
+parser = argparse.ArgumentParser(description="A modular IRC bot written in Python, using Pydle at "
                                              "its backend.")
 parser.add_argument("-c", "--configfile",
                     help="The default config file that will be used for all config files (default "

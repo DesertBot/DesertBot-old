@@ -1,7 +1,7 @@
 DesertBot
 =========
 
-A community IRC bot using Pydle at its backend, written to merge some of the bots running for the DesertBus community. The project is a WiP. More relevant information will be added here as time goes on.
+A community IRC bot written in Python 3, using Pydle at its backend. Its purpose is to merge some of the bots running for the DesertBus community. The project is a WiP. More relevant information will be added here as time goes on.
 
 To poke around with it, do the following:
 
