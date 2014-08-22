@@ -24,7 +24,7 @@ if __name__ == "__main__":
         os.makedirs("config")
 
     # Initialize logging
-    logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s] "
+    logFormatter = logging.Formatter("%(asctime)s [%(module)s] [%(levelname)s] "
                                      " %(message)s")
     logger = logging.getLogger()
 
