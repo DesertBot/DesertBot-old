@@ -64,7 +64,7 @@ class DesertBot(object):
         for config in self.configs.keys():
             self.startConnection(config)
 
-    def startConnection(self, server):
+    def openConnection(self, server):
         """
         Creates a new server connection. The address has to be specified. All other settings will
         then be read from the config.
@@ -89,7 +89,7 @@ class DesertBot(object):
         self.connections[config["server"]] = connection
         self.pool.add(connection)
 
-    def stopConnection(self, server):
+    def closeConnection(self, server):
         """
         Closes a server connection.
         :param server: The address of the server to disconnect from.
