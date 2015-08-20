@@ -1,105 +1,103 @@
-import logging
-import pydle
-import sys
+from twisted.internet import reactor
+from twisted.internet.task import LoopingCall
+from desertbot.config import Config
+from desertbot.factory import DesertBotFactory
+from desertbot.modulehandler import ModuleHandler
+from desertbot.utils.timeutils import now
+import os, shelve, sys
 
-from desertbot.botconnection import DesertBotConnection
-from desertbot.config import ConfigHandler, ConfigException
+# Try to enable SSL support
+try:
+    from twisted.internet import ssl
+except ImportError:
+    ssl = None
 
 
 class DesertBot(object):
-    """
-    The main class that will keep track of all open connections and configs.
-    """
-    def __init__(self, cmdArgs):
-        """
-        Creates a bot.
-        :param cmdArgs: The arguments parsed from the command line
-        :return:
-        """
-        self.connections = {}
-        self.configs = {}
-        self.cmdArgs = cmdArgs
+    def __init__(self, configFile):
+        self.config = Config(configFile)
+        self.connectionFactory = DesertBotFactory(self)
+        self.log = None
+        self.moduleHandler = ModuleHandler(self)
+        self.servers = {}
+        self.storage = None
+        self.storageSync = None
+        self.startTime = now()
 
-        self.pool = pydle.ClientPool()
-        self.configHandler = ConfigHandler()
+    def startup(self):
+        if ssl is None:
+            self.log.warn("The PyOpenSSL package was not found. You will not be able to connect to servers using SSL.")
+        self.log.info("Loading configuration file...")
+        self.config.loadConfig()
+        self.log.info("Loading storage...")
+        self.storage = shelve.open(self.config.itemWithDefault("storage_path", "desertbot.db"))
+        self.storageSync = LoopingCall(self.storage.sync)
+        self.storageSync.start(self.config.itemWithDefault("storage_sync_interval", 5), now=False)
+        self.log.info("Loading modules...")
+        self.moduleHandler.loadAllModules()
+        self.log.info("Initiating connections...")
+        self._initiateConnections()
+        self.log.info("Starting reactor...")
+        reactor.run()
 
-        self._loadConfigs()
-        self._intializeConnections()
+    def _initiateConnections(self):
+        for server in self.config["servers"].iterkeys():
+            self.connectServer(server)
 
-        self.pool.handle_forever()
-
-    def _loadConfigs(self):
-        """
-        Tells the config handler to load the default config file and all server config files it
-        can find.
-        :return:
-        """
-        logging.info("Loading configs...")
-        try:
-            self.configHandler.loadDefaultConfig(self.cmdArgs.configfile)
-            logging.info("Loaded default config file {}".format(self.cmdArgs.configfile))
-        except ConfigException as e:
-            logging.error("Could not read config file {}, reason: {}".format(e.configFile,
-                                                                             e.reason))
-            # No need to continue without a default config file
-            sys.exit(-1)
-
-        for serverConfig in self.configHandler.getConfigList(self.cmdArgs.configfile):
-            try:
-                config = self.configHandler.loadServerConfig(serverConfig)
-                self.configs[config["server"]] = config
-                logging.info("Loaded server config file {}".format(serverConfig))
-            except ConfigException as e:
-                logging.error("Could not read config file {}, reason: {}. Skipping this file...".
-                              format(e.configFile,
-                                     e.reason))
-
-    def _intializeConnections(self):
-        """
-        Starts up connections for all servers that have valid config files loaded in. This could
-        be changed later to only make certain servers connect or an "autoconnect" field could be
-        added to the config.
-        :return:
-        """
-        for config in self.configs.keys():
-            self.startConnection(config)
-
-    def openConnection(self, server):
-        """
-        Creates a new server connection. The address has to be specified. All other settings will
-        then be read from the config.
-        :param server: The address of the server to connect to.
-        :return:
-        """
-        config = self.configs[server]
-        nicknames = config["nicknames"]
-        # Check for fallback nicknames should the initial one be taken
-        if len(nicknames) > 1:
-            fallback = nicknames[1:]
+    def connectServer(self, host):
+        if host in self.servers:
+            error = "A connection to {} was requested, but already exists.".format(host)
+            self.log.warn(error)
+            return error
+        if host not in self.config["servers"]:
+            error = "A connection to {} was requested, but there is no config data for this server.".format(host)
+            self.log.warn(error)
+            return error
+        port = int(self.config.serverItemWithDefault(host, "port", 6667))
+        if self.config.serverItemWithDefault(host, "ssl", False):
+            self.log.info("Attempting secure connection to {host}/{port}...", host=host, port=port)
+            if ssl is not None:
+                reactor.connectSSL(host, port, self.connectionFactory, ssl.ClientContextFactory())
+            else:
+                self.log.error("Can't connect to {host}/{port}; PyOpenSSL is required to allow secure connections.",
+                               host=host, port=port)
         else:
-            fallback = []
+            self.log.info("Attempting connection to {host}/{port}...", host=host, port=port)
+            reactor.connectTCP(host, port, self.connectionFactory)
 
-        # Intialize the connection
-        connection = DesertBotConnection(nicknames[0], fallback, username=config["username"],
-                                         realname=config["realname"])
-        logging.info("Connecting to {}...".format(server))
+    def disconnectServer(self, host, quitMessage = "Quitting..."):
+        if host not in self.servers:
+            error = "A disconnect from {} was requested, but this connection doesn't exist.".format(host)
+            self.log.warn(error)
+            return error
+        self.servers[host].disconnect(quitMessage, True)
 
-        # Connect and add the connection to the client pool and the connections dictionary
-        connection.connect(config["server"], config["port"], tls=config["tls"], tls_verify=False)
-        self.connections[config["server"]] = connection
-        self.pool.add(connection)
+    def reconnectServer(self, host, quitMessage = "Reconnecting..."):
+        if host not in self.servers:
+            error = "A reconnect to {} was requested, but this connection doesn't exist.".format(host)
+            self.log.warn(error)
+            return error
+        self.servers[host].disconnect(quitMessage)
 
-    def closeConnection(self, server):
-        """
-        Closes a server connection.
-        :param server: The address of the server to disconnect from.
-        :return:
-        """
-        # Disconnect and remove the connection from the dictionary and client pool
-        connection = self.connections[server]
-        connection.disconnect()
-        self.pool.remove(connection)
-        del self.connections[server]
+    def shutdown(self, quitMessage = "Shutting down..."):
+        serversCopy = self.servers.copy()
+        for server in serversCopy.itervalues():
+            server.disconnect(quitMessage, True)
 
-    def quit(self, restart = False):
-        pass
+    def restart(self, quitMessage = "Restarting..."):
+        reactor.addSystemEventTrigger("after", "shutdown", lambda: os.execl(sys.executable, sys.executable, *sys.argv))
+        self.shutdown(quitMessage)
+
+    def countConnections(self):
+        if len(self.servers) == 0:
+            self.log.info("No more connections alive, shutting down...")
+            # If we have any connections that have been started but never finished, stop trying
+            self.connectionFactory.stopTrying()
+            self.log.info("Closing storage...")
+            if self.storageSync.running:
+                self.storageSync.stop()
+            self.storage.close()
+            self.log.info("Unloading modules...")
+            self.moduleHandler.unloadAllModules()
+            self.log.info("Stopping reactor...")
+            reactor.stop()

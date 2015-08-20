@@ -18,7 +18,6 @@ lib64/
 parts/
 sdist/
 var/
-*.egg-info/
 .installed.cfg
 *.egg
 
@@ -52,15 +51,7 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-# Python Tools for Visual Studio
-*.pyproj
-*.sln
-*.suo
-.gitattributes
-
-# PyCharm
-.idea/*
-
 # Bot
-config/
-data/
+*.yaml
+*.db
+dropin.cache

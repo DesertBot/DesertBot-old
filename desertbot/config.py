@@ -1,116 +1,91 @@
-import os
+import yaml
 
-from yaml import load
-from yaml.parser import ParserError
-from yaml.scanner import ScannerError
+_required = ["servers"]
 
+class Config(object):
 
-class ConfigHandler(object):
-    """
-    A class that serves to load, validate and list config files.
-    """
-    def __init__(self):
-        """
-        Creates a config handler and initialize it with a dictionary in which the default data
-        will be stored.
-        :return:
-        """
-        self.defaultConfigData = {}
-
-    def loadDefaultConfig(self, defaultConfig):
-        """
-        Loads the default config file and initializes the defaultConfigData dictionary with the
-        values read from it.
-        :param defaultConfig: The name of the default config file.
-        :return:
-        """
-        if os.path.exists(os.path.join("config", defaultConfig)):
-            with open(os.path.join("config", defaultConfig), "r") as defaultConfig:
-                try:
-                    self.defaultConfigData = load(defaultConfig)
-                except ScannerError as e:
-                    # We got a garbled YAML file
-                    raise ConfigException(defaultConfig, e.problem)
-                except ParserError as e:
-                    raise ConfigException(defaultConfig, e.problem)
-        else:
-            raise ConfigException(defaultConfig, "File not found.")
-
-    def loadServerConfig(self, serverConfig):
-        """
-        Loads the config for the given server, creates a copy of the default config values and
-        updates these.
-        :param serverConfig: The name of the server config file.
-        :return serverConfigFata: The dictionary with the config values that will be used for the
-        specified server.
-        """
-        serverConfigData = self.defaultConfigData.copy()
-        with open(os.path.join("config", serverConfig), "r") as defaultConfig:
-            try:
-                serverConfigData.update(load(defaultConfig))
-            except ScannerError as e:
-                # We got a garbled YAML file
-                raise ConfigException(defaultConfig, e.problem)
-            except ParserError as e:
-                raise ConfigException(defaultConfig, e.problem)
-
-        missing = self._validateConfig(serverConfigData)
-        if len(missing) == 0:
-            return serverConfigData
-        else:
-            raise ConfigException(serverConfig, "Required values \"{}\" were not found".
-                                  format("\", \"".join(missing)))
-
-    def _validateConfig(self, serverConfigData):
-        """
-        Makes sure all required values are present in the config.
-        :param serverConfigData: The dictionary that will be checked.
-        :return missing: The list of missing values. This list will be empty if the config has
-        all required values.
-        """
-        required = ["nicknames", "username", "realname", "server"]
-        missing = []
-        for req in required:
-            if req not in serverConfigData.keys():
-                missing.append(req)
-        return missing
-
-    def getConfigList(self, defaultConfig):
-        """
-        Scans the config folder for all .yaml files.
-        :param defaultConfig: The name of the default config file (to exclude it in searching).
-        :return configs: A list of all config files found in the config folder.
-        """
-        root = os.path.join("config")
-        configs = []
-        for item in os.listdir(root):
-            if not os.path.isfile(os.path.join(root, item)):
-                continue
-            if not item.endswith(".yaml"):
-                continue
-            if item == defaultConfig:
-                continue
-            configs.append(item)
-        return configs
-
-
-class ConfigException(Exception):
-    """
-    A custom exception class to inform the user of errors in the config files.
-    """
-    def __init__(self, configFile, reason):
-        """
-        Creates a config exception.
-        :param configFile: The file that caused the exception.
-        :param reason: The reason why the exception occurred.
-        :return:
-        """
+    def __init__(self, configFile):
         self.configFile = configFile
-        self.reason = reason
+        self._configData = {}
+
+    def loadConfig(self):
+        configData = self._readConfig(self.configFile)
+        self._validateConfigData(configData)
+        self._configData = configData
+
+    # From txircd:
+    # https://github.com/ElementalAlchemist/txircd/blob/762e5ae6fa740f52e6b18fd6d2f9d2ee2507d263/txircd/config.py#L50
+    def _readConfig(self, fileName):
+        try:
+            with open(fileName, "r") as config:
+                configData = yaml.safe_load(config)
+                if not configData:
+                    configData = {}
+        except Exception as e:
+            raise ConfigError(fileName, e)
+
+        if "include" in configData:
+            for fileName in configData["include"]:
+                includeConfig = self._readConfig(fileName)
+                for key, val in includeConfig.iteritems():
+                    if key not in configData:
+                        configData[key] = val
+                    elif not isinstance(configData[key], basestring): # Let's try to merge them if they're collections
+                        if isinstance(val, basestring):
+                            raise ConfigError(fileName, "The included configuration file tried to merge a non-string "
+                                                        "with a string.")
+                        try: # Make sure both things we're merging are still iterable types (not numbers or whatever)
+                            iter(configData[key])
+                            iter(val)
+                        except TypeError:
+                            pass # Just don't merge them if they're not
+                        else:
+                            try:
+                                configData[key] += val # Merge with the + operator
+                            except TypeError: # Except that some collections (dicts) can't
+                                try:
+                                    for subkey, subval in val.iteritems(): # So merge them manually
+                                        if subkey not in configData[key]:
+                                            configData[key][subkey] = subval
+                                except (AttributeError, TypeError):
+                                    # If either of these, they weren't both dicts (but were still iterable);
+                                    # requires user to resolve
+                                    raise ConfigError(fileName, "The variable {} could not be successfully merged "
+                                                                "across files.".format(key))
+            del configData["include"]
+        return configData
+
+
+    def _validateConfigData(self, configData):
+        for item in _required:
+            if item not in configData:
+                raise ConfigError(self.configFile, "Required item \"{}\" was not found in the config.".format(item))
+
+    def __len__(self):
+        return len(self._configData)
+
+    def __iter__(self):
+        return iter(self._configData)
+
+    def __getitem__(self, item):
+        return self._configData[item]
+
+    def itemWithDefault(self, item, default):
+        if item in self._configData:
+            return self._configData[item]
+        return default
+
+    def serverItemWithDefault(self, server, item, default):
+        if item in self._configData["servers"][server]:
+            return self._configData["servers"][server][item]
+        if item in self._configData:
+            return self._configData[item]
+        return default
+
+class ConfigError(Exception):
+    def __init__(self, configFile, message):
+        self.configFile = configFile
+        self.message = message
 
     def __str__(self):
-        """
-        A string representation of the exception.
-        :return:
-        """
-        return "Could not read config file {}, reason: {}".format(self.configFile, self.reason)
+        return "An error occurred while reading config file {}: {}".format(self.configFile, self.message)

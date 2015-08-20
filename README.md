@@ -1,13 +1,16 @@
 DesertBot
 =========
 
-A community IRC bot written in Python 3, using Pydle at its backend. Its purpose is to merge some of the bots running for the DesertBus community. The project is a WiP. More relevant information will be added here as time goes on.
+A community IRC bot written in Python 2, using Twisted at its backend. Its purpose is to merge some of the bots running
+for the DesertBus community. The project is a WiP. More relevant information will be added here as time goes on.
 
 To poke around with it, do the following:
 
-1. Clone the repository
-2. Create a virtualenv and activate it. Be sure to use Python 3 as the interpreter.
-3. Within the virtualenv, run `pip install -r requirements.txt`. You might have to run `pip install tornado` first, as Pydle depends on it and this dependency is not handled well by pip.
-4. Run the bot using `python3 start.py`
+1. Clone the repository.
+2. Create and activate a virtualenv. You will have to download virtualenv for Python 2 if you do not already have it. 
+You could also just install the requirements on your machine itself, but a virtualenv is easier to work with.
+3. Once the virtualenv is activated, run pip install -r requirements.txt.
+4. Create a config file and run python app.py.
 
-For any bug reports, comments or talk about the bot, drop by in the #desertbot channel on heufneutje.net at port 6667 (or 6697 for SSL)
+For any bug reports, comments or talk about the bot, drop by in the #desertbus channel on irc.desertbus.org at port 6667
+(or 6697 for SSL)

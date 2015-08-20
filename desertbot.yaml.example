@@ -1,0 +1,130 @@
+# This is the example configuration file for DesertBot.  Make sure you rename
+# this file to "desertbot.yaml" or create a new file with this name!  By default
+# most lines in this config file are commented out and the bot will usually use
+# the values you see in the commented line (not all the time).  Make sure you
+# uncomment a line if you change something.
+
+
+# CORE CONFIGURATION
+# These values are always used and give basic information about the bot.
+
+# nickname: string (default: "DesertBot")
+# The nickname that will be given to the bot when connecting.  If this nickname
+# is already in use, an underscore will be appended until reaching a nickname
+# that is available.
+#nickname: "DesertBot"
+
+# username: string (default: nickname)
+# The username or ident that will be given to the bot when connecting.
+#username: "DesertBot"
+
+# realname: string (default: nickname)
+# The realname or gecos that will be given to the bot when connecting.
+#realname: "DesertBot"
+
+# storage_path: string (default: desertbot.db)
+# The location of the storage file for modules that need persistent storage.
+#storage_path: "desertbot.db"
+
+# servers: dictionary (REQUIRED!):
+# The servers the bot will connect to on startup.  The keys in this dictionary
+# represent the host of the server to connect to.  Servers can override most
+# global settings of the bot, like the nickname.  A special setting is the
+# "disabled_modules", which cannot be used as a global setting and MUST be
+# defined in the servers dictionary.  Any module in this list will be ignored
+# for that specific server.
+#servers:
+#  irc.example.org:
+#    nickname: "OtherBot"
+#    disabled_modules:
+#    - CTCP
+
+# port: int (default: 6667)
+# The port the bot will use to connect to a server.  It is recommended to put
+# this in the "servers" dictionary.
+#port: 6667
+
+# ssl: boolean (default: false)
+# Whether or not the bot should try to connect securely.  Requires PyOpenSSL to
+# be installed.  See optional-requirements.txt.
+#ssl: false
+
+# password: string (default: null)
+# Uncomment this if the server(s) you want to connect to require(s) a password.
+# It is recommended to put this in the "servers" dictionary.
+#password: null
+
+# channels: dictionary (default: null)
+# The channels the bot will join after connecting to the server.  The format is
+# name: password.  Use null for channels that don't require a password.  It is
+# recommended to put this in the "servers" dictionary.
+#channels:
+#  "#channel1": null
+#  "#channel2": "channelpassword"
+
+# MODULES
+# With only the core the bot will not do much more than idle.  For extra
+$ functionality additional modules can be loaded.
+
+# modules: list (default: empty list)
+# The modules the bot will load on startup.
+#modules: # Uncomment this line if you decide to load any modules.
+
+# Admin: Enables permission checks for command modules, based on a user's
+# hostmask.
+#- Admin
+
+# ChannelLogger: Enables logging of the channels the bot is in.
+#- ChannelLogger
+
+# CTCP: Enables replying to CTCP commands.  The supported comamnds are PING,
+# VERSION, TIME and SOURCE.
+#- CTCP
+
+# GeoLocation: Provides utility functions for getting coordinates for a given
+# location from the Google Maps API.  Requires WebUtils to be loaded.
+#- GeoLocation
+
+# NickServIdentify: Enables sending a password to IRC services for
+# authentication.
+#- NickServIdentify
+
+# URLFollow: Enables the bot to look up the content details of posted URLs.
+# Requires isodate to be installed.  See optional-requirements.txt.
+#- URLFollow
+
+# UserLocationChatmap: Provides utility functions to determine the location of
+# a user on the Desert Bus Chatmap.  Requires WebUtils to be loaded.
+#- UserLocationChatmap
+
+# WebUtils: Enables fetch and posting of URLs.  Requires Requests to be
+# installed.  See optional-requirements.txt.
+#- WebUtils
+
+
+# MODULE CONFIGURATION
+# Some modules provide additional configuration options.  They can also
+# be specified per server.
+
+# bot_admins: list (Admin, default: empty list)
+# The users that can use command modules that require admin permissions.  The
+# values of the list are hostmasks with possible wildcards.
+#bot_admins:
+#  - someuser!*@localhost
+
+# logpath: string (ChannelLogger, default: "logs")
+# The folder where the channel logs will be stored.
+#logpath: "logs"
+
+# nickserv_nick: string (NickServIdentify, default: "NickServ")
+# The name of authentication service.
+#nickserv_nick: "NickServ"
+
+# nickserv_pass: string (NickServIdentify, no default)
+# The password that will be sent to the authentication service.
+#nickserv_pass: null
+
+# webrequest_timeout: int (WebUtils, default: 10)
+# The number of seconds to wait for the server to respond when using a web
+# request.
+#webrequest_timeout: 10
