@@ -22,11 +22,11 @@ class CTCP(BotModule):
         if message.upper() == "PING" or message.upper().startswith("PING "):
             self.sendCTCPReply(server, user.nick, "PING", message[5:])
         elif message.upper() == "VERSION":
-            self.sendCTCPReply(server, user.nick, "VERSION", "PyHeufyBot v{} / {}".format(__version__, platform()))
+            self.sendCTCPReply(server, user.nick, "VERSION", "DesertBot v{} / {}".format(__version__, platform()))
         elif message.upper() == "TIME":
             self.sendCTCPReply(server, user.nick, "TIME", strftimeWithTimezone(now()))
         elif message.upper() == "SOURCE":
-            self.sendCTCPReply(server, user.nick, "SOURCE", "https://github.com/Heufneutje/PyHeufyBot/")
+            self.sendCTCPReply(server, user.nick, "SOURCE", "https://github.com/DesertBot/DesertBot/")
 
     def sendCTCPCommand(self, server, target, ctcpType):
         self.bot.servers[server].outputHandler.cmdPRIVMSG(target, "\x01{}\x01".format(ctcpType))
