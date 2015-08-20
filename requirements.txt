@@ -1,3 +1,0 @@
-tornado>=4.0
-pydle==0.8.0
-pyyaml>=3.11
