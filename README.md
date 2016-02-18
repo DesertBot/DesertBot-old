@@ -12,5 +12,5 @@ You could also just install the requirements on your machine itself, but a virtu
 3. Once the virtualenv is activated, run pip install -r requirements.txt.
 4. Create a config file and run python app.py.
 
-For any bug reports, comments or talk about the bot, drop by in the #desertbus channel on irc.desertbus.org at port 6667
+For any bug reports, comments or talk about the bot, drop by in the #desertbus channel on irc.dbcommunity.org at port 6667
 (or 6697 for SSL)
